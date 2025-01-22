@@ -48,3 +48,14 @@ export default tseslint.config({
   },
 })
 ```
+## Initialization
+-- run the following: npm install
+
+# Helpful Videos
+## Bootstrap
+- https://getbootstrap.com/docs
+
+- https://youtu.be/Jyvffr3aCp0?si=p4EVY6IWgLpXSwsr
+
+## React
+- https://youtu.be/SqcY0GlETPk?si=FczzZR-w68VXmXxe
