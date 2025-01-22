@@ -1,5 +1,7 @@
 import NavBar from './Components/NavBar.tsx';
 import about from './Pages/about.tsx';
+import home from './Pages/home.tsx';
+import players from './Pages/players.tsx';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import './App.css'
 
@@ -10,9 +12,9 @@ function App() {
               <NavBar />
               <div className="content">
                   <Routes>
-                      <Route path="/" element={<h1>Welcome Home</h1>} />
+                      <Route path="/" element={home()} />
                       <Route path="/about" element={about()} />
-                      <Route path="/contact" element={<h1>Contact Page</h1>} />
+                      <Route path="/players" element={players()} />
                   </Routes>
               </div>
           </div>
