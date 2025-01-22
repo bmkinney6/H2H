@@ -51,6 +51,9 @@ export default tseslint.config({
 ## Initialization
 -- run the following: npm install
 
+## Running and stooping server
+- 'npm run dev' to open server
+- ctrl + C to close server
 # Helpful Videos
 ## Bootstrap
 - https://getbootstrap.com/docs
