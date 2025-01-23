@@ -1,4 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
+
 function NavBar() {
+
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Navigate to the login page
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/register"); // Navigate to the login page
+  };
+
   return (
     <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
       <div className="container-fluid">
@@ -73,8 +87,8 @@ function NavBar() {
           </button>
         </form>
         <div className="ms-2">
-          <button className="btn btn-outline-primary me-2">Login</button>
-          <button className="btn btn-primary">Sign Up</button>
+          <button className="btn btn-outline-primary me-2" onClick={handleLoginClick}>Login</button>
+          <button className="btn btn-primary" onClick={handleRegisterClick}>Register</button>
         </div>
       </div>
     </nav>
