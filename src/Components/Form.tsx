@@ -2,6 +2,7 @@ import {FormEvent, useState} from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import '../Styles/Form.css';
 
 interface FormProps {
     route: string;
@@ -37,26 +38,33 @@ function Form({ route, method }: FormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1>{name}</h1>
-      <input
-        className="form-control-md"
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        className="form-control-md"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button className="btn btn-primary" type="submit">
-        {name}
-      </button>
-    </form>
+      <form onSubmit={handleSubmit} className="form-container text-center">
+          <img //replace with our logo!
+              className="mt-5 rounded-2"
+              src="src/assets/H2HLogo.jpg"
+              width={100}
+              height={100}
+              alt="Logo"
+          />
+          <h1 >{name}</h1>
+          <input
+              className="form-control mb-2"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+              className="form-control"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className="btn btn-lg btn-primary btn-block mt-3" type="submit">
+              {name}
+          </button>
+      </form>
   );
 }
 

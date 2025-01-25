@@ -7,7 +7,7 @@ import Register from './Pages/register.tsx';
 import NotFound from './Pages/notFound.tsx';
 import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
-import './App.css'
+
 
 function Logout() {
     localStorage.clear();
@@ -15,30 +15,34 @@ function Logout() {
 }
 
 function RegisterAndLogout() {
-    localStorage.clear();
-    return <Register />;
+  localStorage.clear();
+  return <Register />;
 }
 
 function App() {
   return (
-      <Router>
-          <div>
-              <NavBar />
-              <div className="content">
-                  <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/players" element={
-                          <ProtectedRoute><Players /></ProtectedRoute>
-                      } />
-                      <Route path="/login" element={<Login />}/>
-                      <Route path="/logout" element={<Logout />}/>
-                      <Route path="/register" element={<RegisterAndLogout />}/>
-                      <Route path="*" element={<NotFound />}/>
-                  </Routes>
-              </div>
-          </div>
-      </Router>
+
+    <Router>
+        <NavBar />
+      <div className="content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route
+            path="/players"
+            element={
+              <ProtectedRoute>
+                <Players />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/register" element={<RegisterAndLogout />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
