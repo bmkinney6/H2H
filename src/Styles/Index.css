@@ -24,8 +24,36 @@ body {
     width: 100%; // Add this
 }
 
-#PlayerCardImg {
-    display: block;
-    margin: 10px auto;
+#PlayerCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    justify-content: space-evenly; /* Space items evenly */
+    height: 100%; /* Ensure the container uses its parent's height */
+    padding: 1rem; /* Add some padding for spacing */
+    box-sizing: border-box; /* Include padding in height/width calculations */
+    max-width: 200px;
+    max-height: 200px;
+    border: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 20px;
+    background-color: #0D1B2A;
+    color: white;
+}
 
+
+#PlayerCardImg {
+    max-width: 100%; /* Prevent the image from exceeding its container width */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Keep the circle shape */
+}
+
+#PlayerCard h1, #PlayerCard h2, #PlayerCard h3 {
+    margin: 0.1rem 0; /* Add spacing between text elements */
+    word-wrap: break-word; /* Handle long text gracefully */
+}
+
+#PlayerCard {
+    max-height: 300px; /* Adjust this value to fit your design */
 }
