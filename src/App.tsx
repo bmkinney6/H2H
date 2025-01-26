@@ -1,17 +1,24 @@
-import NavBar from './Components/NavBar.tsx';
-import About from './Pages/about.tsx';
-import Home from './Pages/home.tsx';
-import Players from './Pages/players.tsx';
-import Login from './Pages/login.tsx';
-import Register from './Pages/register.tsx';
-import NotFound from './Pages/notFound.tsx';
-import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import NavBar from "./Components/NavBar.tsx";
+import About from "./Pages/about.tsx";
+import Home from "./Pages/home.tsx";
+import Players from "./Pages/players.tsx";
+import Login from "./Pages/login.tsx";
+import Register from "./Pages/register.tsx";
+import NotFound from "./Pages/notFound.tsx";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
-
+import "./Styles/Index.css";
+import SideBar from "./Components/SideBar.tsx";
+import Scout from "./Pages/Scout.tsx";
 
 function Logout() {
-    localStorage.clear();
-    return <Navigate to="/login" />;
+  localStorage.clear();
+  return <Navigate to="/login" />;
 }
 
 function RegisterAndLogout() {
@@ -21,13 +28,14 @@ function RegisterAndLogout() {
 
 function App() {
   return (
-
     <Router>
-        <NavBar />
+      <NavBar />
       <div className="content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/scout" element={<Scout />} />
           <Route
             path="/players"
             element={
@@ -46,4 +54,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

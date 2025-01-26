@@ -1,0 +1,31 @@
+nav {
+    background-color: #0D1B2A;
+    border-bottom: solid;
+    border-bottom-color: white;
+    border-bottom-width: 2px;
+}
+
+body {
+    background-color: #778DA9;
+    height: 2000px;
+    padding-top: 75px;
+
+}
+
+.carousel-inner {
+    ;
+}
+.carousel-inner img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    line-height: 1;
+    margin:auto;
+    width: 100%; // Add this
+}
+
+#PlayerCardImg {
+    display: block;
+    margin: 10px auto;
+
+}
