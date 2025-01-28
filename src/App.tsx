@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
 import "./Styles/Index.css";
-import SideBar from "./Components/SideBar.tsx";
 import Scout from "./Pages/Scout.tsx";
 
 function Logout() {
