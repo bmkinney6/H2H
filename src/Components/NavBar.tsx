@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-
+import "../Styles/Index.css";
 
 function NavBar() {
-
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -12,9 +11,12 @@ function NavBar() {
   const handleRegisterClick = () => {
     navigate("/register"); // Navigate to the login page
   };
+  const handleHomeClick = () => {
+    navigate("/home"); // Navigate to the login page
+  };
 
   return (
-    <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
+    <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
       <div className="container-fluid">
         <a href="#" className="navbar-brand mb-0 h1">
           <img //replace with our logo!
@@ -40,7 +42,7 @@ function NavBar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item active">
-              <a href="#" className="nav-link active">
+              <a href="#" className="nav-link active" onClick={handleHomeClick}>
                 Home
               </a>
             </li>
@@ -58,17 +60,17 @@ function NavBar() {
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                   <a href="#" className="dropdown-item">
-                    Feature #1
+                    Betting
                   </a>
                 </li>
                 <li>
                   <a href="#" className="dropdown-item">
-                    Feature #2
+                    League
                   </a>
                 </li>
                 <li>
                   <a href="#" className="dropdown-item">
-                    Feature #3
+                    Room for more features!
                   </a>
                 </li>
               </ul>
@@ -87,8 +89,15 @@ function NavBar() {
           </button>
         </form>
         <div className="ms-2">
-          <button className="btn btn-outline-primary me-2" onClick={handleLoginClick}>Login</button>
-          <button className="btn btn-primary" onClick={handleRegisterClick}>Register</button>
+          <button
+            className="btn btn-outline-primary me-2"
+            onClick={handleLoginClick}
+          >
+            Login
+          </button>
+          <button className="btn btn-primary" onClick={handleRegisterClick}>
+            Register
+          </button>
         </div>
       </div>
     </nav>

@@ -4,8 +4,10 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md)
+  uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast
+  Refresh
 
 ## Expanding the ESLint configuration
 
@@ -15,17 +17,18 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+    languageOptions: {
+        // other options...
+        parserOptions: {
+            project: ['./tsconfig.node.json', './tsconfig.app.json'],
+            tsconfigRootDir: import.meta.dirname,
+        },
     },
-  },
 })
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or
+  `tseslint.configs.strictTypeChecked`
 - Optionally add `...tseslint.configs.stylisticTypeChecked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
@@ -48,17 +51,24 @@ export default tseslint.config({
   },
 })
 ```
+
 ## Initialization
+
 -- run the following: npm install
 
 ## Running and stooping server
+
 - 'npm run dev' to open server
 - ctrl + C to close server
+
 # Helpful Videos
+
 ## Bootstrap
+
 - https://getbootstrap.com/docs
 
 - https://youtu.be/Jyvffr3aCp0?si=p4EVY6IWgLpXSwsr
 
 ## React
+
 - https://youtu.be/SqcY0GlETPk?si=FczzZR-w68VXmXxe
