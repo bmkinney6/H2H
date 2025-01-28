@@ -1,6 +1,7 @@
 import "../Styles/Index.css";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
+import SearchForm from "../Components/SearchForm.tsx";
 
 type Player = {
   id: number;
@@ -18,51 +19,42 @@ type Player = {
 };
 
 export default function PlayerCard() {
-  const [player, setPlayer] = useState<Player | null>(null); // Player state
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [player, setPlayer] = useState<Player | null>(null); // State to store fetched player data
+  const [error, setError] = useState<string | null>(null); // State to store errors
+
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const fetchPlayer = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/3049698`); // Replace 3049698 with dynamic ID
-        setPlayer(response.data.Player);
-      } catch (err) {
-        console.error("Error fetching player:", err);
-        setError("Failed to fetch player data.");
-      }
-    };
-
-    fetchPlayer();
-  }, []);
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+  // Function to fetch player info based on player ID
+  const fetchPlayerInfo = async (id: string) => {
+    try {
+      const response = await axios.get(`${API_URL}/${id}`);
+      setPlayer(response.data.Player);
+    } catch (err) {
+      console.error("Error fetching player:", err);
+      setError("Failed to fetch player data.");
+    }
+  };
 
   return (
-    <div
-      id="PlayerCard"
-      className="container-sm d-flex flex-column justify-content-center align-items-center p-3"
-    >
-      {player ? (
-        <div className="player-card mb-4 p-3 d-flex flex-column align-items-center">
-          <img
-            src="src/assets/H2HLogo.jpg"
-            id={`PlayerCardImg-${player.id}`}
-            className="rounded-circle mb-2 mt-5"
-            width={100}
-            height={100}
-            alt={`Headshot of ${player.lastName}`}
-          />
-          <h3 className="text-center">{`${player.firstName} ${player.lastName}`}</h3>
-          <h5 className="text-center ">{player.team}</h5>
-          <h5 className="text-center">{player.position}</h5>
-          <p className="text-center">{`Jersey #: ${player.jersey}`}</p>
-        </div>
-      ) : (
-        <p>Loading player...</p>
-      )}
+    <div>
+      <h1 className="text-center">Search Player Info</h1>
+
+      {/* Use the SearchForm component */}
+      <SearchForm onSubmit={fetchPlayerInfo} placeholder="Enter Player ID" />
+
+      {/* Show error message if there is an error */}
+      {error && <p>{error}</p>}
+      <div id="PlayerCard" className="container-sm p-3 mt-3">
+        {/* Show player data if available */}
+        {player && (
+          <div className="player-info text-center">
+            <h3>{`${player.firstName} ${player.lastName}`}</h3>
+            <h5>{`Team: ${player.team}`}</h5>
+            <h5>{`Position: ${player.position}`}</h5>
+            <p>{`Jersey #: ${player.jersey}`}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
