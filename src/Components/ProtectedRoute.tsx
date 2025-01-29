@@ -14,10 +14,11 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false));
   }, []);
+
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
     try {
-      const res = await api.post("/api/token/refresh/", {
+      const res = await api.post("/user/token/refresh", {
         refresh: refreshToken,
       });
       if (res.status === 200) {
@@ -35,6 +36,7 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
   const auth = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (!token) {
+      //if don't have token, set authorization to false and return to login
       setIsAuthorized(false);
       return;
     }

@@ -13,7 +13,7 @@ interface FormProps {
 function Form({ route, method }: FormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
 
   const name = method === "login" ? "login" : "Register";

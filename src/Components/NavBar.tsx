@@ -15,6 +15,10 @@ function NavBar() {
     navigate("/home"); // Navigate to the login page
   };
 
+  const handlePlayerClick = () => {
+    navigate("/scout");
+  };
+
   return (
     <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
       <div className="container-fluid">
@@ -76,8 +80,8 @@ function NavBar() {
               </ul>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
-                Pricing
+              <a href="#" className="nav-link" onClick={handlePlayerClick}>
+                Players
               </a>
             </li>
           </ul>

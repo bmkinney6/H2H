@@ -1,7 +1,6 @@
 import NavBar from "./Components/NavBar.tsx";
 import About from "./Pages/about.tsx";
 import Home from "./Pages/home.tsx";
-import Players from "./Pages/players.tsx";
 import Login from "./Pages/login.tsx";
 import Register from "./Pages/register.tsx";
 import NotFound from "./Pages/notFound.tsx";
@@ -34,12 +33,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/scout" element={<Scout />} />
+          {/*<Route path="/scout" element={<Scout />} />*/}
           <Route
-            path="/players"
+            path="/scout"
             element={
               <ProtectedRoute>
-                <Players />
+                <Scout />
               </ProtectedRoute>
             }
           />

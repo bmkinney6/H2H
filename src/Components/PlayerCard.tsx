@@ -1,7 +1,9 @@
 import "../Styles/Index.css";
 import { useState } from "react";
 import axios from "axios";
+import { AxiosError } from "axios";
 import SearchForm from "../Components/SearchForm.tsx";
+import { ACCESS_TOKEN } from "../constants.tsx";
 
 type Player = {
   id: number;
@@ -24,13 +26,39 @@ export default function PlayerCard() {
 
   const API_URL = import.meta.env.VITE_PLAYER_URL;
 
-  // Function to fetch player info based on player ID
   const fetchPlayerInfo = async (id: string) => {
+    const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
+    console.log(token);
+
+    if (!token) {
+      console.error("No token found");
+      setError("User is not authenticated.");
+      return;
+    }
+
     try {
-      const response = await axios.get(`${API_URL}/${id}`);
+      const response = await axios.get(`${API_URL}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token here
+        },
+      });
+      console.log(response);
       setPlayer(response.data.Player);
     } catch (err) {
-      console.error("Error fetching player:", err);
+      // Type assertion to AxiosError
+      const axiosError = err as AxiosError;
+
+      if (axiosError.response) {
+        // Server responded with a status other than 2xx
+        console.error("Error response:", axiosError.response.data);
+        console.error("Status code:", axiosError.response.status);
+      } else if (axiosError.request) {
+        // No response was received
+        console.error("Error request:", axiosError.request);
+      } else {
+        // Something else went wrong
+        console.error("Error message:", axiosError.message);
+      }
       setError("Failed to fetch player data.");
     }
   };
