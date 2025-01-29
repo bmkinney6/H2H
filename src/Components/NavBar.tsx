@@ -19,6 +19,10 @@ function NavBar() {
     navigate("/scout");
   };
 
+  const handleLogoutClick = () => {
+    navigate("/logout")
+  }
+
   return (
     <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
       <div className="container-fluid">
@@ -94,13 +98,16 @@ function NavBar() {
         </form>
         <div className="ms-2">
           <button
-            className="btn btn-outline-primary me-2"
-            onClick={handleLoginClick}
+              className="btn btn-outline-primary me-2"
+              onClick={handleLoginClick}
           >
             Login
           </button>
-          <button className="btn btn-primary" onClick={handleRegisterClick}>
+          <button className="btn btn-primary me-2" onClick={handleRegisterClick}>
             Register
+          </button>
+          <button className="btn btn-danger" onClick={handleLogoutClick}>
+            Logout
           </button>
         </div>
       </div>
