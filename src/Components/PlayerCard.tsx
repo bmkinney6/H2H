@@ -22,7 +22,7 @@ export default function PlayerCard() {
   const [player, setPlayer] = useState<Player | null>(null); // State to store fetched player data
   const [error, setError] = useState<string | null>(null); // State to store errors
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_PLAYER_URL;
 
   // Function to fetch player info based on player ID
   const fetchPlayerInfo = async (id: string) => {
