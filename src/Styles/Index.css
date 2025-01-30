@@ -9,51 +9,102 @@ body {
     background-color: #778DA9;
     height: 2000px;
     padding-top: 75px;
-
 }
 
 .carousel-inner {
     ;
 }
+
 .carousel-inner img {
     display: block;
     height: auto;
     max-width: 100%;
     line-height: 1;
-    margin:auto;
-    width: 100%; // Add this
+    margin: auto;
+    width: 100%;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 400px;
+    background-color: #0D1B2A;
+    color: white;
+    border: 2px solid white;
+    border-radius: 20px;
+    padding: 1rem;
+    margin: 20px auto;
+    box-sizing: border-box;
+    height: auto;
+    text-align: center;
+}
+
+#PlayerCardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto; /* Center the container if there is space around it */
 }
 
 #PlayerCard {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center items horizontally */
-    justify-content: space-evenly; /* Space items evenly */
-    height: 100%; /* Ensure the container uses its parent's height */
-    padding: 1rem; /* Add some padding for spacing */
-    box-sizing: border-box; /* Include padding in height/width calculations */
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 1rem;
     max-width: 200px;
-    max-height: 200px;
-    border: solid;
-    border-color: white;
-    border-width: 2px;
+    min-height: 300px; /* Ensure each card has a minimum height */
+    height: auto; /* Let the height adjust based on content */
+    width: 100%; /* Ensure cards take full width available within max-width */
+    border: 2px solid white;
     border-radius: 20px;
     background-color: #0D1B2A;
     color: white;
+    box-sizing: border-box;
 }
 
-
 #PlayerCardImg {
-    max-width: 100%; /* Prevent the image from exceeding its container width */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 50%; /* Keep the circle shape */
+    max-width: 100%; 
+    height: auto;
+    border-radius: 50%;
 }
 
 #PlayerCard h1, #PlayerCard h2, #PlayerCard h3 {
-    margin: 0.1rem 0; /* Add spacing between text elements */
-    word-wrap: break-word; /* Handle long text gracefully */
+    margin: 0.1rem 0;
+    word-wrap: break-word;
 }
 
-#PlayerCard {
-    max-height: 300px; /* Adjust this value to fit your design */
+button {
+    background-color: #0D1B2A;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
 }
+
+button:hover {
+    background-color: white;
+    color: #0D1B2A;
+    transition: all 0.3s ease;
+}
+
+.no-players-message {
+    font-size: 1.2rem;
+    color: #ff4d4d; /* A red color for emphasis */
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  
+  .no-players-message p {
+    margin: 0;
+    padding: 0;
+  }
