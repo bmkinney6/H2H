@@ -25,7 +25,7 @@ export default function PlayerDetail() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = "http://localhost:8000";
+  const API_URL = import.meta.env.VITE_PLAYER_URL;
 
   useEffect(() => {
     const fetchPlayerDetail = async () => {
@@ -38,7 +38,7 @@ export default function PlayerDetail() {
       }
 
       try {
-        const response = await axios.get(`${API_URL}/playerInfo/${id}`, {
+        const response = await axios.get(`${API_URL}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

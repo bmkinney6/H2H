@@ -27,7 +27,7 @@ export default function PlayerCard() {
   const [searchPerformed, setSearchPerformed] = useState<boolean>(false); // State to track if search has been performed
   const navigate = useNavigate(); // Hook for navigation
 
-  const API_URL = "http://localhost:8000";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchPlayerInfo = async (name: string) => {
     const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
