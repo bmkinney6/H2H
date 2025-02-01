@@ -57,3 +57,8 @@ body {
 #PlayerCard {
     max-height: 300px; /* Adjust this value to fit your design */
 }
+
+.player_table {
+    width: 50%;
+    margin: auto;
+}
