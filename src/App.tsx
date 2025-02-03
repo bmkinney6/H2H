@@ -12,6 +12,8 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
 import "./Styles/Index.css";
+import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
+
 import Scout from "./Pages/Scout.tsx";
 
 function Logout() {
@@ -33,12 +35,20 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
-          {/*<Route path="/scout" element={<Scout />} />*/}
           <Route
             path="/scout"
             element={
               <ProtectedRoute>
                 <Scout />
+              </ProtectedRoute>
+            }
+          />
+          {/* Route for player details page */}
+          <Route
+            path="/scout/player/:id"
+            element={
+              <ProtectedRoute>
+                <PlayerDetail />
               </ProtectedRoute>
             }
           />
