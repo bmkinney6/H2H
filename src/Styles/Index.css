@@ -90,6 +90,11 @@ button {
     margin-top: 1rem;
 }
 
+.player_table {
+    width: 50%;
+    margin: auto;
+}
+
 button:hover {
     background-color: white;
     color: #0D1B2A;
