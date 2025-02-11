@@ -29,7 +29,7 @@ function NavBar() {
         <a href="#" className="navbar-brand mb-0 h1">
           <img //replace with our logo!
             className="d-inline-block align-top"
-            src="../../public/H2HLogo.jpg"
+            src="/H2HLogo.jpg"
             width={30}
             height={30}
             alt="Logo"
