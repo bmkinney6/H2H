@@ -4,19 +4,29 @@ import axios from "axios";
 import { AxiosError } from "axios";
 import { ACCESS_TOKEN } from "../constants.tsx";
 
+// Define the structure for player stats
+type PlayerStats = {
+  week: number;
+  pass_att: number;
+  completions: number;
+  pass_yards: number;
+  rush_yards: number;
+  receiving_yards: number;
+  touchdowns: number;
+  total_fantasy_points: string;
+};
+
 type Player = {
-  id: number;
-  status: string;
-  position: string;
+  id: string;
   firstName: string;
   lastName: string;
   team: string;
-  location: string;
+  position: string;
+  jersey: number;
+  age: number;
   weight: number;
   displayHeight: string;
-  age: number;
-  experience: string;
-  jersey: number;
+  player_stats: PlayerStats[];  // Updated this to match the structure
 };
 
 export default function PlayerDetail() {
@@ -43,9 +53,9 @@ export default function PlayerDetail() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("API Response:", response.data);
+        console.log("API Response:", response.data); // Log to verify response structure
 
-        setPlayer(response.data.Player);
+        setPlayer(response.data.Player); // Assuming response contains the player object under 'Player'
         setError(null);
       } catch (err) {
         const axiosError = err as AxiosError;
@@ -85,6 +95,28 @@ export default function PlayerDetail() {
           <p>{`Age: ${player.age}`}</p>
           <p>{`Weight: ${player.weight}`}</p>
           <p>{`Height: ${player.displayHeight}`}</p>
+
+          {/* Display Player Stats if available */}
+          {player.player_stats.length > 0 ? (
+            <div className="player-stats">
+              <h4>Player Stats</h4>
+              {player.player_stats.map((stat, index) => (
+                <div key={index} className="stat-week">
+                  <h5>Week: {stat.week}</h5>
+                  <p>Pass Attempts: {stat.pass_att}</p>
+                  <p>Completions: {stat.completions}</p>
+                  <p>Passing Yards: {stat.pass_yards}</p>
+                  <p>Rushing Yards: {stat.rush_yards}</p>
+                  <p>Receiving Yards: {stat.receiving_yards}</p>
+                  <p>Touchdowns: {stat.touchdowns}</p>
+                  <p>Total Fantasy Points: {stat.total_fantasy_points}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No stats available</p>
+          )}
+
           <button onClick={() => navigate("/scout")}>Back to Search</button> {/* Button to go back to the search page */}
         </div>
       )}
