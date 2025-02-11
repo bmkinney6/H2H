@@ -20,13 +20,16 @@ function NavBar() {
     navigate("/scout");
   };
 
+  const handleDraftClick = () => {
+    navigate("/draft");
+  };
   return (
     <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
       <div className="container-fluid">
         <a href="#" className="navbar-brand mb-0 h1">
           <img //replace with our logo!
             className="d-inline-block align-top"
-            src="src/assets/H2HLogo.jpg"
+            src="../../public/H2HLogo.jpg"
             width={30}
             height={30}
             alt="Logo"
@@ -85,6 +88,11 @@ function NavBar() {
                 Players
               </a>
             </li>
+            <li className="nav-item">
+              <a href="#" className="nav-link" onClick={handleDraftClick}>
+                Draft
+              </a>
+            </li>
           </ul>
         </div>
         <form className="d-flex">
@@ -137,7 +145,7 @@ function NavBarPre() {
         <a href="#" className="navbar-brand mb-0 h1">
           <img //replace with our logo!
             className="d-inline-block align-top"
-            src="src/assets/H2HLogo.jpg"
+            src="../../public/H2HLogo.jpg"
             width={30}
             height={30}
             alt="Logo"

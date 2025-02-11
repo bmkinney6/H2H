@@ -1,3 +1,162 @@
+/*==========GOOGLE FONTS================*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/*=============== VARIABLES CSS ===============*/
+:root {
+    /*========== Colors ==========*/
+    --first-color: hsl(82, 60%, 28%);
+    --title-color: hsl(0, 0%, 15%);
+    --text-color: hsl(0, 0%, 35%);
+    --body-color: hsl(0, 0%, 95%);
+    --container-color: hsl(0, 0%, 100%);
+
+    /*========== Font and typography ==========*/
+    --body-font: "Poppins", sans-serif;
+    --h2-font-size: 1.25rem;
+    --small-font-size: 0.813rem;
+}
+
+/*========== Responsive typography ==========*/
+@media screen and (min-width: 1120px) {
+    :root {
+        --h2-font-size: 1.5rem;
+        --small-font-size: 0.875rem;
+    }
+}
+
+body {
+    font-family: var(--body-font);
+    background-color: var(--body-color);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-top: 75px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/*=============== CARD ===============*/
+.cardContainer {
+    display: grid;
+    place-items: center;
+    margin-inline: 1.0rem;
+    padding-block: 5rem;
+    width: 100%;
+}
+
+.card__container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.card__article {
+    position: relative;
+    overflow: hidden;
+}
+
+.card__img {
+    width: 200px;
+    border-radius: 1.5rem;
+}
+
+.card__data {
+    width: 180px;
+    background-color: var(--container-color);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 24px hsla(0, 0%, 0%, 0.15);
+    border-radius: 1rem;
+    position: absolute;
+    bottom: -9rem;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 1s, transform 1s;
+}
+
+.card__description {
+    display: block;
+    font-size: var(--small-font-size);
+    margin-bottom: 0.25rem;
+}
+
+.card__title {
+    font-size: var(--h2-font-size);
+    font-weight: 500;
+    color: var(--title-color);
+    margin-bottom: 0.75rem;
+}
+
+.card__button {
+    text-decoration: none;
+    font-size: var(--small-font-size);
+    font-weight: 500;
+    color: var(--first-color);
+}
+
+.card__button:hover {
+    text-decoration: underline;
+}
+
+.card__article:hover .card__data {
+    transform: translateX(-50%) translateY(-7rem);
+    opacity: 1;
+}
+
+.card__article:hover {
+    overflow: initial;
+}
+
+.card__article:not(:hover) .card__data {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0;
+}
+
+/* Card animation */
+@keyframes show-data {
+    50% {
+        transform: translateY(-10rem);
+    }
+    100% {
+        transform: translateY(-7rem);
+    }
+}
+
+@keyframes remove-overflow {
+    to {
+        overflow: initial;
+    }
+}
+
+@keyframes remove-data {
+    0% {
+        transform: translateY(-7rem);
+    }
+    50% {
+        transform: translateY(-10rem);
+    }
+    100% {
+        transform: translateY(0.5rem);
+    }
+}
+
+@keyframes show-overflow {
+    0% {
+        overflow: initial;
+        pointer-events: none;
+    }
+    50% {
+        overflow: hidden;
+    }
+}
+
+/*=============== NAVIGATION ===============*/
 nav {
     background-color: #0D1B2A;
     border-bottom: solid;
@@ -5,14 +164,15 @@ nav {
     border-bottom-width: 2px;
 }
 
-body {
-    background-color: #778DA9;
-    /*height: 2000px;*/
-    padding-top: 75px;
+/*=============== CAROUSEL ===============*/
+.carousel-img {
+    height: 5vh;
+    width: 30vw;
 }
 
 .carousel-inner {
-    ;
+    height: 300px;
+    width: auto;
 }
 
 .carousel-inner img {
@@ -24,6 +184,7 @@ body {
     width: 100%;
 }
 
+/*=============== PLAYER INFO ===============*/
 .player-info {
     display: flex;
     flex-direction: column;
@@ -70,7 +231,7 @@ body {
 }
 
 #PlayerCardImg {
-    max-width: 100%; 
+    max-width: 100%;
     height: auto;
     border-radius: 50%;
 }
@@ -90,15 +251,15 @@ button {
     margin-top: 1rem;
 }
 
-.player_table {
-    width: 50%;
-    margin: auto;
-}
-
 button:hover {
     background-color: white;
     color: #0D1B2A;
     transition: all 0.3s ease;
+}
+
+.player_table {
+    width: 50%;
+    margin: auto;
 }
 
 .no-players-message {
@@ -107,9 +268,68 @@ button:hover {
     text-align: center;
     margin-top: 20px;
     font-weight: bold;
-  }
-  
-  .no-players-message p {
+}
+
+.no-players-message p {
     margin: 0;
     padding: 0;
-  }
+}
+
+/*=============== LINEUP ===============*/
+.lineup {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    height: 100%;
+}
+
+.lineup-position {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+/*=============== SEARCH SECTION ===============*/
+.search-section {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    height: 100%;
+}
+
+/*=============== PLAYER LIST ===============*/
+.player-list {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+.player-card {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: absolute; /* Ensure the card can move freely */
+    z-index: 1000; /* Ensure the card stays on top */
+    will-change: transform; /* Optimize for performance */
+}
+
+.player-headshot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
