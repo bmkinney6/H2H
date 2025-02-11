@@ -16,6 +16,7 @@ import "./Styles/Index.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext"; // Adjust the import path as necessary
+import CreateLeagueForm from './Components/CreateLeagueForm';
 
 function Logout() {
   localStorage.clear();
@@ -46,6 +47,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/create-league" element={
+            <ProtectedRoute>
+              <CreateLeagueForm />
+            </ProtectedRoute>} />
           <Route
             path="/scout/player/:id"
             element={

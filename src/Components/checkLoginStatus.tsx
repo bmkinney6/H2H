@@ -15,11 +15,13 @@ export const checkLoginStatus = async (): Promise<{
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+
+      console.log("Token Verification Response:", response);
       if (response.status === 200) {
         return { isLoggedIn: true, username: response.data.username };
       }
-    } catch (error) {
-      console.error("Token verification failed", error);
+    } catch (error: any) {
+      console.error("Token verification failed", error.response?.data || error.message);
     }
   }
   return { isLoggedIn: false };
