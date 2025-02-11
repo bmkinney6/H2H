@@ -1,8 +1,7 @@
 import "../Styles/Index.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Container, Table, Pagination } from "react-bootstrap";
-import { AxiosError } from "axios";
 import { ACCESS_TOKEN } from "../constants.tsx";
 import getPaginationItems from "./Pagination.tsx";
 

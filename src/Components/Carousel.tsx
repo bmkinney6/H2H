@@ -10,24 +10,16 @@ export default function Carousel() {
       <div className="carousel-inner rounded-5">
         <div className="carousel-item active">
           <img
-            src="../src/assets/DraftPic.png"
-            className="d-block w-100"
+            src="/DraftPic.png"
+            className="carousel-img"
             alt="Draft Picture"
           />
         </div>
         <div className="carousel-item">
-          <img
-            src="../src/assets/LeagueFormat.png"
-            className="d-block w-100"
-            alt="Format"
-          />
+          <img src="/LeagueFormat.png" className="carousel-img" alt="Format" />
         </div>
         <div className="carousel-item">
-          <img
-            src="../src/assets/StatPage.png"
-            className="d-block w-100"
-            alt="Stat"
-          />
+          <img src="/StatPage.png" className="carousel-img" alt="Stat" />
         </div>
       </div>
       <button

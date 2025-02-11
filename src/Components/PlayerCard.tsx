@@ -1,27 +1,26 @@
 import "../Styles/Index.css";
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
 import SearchForm from "../Components/SearchForm.tsx";
-import { ACCESS_TOKEN } from "../constants.tsx";
 
-type Player = {
-  id: number;
-  status: string;
-  position: string;
-  firstName: string;
-  lastName: string;
-  team: string;
-  location: string;
-  weight: number;
-  displayHeight: string;
-  age: number;
-  experience: string;
-  jersey: number;
-};
+import { fetchPlayerInfo } from "./FetchPlayerInfo.tsx";
 
 export default function PlayerCard() {
+  type Player = {
+    id: number;
+    status: string;
+    position: string;
+    firstName: string;
+    lastName: string;
+    team: string;
+    location: string;
+    weight: number;
+    displayHeight: string;
+    age: number;
+    experience: string;
+    jersey: number;
+  };
+
   const [players, setPlayers] = useState<Player[]>([]); // State to store fetched player data
   const [error, setError] = useState<string | null>(null); // State to store errors
   const [searchPerformed, setSearchPerformed] = useState<boolean>(false); // State to track if search has been performed
@@ -29,42 +28,14 @@ export default function PlayerCard() {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const fetchPlayerInfo = async (name: string) => {
-    const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
-    console.log(token);
-
-    if (!token) {
-      console.error("No token found");
-      setError("User is not authenticated.");
-      return;
-    }
-
+  const handleFetchPlayerInfo = async (name: string) => {
     try {
-      const response = await axios.get(`${API_URL}/search/?name=${name}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add the token here
-        },
-      });
-      console.log(response);
-      setPlayers(response.data.players); // Save all players
+      const fetchedPlayers = await fetchPlayerInfo(name, API_URL);
+      setPlayers(fetchedPlayers); // Save all players
       setError(null); // Reset error
       setSearchPerformed(true); // Indicate that search was performed
-    } catch (err) {
-      // Type assertion to AxiosError
-      const axiosError = err as AxiosError;
-
-      if (axiosError.response) {
-        // Server responded with a status other than 2xx
-        console.error("Error response:", axiosError.response.data);
-        console.error("Status code:", axiosError.response.status);
-      } else if (axiosError.request) {
-        // No response was received
-        console.error("Error request:", axiosError.request);
-      } else {
-        // Something else went wrong
-        console.error("Error message:", axiosError.message);
-      }
-      setError("Failed to fetch player data.");
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -73,7 +44,10 @@ export default function PlayerCard() {
       <h1 className="text-center">Search Player Info</h1>
 
       {/* Use the SearchForm component */}
-      <SearchForm onSubmit={fetchPlayerInfo} placeholder="Enter player name" />
+      <SearchForm
+        onSubmit={handleFetchPlayerInfo}
+        placeholder="Enter player name"
+      />
 
       {/* Show error message if there is an error */}
       {error && <p>{error}</p>}
@@ -100,7 +74,11 @@ export default function PlayerCard() {
             </ul>
           </div>
         ) : (
-          searchPerformed && <p className="no-players-message">No players found with that name.</p> // Show this message after search if no players are found
+          searchPerformed && (
+            <p className="no-players-message">
+              No players found with that name.
+            </p>
+          ) // Show this message after search if no players are found
         )}
       </div>
     </div>
