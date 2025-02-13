@@ -17,6 +17,8 @@ import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player 
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
 import Draft from "./Pages/Draft.tsx"; // Adjust the import path as necessary
+import CreateLeaguePage from "./Pages/CreateLeaguePage";
+
 
 function Logout() {
   localStorage.clear();
@@ -53,6 +55,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PlayerDetail />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/create-league"
+            element={
+              <ProtectedRoute>
+                <CreateLeaguePage />
               </ProtectedRoute>
             }
           />

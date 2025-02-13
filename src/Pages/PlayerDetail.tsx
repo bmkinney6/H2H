@@ -7,13 +7,26 @@ import { ACCESS_TOKEN } from "../constants.tsx";
 // Define the structure for player stats
 type PlayerStats = {
   week: number;
-  pass_att: number;
-  completions: number;
-  pass_yards: number;
-  rush_yards: number;
-  receiving_yards: number;
-  touchdowns: number;
-  total_fantasy_points: string;
+  carries?: number;
+  rushing_yards?: number;
+  rushing_tds?: number;
+  receptions?: number;
+  receiving_yards?: number;
+  receiving_tds?: number;
+  targets?: number;
+  fantasy_points: string;
+  projected_fantasy_points: string;
+  field_goals_made?: number;
+  field_goals_attempted?: number;
+  field_goal_percentage?: number;
+  extra_points?: number;
+  completions?: number;
+  attempts?: number;
+  passing_yards?: number;
+  passing_tds?: number;
+  interceptions?: number;
+  fumbles?: number;
+  completion_percentage?: number;
 };
 
 type Player = {
@@ -53,7 +66,6 @@ export default function PlayerDetail() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("API Response:", response.data); // Log to verify response structure
 
         setPlayer(response.data.Player); // Assuming response contains the player object under 'Player'
         setError(null);
@@ -73,12 +85,6 @@ export default function PlayerDetail() {
 
     if (id) fetchPlayerDetail();
   }, [id]);
-
-  useEffect(() => {
-    if (player) {
-      console.log("Player Object:", player);  // Log after player is updated
-    }
-  }, [player]);
 
   return (
     <div>
@@ -103,13 +109,37 @@ export default function PlayerDetail() {
               {player.player_stats.map((stat, index) => (
                 <div key={index} className="stat-week">
                   <h5>Week: {stat.week}</h5>
-                  <p>Pass Attempts: {stat.pass_att}</p>
-                  <p>Completions: {stat.completions}</p>
-                  <p>Passing Yards: {stat.pass_yards}</p>
-                  <p>Rushing Yards: {stat.rush_yards}</p>
-                  <p>Receiving Yards: {stat.receiving_yards}</p>
-                  <p>Touchdowns: {stat.touchdowns}</p>
-                  <p>Total Fantasy Points: {stat.total_fantasy_points}</p>
+                  {/* Display different stats based on player position */}
+                  {player.position === 'Running Back' || player.position === 'Wide Receiver' || player.position === 'Tight End' ? (
+                    <>
+                      <p>Rushing Yards: {stat.rushing_yards}</p>
+                      <p>Rushing TDs: {stat.rushing_tds}</p>
+                      <p>Receptions: {stat.receptions}</p>
+                      <p>Receiving Yards: {stat.receiving_yards}</p>
+                      <p>Receiving TDs: {stat.receiving_tds}</p>
+                      <p>Targets: {stat.targets}</p>
+                    </>
+                  ) : null}
+                  {player.position === 'Place kicker' ? (
+                    <>
+                      <p>Field Goals Made: {stat.field_goals_made}</p>
+                      <p>Field Goals Attempted: {stat.field_goals_attempted}</p>
+                      <p>Field Goal Percentage: {stat.field_goal_percentage}%</p>
+                      <p>Extra Points: {stat.extra_points}</p>
+                    </>
+                  ) : null}
+                  {player.position === 'Quarterback' ? (
+                    <>
+                      <p>Completions: {stat.completions}</p>
+                      <p>Passing Yards: {stat.passing_yards}</p>
+                      <p>Passing TDs: {stat.passing_tds}</p>
+                      <p>Interceptions: {stat.interceptions}</p>
+                      <p>Fumbles: {stat.fumbles}</p>
+                      <p>Completion Percentage: {stat.completion_percentage}%</p>
+                    </>
+                  ) : null}
+                  <p>Fantasy Points: {stat.fantasy_points}</p>
+                  <p>Projected Fantasy Points: {stat.projected_fantasy_points}</p>
                 </div>
               ))}
             </div>
