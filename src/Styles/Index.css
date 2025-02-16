@@ -162,7 +162,26 @@ nav {
     border-bottom: solid;
     border-bottom-color: white;
     border-bottom-width: 2px;
+    height: 75px; /* Set your desired height */
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Distribute items evenly */
 }
+
+.nav-search {
+    height: 30px; /* Set the desired height for the search input */
+    padding: 0.375rem 0.75rem; /* Adjust padding to match the height */
+    box-sizing: border-box; /* Ensure padding is included in the height */
+
+}
+
+.navbar-icon {
+    width: 40px; /* Set the desired width */
+    height: 40px; /* Set the desired height */
+    object-fit: contain; /* Ensure the image scales down to fit within the dimensions */
+    vertical-align: middle; /* Align the image vertically in the middle */
+}
+
 
 /*=============== CAROUSEL ===============*/
 .carousel-img {

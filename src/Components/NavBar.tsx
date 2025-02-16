@@ -5,13 +5,6 @@ import LogoutButton from "./LogoutButton.tsx";
 function NavBar() {
   const navigate = useNavigate();
 
-  const handleLoginClick = () => {
-    navigate("/login"); // Navigate to the login page
-  };
-
-  const handleRegisterClick = () => {
-    navigate("/register"); // Navigate to the login page
-  };
   const handleHomeClick = () => {
     navigate("/home"); // Navigate to the login page
   };
@@ -96,24 +89,19 @@ function NavBar() {
           </ul>
         </div>
         <form className="d-flex">
-          <input type="text" className="form-control me-2" />
-          <button type="submit" className="btn btn-primary">
+          <input type="text" className="form-control nav-search my-auto" />
+          <button type="submit" className="btn btn-primary my-auto ms-2">
             Search
           </button>
         </form>
-        <div className="ms-2">
-          <button
-            className="btn btn-outline-primary me-2"
-            onClick={handleLoginClick}
-          >
-            Login
-          </button>
-          <button
-            className="btn btn-primary me-2"
-            onClick={handleRegisterClick}
-          >
-            Register
-          </button>
+        <div className=" d-flex align-items-center">
+          <div className="text-center mx-2">
+            <img
+              src="/ProfilePic.png"
+              alt="Profile Icon"
+              className="navbar-icon"
+            />
+          </div>
           <LogoutButton />
         </div>
       </div>
@@ -176,20 +164,20 @@ function NavBarPre() {
           </ul>
         </div>
         <form className="d-flex">
-          <input type="text" className="form-control me-2" />
-          <button type="submit" className="btn btn-primary">
+          <input type="text" className="form-control me-2 my-auto" />
+          <button type="submit" className="btn btn-primary my-auto">
             Search
           </button>
         </form>
         <div className="ms-2">
           <button
-            className="btn btn-outline-primary me-2"
+            className="btn btn-outline-primary me-2 my-auto"
             onClick={handleLoginClick}
           >
             Login
           </button>
           <button
-            className="btn btn-primary me-2"
+            className="btn btn-primary me-2 my-auto"
             onClick={handleRegisterClick}
           >
             Register
