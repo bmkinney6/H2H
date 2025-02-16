@@ -16,6 +16,9 @@ function NavBar() {
   const handleDraftClick = () => {
     navigate("/draft");
   };
+  const handleUserClick = () => {
+    navigate("/user");
+  };
   return (
     <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
       <div className="container-fluid">
@@ -100,6 +103,7 @@ function NavBar() {
               src="/ProfilePic.png"
               alt="Profile Icon"
               className="navbar-icon"
+              onClick={handleUserClick}
             />
           </div>
           <LogoutButton />
