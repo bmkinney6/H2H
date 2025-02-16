@@ -16,7 +16,8 @@ import "./Styles/Index.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
-import Draft from "./Pages/Draft.tsx"; // Adjust the import path as necessary
+import Draft from "./Pages/Draft.tsx";
+import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
 
 function Logout() {
   localStorage.clear();
@@ -45,6 +46,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Scout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
               </ProtectedRoute>
             }
           />
