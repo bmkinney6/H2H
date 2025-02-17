@@ -54,9 +54,9 @@ export default tseslint.config({
 
 ## Initialization
 
--- make sure node.js is installed (https://nodejs.org/en/download)
--- open project in editor
--- run the following: npm install
+- make sure node.js is installed (https://nodejs.org/en/download)
+- open project in editor
+- run the following: npm install
 
 
 ## Running and stooping server
