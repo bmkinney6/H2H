@@ -6,7 +6,7 @@ function NavBar() {
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/home"); // Navigate to the home page
+    navigate("/home");
   };
 
   const handlePlayerClick = () => {
@@ -18,7 +18,15 @@ function NavBar() {
   };
 
   const handleCreateLeagueClick = () => {
-    navigate("/create-league"); // Navigate to the create-league page if the user is logged in
+    navigate("/create-league");
+  };
+
+  const handleLeagueClick = () => {
+    navigate("/leagues"); // Navigate to leagues listing page
+  };
+
+  const handleSearchLeaguesClick = () => {
+    navigate("/search-leagues"); // Navigate to search leagues page
   };
 
   return (
@@ -70,13 +78,18 @@ function NavBar() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="dropdown-item">
-                    League
+                  <a href="#" className="dropdown-item" onClick={handleLeagueClick}>
+                    View Leagues
                   </a>
                 </li>
                 <li>
                   <a href="#" className="dropdown-item" onClick={handleCreateLeagueClick}>
                     Create League
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="dropdown-item" onClick={handleSearchLeaguesClick}>
+                    Search Leagues
                   </a>
                 </li>
                 <li>
@@ -114,15 +127,15 @@ function NavBarPre() {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    navigate("/login"); // Navigate to the login page
+    navigate("/login");
   };
 
   const handleRegisterClick = () => {
-    navigate("/register"); // Navigate to the register page
+    navigate("/register");
   };
 
   const handleHomeClick = () => {
-    navigate("/home"); // Navigate to the home page
+    navigate("/home");
   };
 
   return (

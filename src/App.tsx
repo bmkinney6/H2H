@@ -18,6 +18,9 @@ import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
 import Draft from "./Pages/Draft.tsx"; // Adjust the import path as necessary
 import CreateLeaguePage from "./Pages/CreateLeaguePage";
+import SearchLeague from "./Components/SearchLeague";
+import LeagueDetail from "./Pages/LeagueDetail";
+import LeagueScout from "./Pages/LeagueScout";
 
 
 function Logout() {
@@ -70,6 +73,11 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<RegisterAndLogout />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/leagues" element={<SearchLeague />} />
+          <Route path="/leagues/:id" element={<LeagueDetail />} />
+          <Route path="/search-leagues" element={<LeagueScout />} />
+
+          
         </Routes>
       </div>
     </Router>
