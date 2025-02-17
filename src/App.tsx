@@ -16,7 +16,6 @@ import "./Styles/Index.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
-import Draft from "./Pages/Draft.tsx"; // Adjust the import path as necessary
 import CreateLeaguePage from "./Pages/CreateLeaguePage";
 import SearchLeague from "./Components/SearchLeague";
 import LeagueDetail from "./Pages/LeagueDetail";
