@@ -16,8 +16,14 @@ import "./Styles/Index.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
+import Draft from "./Pages/Draft.tsx"; // Adjust the import path as necessary
+import CreateLeaguePage from "./Pages/CreateLeaguePage";
+import SearchLeague from "./Components/SearchLeague";
+import LeagueDetail from "./Pages/LeagueDetail";
+import LeagueScout from "./Pages/LeagueScout";
 import Draft from "./Pages/Draft.tsx";
 import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
+
 
 function Logout() {
   localStorage.clear();
@@ -65,10 +71,23 @@ function App() {
               </ProtectedRoute>
             }
           />
+           <Route
+            path="/create-league"
+            element={
+              <ProtectedRoute>
+                <CreateLeaguePage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<RegisterAndLogout />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/leagues" element={<SearchLeague />} />
+          <Route path="/leagues/:id" element={<LeagueDetail />} />
+          <Route path="/search-leagues" element={<LeagueScout />} />
+
+          
         </Routes>
       </div>
     </Router>
