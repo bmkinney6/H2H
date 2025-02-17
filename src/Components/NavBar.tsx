@@ -16,7 +16,6 @@ function NavBar() {
   const handleDraftClick = () => {
     navigate("/draft");
   };
-
   const handleCreateLeagueClick = () => {
     navigate("/create-league");
   };
@@ -27,6 +26,10 @@ function NavBar() {
 
   const handleSearchLeaguesClick = () => {
     navigate("/search-leagues"); // Navigate to search leagues page
+  };
+
+  const handleUserClick = () => {
+    navigate("/user");
   };
 
   return (
@@ -112,12 +115,23 @@ function NavBar() {
           </ul>
         </div>
         <form className="d-flex">
-          <input type="text" className="form-control me-2" />
-          <button type="submit" className="btn btn-primary">
+          <input type="text" className="form-control nav-search my-auto" />
+          <button type="submit" className="btn btn-primary my-auto ms-2">
             Search
           </button>
         </form>
         <LogoutButton />
+        <div className=" d-flex align-items-center">
+          <div className="text-center mx-2">
+            <img
+              src="/ProfilePic.png"
+              alt="Profile Icon"
+              className="navbar-icon"
+              onClick={handleUserClick}
+            />
+          </div>
+          <LogoutButton />
+        </div>
       </div>
     </nav>
   );
@@ -211,20 +225,20 @@ function NavBarPre() {
           </ul>
         </div>
         <form className="d-flex">
-          <input type="text" className="form-control me-2" />
-          <button type="submit" className="btn btn-primary">
+          <input type="text" className="form-control me-2 my-auto" />
+          <button type="submit" className="btn btn-primary my-auto">
             Search
           </button>
         </form>
         <div className="ms-2">
           <button
-            className="btn btn-outline-primary me-2"
+            className="btn btn-outline-primary me-2 my-auto"
             onClick={handleLoginClick}
           >
             Login
           </button>
           <button
-            className="btn btn-primary me-2"
+            className="btn btn-primary me-2 my-auto"
             onClick={handleRegisterClick}
           >
             Register

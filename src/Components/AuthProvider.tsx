@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import AuthContext from "./AuthContext";
+import { checkLoginStatus } from "./checkLoginStatus";
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -7,8 +8,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!token);
+    const verifyLoginStatus = async () => {
+      const { isLoggedIn } = await checkLoginStatus();
+      setIsLoggedIn(isLoggedIn);
+    };
+
+    verifyLoginStatus();
   }, []);
 
   return (
@@ -17,5 +22,3 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;

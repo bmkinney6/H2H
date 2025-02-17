@@ -21,6 +21,8 @@ import CreateLeaguePage from "./Pages/CreateLeaguePage";
 import SearchLeague from "./Components/SearchLeague";
 import LeagueDetail from "./Pages/LeagueDetail";
 import LeagueScout from "./Pages/LeagueScout";
+import Draft from "./Pages/Draft.tsx";
+import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
 
 
 function Logout() {
@@ -50,6 +52,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Scout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
               </ProtectedRoute>
             }
           />

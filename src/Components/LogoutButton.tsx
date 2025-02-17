@@ -17,7 +17,7 @@ const Logout: React.FC = () => {
   return (
     <button
       onClick={handleLogout}
-      className="justify-content-center btn btn-danger"
+      className="justify-content-center btn btn-danger my-auto"
     >
       Logout
     </button>
