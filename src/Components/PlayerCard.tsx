@@ -35,6 +35,8 @@ export default function PlayerCard() {
       setError(null); // Reset error
       setSearchPerformed(true); // Indicate that search was performed
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       setError(error.message);
     }
   };

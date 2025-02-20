@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import interact from "interactjs";
-import PlayerCard from "../Components/PlayerCard.tsx";
+import OffenseLineup from "../Components/OffenseLineup.tsx";
+import DefenseLineup from "../Components/DefenseLinup.tsx";
+import BenchPlayers from "../Components/Bench.tsx";
 
 const Draft: React.FC = () => {
   useEffect(() => {
@@ -67,90 +69,19 @@ const Draft: React.FC = () => {
   };
 
   return (
-    <div className="container-fluid mt-3">
-      <div className="row">
-        {/* Lineup Section */}
-        <div className="col-md-4">
-          <div id="lineup" className="lineup">
-            <h4>Lineup</h4>
-            <div className="lineup-position" data-position="QB">
-              QB
-            </div>
-            <div className="lineup-position" data-position="RB1">
-              RB1
-            </div>
-            <div className="lineup-position" data-position="RB2">
-              RB2
-            </div>
-            <div className="lineup-position" data-position="WR1">
-              WR1
-            </div>
-            <div className="lineup-position" data-position="WR2">
-              WR2
-            </div>
-            <div className="lineup-position" data-position="TE">
-              TE
-            </div>
-            <div className="lineup-position" data-position="FLEX">
-              FLEX
-            </div>
-            <div className="lineup-position" data-position="DST">
-              DST
-            </div>
-            <div className="lineup-position" data-position="K">
-              K
-            </div>
-          </div>
+    <div>
+      <h1 className="text-center">Draft Center</h1>
+      <div className="draft-section">
+        <div className="team-view d-block">
+          <BenchPlayers />
+          <DefenseLineup />
+          <OffenseLineup />
         </div>
-        {/* Scouting and Search Section */}
-        <div className="col-md-8">
-          <div className="row">
-            <div className="col-md-4">
-              {/* Search Section */}
-              <div id="search-section" className="search-section">
-                <h4>Search Players</h4>
-                <input
-                  type="text"
-                  id="search-input"
-                  className="form-control mb-2"
-                  placeholder="Search for players..."
-                />
-                <button className="btn btn-primary btn-block">
-                  Filter by Position
-                </button>
-                <button className="btn btn-primary btn-block">
-                  Filter by Team
-                </button>
-                <div
-                  id="search-results"
-                  className="search-results mt-2"
-                  onLoad={PlayerCard}
-                >
-                  {/* Player Cards will be appended here */}
-                </div>
-              </div>
-            </div>
-            <div className="col-md-8">
-              {/* Player List Section */}
-              <div id="player-list" className="player-list">
-                <h4>Player List</h4>
-                <div className="player-card" draggable="true">
-                  <div className="player-info">
-                    <img
-                      src="player1.jpg"
-                      alt="Player 1"
-                      className="player-headshot"
-                    />
-                    <div>
-                      <h5>Player 1</h5>
-                      <p>Position: QB</p>
-                    </div>
-                  </div>
-                </div>
-                {/* More player cards... */}
-              </div>
-            </div>
-          </div>
+        <div className="draft-search">
+          <h2 className="mx-auto text-center">Scouting Center</h2>
+        </div>
+        <div className="top-players">
+          <h2 className="mx-auto text-center">Top Players</h2>
         </div>
       </div>
     </div>

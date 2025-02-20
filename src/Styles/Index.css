@@ -7,7 +7,7 @@
     --first-color: hsl(82, 60%, 28%);
     --title-color: hsl(0, 0%, 15%);
     --text-color: hsl(0, 0%, 35%);
-    --body-color: hsl(0, 0%, 95%);
+    --body-color: #000814;
     --container-color: hsl(0, 0%, 100%);
 
     /*========== Font and typography ==========*/
@@ -202,6 +202,69 @@ nav {
     margin: auto;
     width: 100%;
 }
+/*==================DRAFT PAGE==================*/
+.draft-section {
+    width: 100%;
+    display: flex;
+}
+.PlayerCircleIcon{
+    width: 60px;
+    margin: 0 auto;
+}
+.PlayerCircleText {
+    width: 75px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.OffenseLineup {
+    margin-top: 8%;
+}
+.DefenseLineup {
+    width: 75%;
+    height: 150px;
+    border: 2px solid white;
+    border-radius: 20px;
+    margin: 0 auto;
+    margin-top: 6%;
+}
+.defense-logo {
+    width: 60px;
+    height: auto;
+    margin: 0 auto;
+}
+.team-view, .draft-search, .top-players {
+    display: flex;
+    /*justify-content: space-between;*/
+    /*align-items: center;*/
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #0D1B2A;
+    color: white;
+    border: 1px solid white;
+    border-top: 2px solid white;
+    /*border-radius: 20px;*/
+    width: 50%;
+    height: 81vh;
+}
+.draft-search {
+    width: 35%;
+
+}
+.top-players {
+    width: 20%;
+    border-right: 0;
+}
+.team-view {
+    background-image: url('/public/Field.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 50%;
+    border-left: 0;
+}
+
+
 
 /*=============== PLAYER INFO ===============*/
 .player-info {

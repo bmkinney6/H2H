@@ -81,17 +81,29 @@ function NavBar() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="dropdown-item" onClick={handleLeagueClick}>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleLeagueClick}
+                  >
                     View Leagues
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="dropdown-item" onClick={handleCreateLeagueClick}>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleCreateLeagueClick}
+                  >
                     Create League
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="dropdown-item" onClick={handleSearchLeaguesClick}>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleSearchLeaguesClick}
+                  >
                     Search Leagues
                   </a>
                 </li>
@@ -120,7 +132,6 @@ function NavBar() {
             Search
           </button>
         </form>
-        <LogoutButton />
         <div className=" d-flex align-items-center">
           <div className="text-center mx-2">
             <img
