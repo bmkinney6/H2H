@@ -7,6 +7,7 @@ type Player = {
   position: string;
   firstName: string;
   lastName: string;
+  headshot: string;
   team: string;
   location: string;
   weight: number;
