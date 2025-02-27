@@ -1,10 +1,10 @@
-import PlayerCard from "../Components/PlayerCard";
 import PlayerList from "../Components/PlayerList.tsx";
+import PlayerSearchCard from "../Components/PlayerCard";
 
 export default function Scout() {
   return (
     <div className="container-fluid">
-      <PlayerCard />
+      <PlayerSearchCard />
       <PlayerList />
     </div>
   );

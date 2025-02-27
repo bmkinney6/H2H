@@ -264,8 +264,22 @@ nav {
     border-left: 0;
 }
 
+.top-player-card {
+    max-width: 18rem; /* Adjust the width as needed */
+    margin: 0 auto;  /* Center the card */
+    height: 60%;
+}
+.top-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%
+}
 
-
+.scrollable-cards {
+    max-height: 80vh;
+    overflow-y: auto;
+}
 /*=============== PLAYER INFO ===============*/
 .player-info {
     display: flex;

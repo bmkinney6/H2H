@@ -5,7 +5,7 @@ import SearchForm from "../Components/SearchForm.tsx";
 
 import { fetchPlayerInfo } from "./FetchPlayerInfo.tsx";
 
-export default function PlayerCard() {
+export default function PlayerSearchCard() {
   type Player = {
     id: number;
     status: string;
