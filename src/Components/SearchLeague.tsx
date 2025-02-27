@@ -17,7 +17,7 @@ const SearchLeague: React.FC = () => {  // <-- Make sure this does NOT expect pr
   const [searchPerformed, setSearchPerformed] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const API_URL = "http://localhost:8000/search_leagues/";
+  const API_URL = "http://localhost:8000/api/leagues/search/";
 
 
   const handleSearch = async (query: string) => {
