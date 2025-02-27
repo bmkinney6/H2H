@@ -1,23 +1,15 @@
-import "../Styles/Index.css";
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { Container, Table, Pagination } from "react-bootstrap";
-import { ACCESS_TOKEN } from "../constants.tsx";
+import { ACCESS_TOKEN } from "../constants";
 import getPaginationItems from "./Pagination.tsx";
 
 type Player = {
-  id: number;
-  status: string;
-  position: string;
+  id: string;
   firstName: string;
   lastName: string;
   team: string;
-  location: string;
-  weight: number;
-  displayHeight: string;
-  age: number;
-  experience: string;
-  jersey: number;
+  position: string;
 };
 
 const PlayerList = () => {
@@ -78,7 +70,7 @@ const PlayerList = () => {
     };
 
     fetchPlayers(currentPage);
-  }, [currentPage, API_URL, ACCESS_TOKEN]);
+  }, [currentPage, API_URL]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -102,8 +94,10 @@ const PlayerList = () => {
               </tr>
             </thead>
             <tbody>
-              {players.map((player) => (
-                <tr key={player.id}>
+              {players.map((player, index) => (
+                <tr key={`playerlist-${player.id}-${index}`}>
+                  {" "}
+                  {/* Ensure unique key by prefixing with component name */}
                   <td>{`${player.firstName} ${player.lastName}`}</td>
                   <td>{player.team}</td>
                   <td>{player.position}</td>

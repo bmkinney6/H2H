@@ -65,7 +65,7 @@ export default function PlayerCard() {
             <ul className="list-group">
               {players.map((player) => (
                 <li
-                  key={player.id}
+                  key={`playercard-${player.id}`} // Ensure unique key by prefixing with component name
                   className="list-group-item list-group-item-action"
                   style={{ cursor: "pointer" }}
                   onClick={() => navigate(`/scout/player/${player.id}`)} // Navigate to the player detail page
