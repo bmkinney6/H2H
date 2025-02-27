@@ -16,6 +16,7 @@ export default function PlayerCard() {
     location: string;
     weight: number;
     displayHeight: string;
+    headshot: string;
     age: number;
     experience: string;
     jersey: number;
@@ -70,6 +71,11 @@ export default function PlayerCard() {
                   style={{ cursor: "pointer" }}
                   onClick={() => navigate(`/scout/player/${player.id}`)} // Navigate to the player detail page
                 >
+                  <img
+                    src={player.headshot}
+                    alt={`${player.firstName} ${player.lastName}`}
+                    className="player-headshot rounded-circle w-auto mx-auto"
+                  />
                   {`${player.firstName} ${player.lastName} - ${player.team} (${player.position})`}
                 </li>
               ))}
