@@ -16,6 +16,7 @@ function NavBar() {
   const handleDraftClick = () => {
     navigate("/draft");
   };
+
   const handleCreateLeagueClick = () => {
     navigate("/create-league");
   };
@@ -26,6 +27,10 @@ function NavBar() {
 
   const handleSearchLeaguesClick = () => {
     navigate("/search-leagues"); // Navigate to search leagues page
+  };
+
+  const handleMyLeaguesClick = () => {
+    navigate("/my-leagues") // Navigate to My Leagues page
   };
 
   const handleUserClick = () => {
@@ -105,6 +110,15 @@ function NavBar() {
                     onClick={handleSearchLeaguesClick}
                   >
                     Search Leagues
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleMyLeaguesClick} // My Leagues link
+                  >
+                    My Leagues
                   </a>
                 </li>
                 <li>

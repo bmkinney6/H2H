@@ -22,7 +22,7 @@ import LeagueDetail from "./Pages/LeagueDetail";
 import LeagueScout from "./Pages/LeagueScout";
 import Draft from "./Pages/Draft.tsx";
 import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
-
+import MyLeagues from './Pages/MyLeagues';
 
 function Logout() {
   localStorage.clear();
@@ -70,7 +70,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-           <Route
+          <Route
             path="/create-league"
             element={
               <ProtectedRoute>
@@ -84,9 +84,8 @@ function App() {
           <Route path="*" element={<NotFound />} />
           <Route path="/leagues" element={<SearchLeague />} />
           <Route path="/leagues/:id" element={<LeagueDetail />} />
+          <Route path="/my-leagues" element={<MyLeagues />} />
           <Route path="/search-leagues" element={<LeagueScout />} />
-
-          
         </Routes>
       </div>
     </Router>
