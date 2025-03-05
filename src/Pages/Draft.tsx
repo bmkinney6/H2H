@@ -1,91 +1,108 @@
-import React, { useEffect } from "react";
-import interact from "interactjs";
 import OffenseLineup from "../Components/OffenseLineup.tsx";
 import DefenseLineup from "../Components/DefenseLinup.tsx";
 import BenchPlayers from "../Components/Bench.tsx";
+import SearchForm from "../Components/SearchForm.tsx";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchTopTenPlayers } from "../Components/FetchPlayerInfo.tsx";
 
-const Draft: React.FC = () => {
-  useEffect(() => {
-    // Initialize interact.js for draggable player cards
-    interact(".player-card").draggable({
-      inertia: false, // Disable inertia for smoother dragging
-      modifiers: [
-        interact.modifiers.restrictRect({
-          restriction: "body", // Allow dragging within the entire body
-          endOnly: true,
-        }),
-      ],
-      autoScroll: true,
-      listeners: {
-        move: dragMoveListener,
-        end(event) {
-          const target = event.target as HTMLElement;
-          if (!event.dropzone) {
-            // Reset the position if it was not dropped in a valid drop zone
-            target.style.transition = "transform 0.3s ease"; // Add smooth transition
-            target.style.transform = "translate(0, 0)";
-            target.setAttribute("data-x", "0");
-            target.setAttribute("data-y", "0");
-
-            // Remove transition after the animation is complete
-            setTimeout(() => {
-              target.style.transition = "";
-            }, 300); // Match the duration of the CSS transition
-          }
-        },
-      },
-    });
-
-    // Initialize interact.js for droppable lineup positions
-    interact(".lineup-position").dropzone({
-      accept: ".player-card",
-      overlap: 0.75,
-      ondrop: function (event) {
-        const draggableElement = event.relatedTarget as HTMLElement;
-        const dropzoneElement = event.target as HTMLElement;
-
-        // Append the draggable element to the dropzone
-        dropzoneElement.appendChild(draggableElement);
-
-        // Reset the transform and data attributes
-        draggableElement.style.transform = "translate(0, 0)";
-        draggableElement.setAttribute("data-x", "0");
-        draggableElement.setAttribute("data-y", "0");
-      },
-    });
-  }, []);
-
-  const dragMoveListener = (event: Interact.InteractEvent) => {
-    const target = event.target as HTMLElement;
-    const x =
-      (parseFloat(target.getAttribute("data-x") || "0") || 0) + event.dx;
-    const y =
-      (parseFloat(target.getAttribute("data-y") || "0") || 0) + event.dy;
-
-    target.style.transform = `translate(${x}px, ${y}px)`;
-
-    target.setAttribute("data-x", x.toString());
-    target.setAttribute("data-y", y.toString());
+export default function Draft() {
+  type Player = {
+    id: number;
+    status: string;
+    position: string;
+    firstName: string;
+    lastName: string;
+    team: string;
+    location: string;
+    weight: number;
+    displayHeight: string;
+    yearly_proj: number;
+    headshot: string;
+    age: number;
+    experience: string;
+    jersey: number;
   };
 
+  const [players, setPlayers] = useState<Player[]>([]); // State to store fetched player data
+  const [error, setError] = useState<string | null>(null); // State to store errors
+  const [searchPerformed, setSearchPerformed] = useState<boolean>(false); // State to track if search has been performed
+  useNavigate();
+  // Hook for navigation
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const handleFetchPlayerInfo = async () => {
+    try {
+      const fetchedPlayers = await fetchTopTenPlayers(API_URL);
+      setPlayers(fetchedPlayers); // Save all players
+      setError(null); // Reset error
+      setSearchPerformed(true); // Indicate that search was performed
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setError(error.message);
+    }
+  };
   return (
     <div>
       <h1 className="text-center">Draft Center</h1>
       <div className="draft-section">
-        <div className="team-view d-block">
+        <div className="team-view  d-block">
           <BenchPlayers />
           <DefenseLineup />
           <OffenseLineup />
         </div>
         <div className="draft-search">
-          <h2 className="mx-auto text-center">Scouting Center</h2>
+          <div className="draft-search-container text-center mx-auto">
+            <SearchForm
+              onSubmit={handleFetchPlayerInfo}
+              placeholder="Enter player name"
+            />
+            {searchPerformed && players.length > 0 ? (
+              <div>
+                <h2>Results:</h2>
+                <div className="results-container">
+                  <div className="row g-4">
+                    {players.map((player) => (
+                      <div key={player.id} className="col-12 col-md-6 col-lg-4">
+                        <div className="card h-100">
+                          <img
+                            src={player.headshot}
+                            className="card-img-top rounded-circle w-75 mx-auto mt-3 h-auto"
+                            alt={`${player.firstName} ${player.lastName}`}
+                          />
+                          <div className="card-body text-center">
+                            <h5 className="card-title">
+                              {player.firstName} {player.lastName}
+                            </h5>
+                            <p className="card-text">{player.team}</p>
+                            <p className="card-text">{player.position}</p>
+                            <p className="card-text">
+                              {player.displayHeight} - {player.weight} lbs
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              searchPerformed && (
+                <p className="no-players-message">
+                  No players found with that name.
+                </p>
+              ) // Show this message after search if no players are found
+            )}
+          </div>
+          {/* Show error message if there is an error */}
+          {error && <p>{error}</p>}
         </div>
-        <div className="top-players">
-          <h2 className="mx-auto text-center">Top Players</h2>
-        </div>
+        {/*<div className="top-players overflow-y-auto">*/}
+        {/*  <TopTenPlayers />*/}
+        {/*</div>*/}
       </div>
     </div>
   );
-};
-
-export default Draft;
+}

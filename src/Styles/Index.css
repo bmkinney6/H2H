@@ -248,13 +248,10 @@ nav {
     height: 81vh;
 }
 .draft-search {
-    width: 35%;
+    width: 50%;
 
 }
-.top-players {
-    width: 20%;
-    border-right: 0;
-}
+
 .team-view {
     background-image: url('/public/Field.png');
     background-size: cover;
@@ -264,8 +261,29 @@ nav {
     border-left: 0;
 }
 
+.top-player-card {
+    max-width: 18rem; /* Adjust the width as needed */
+    margin: 0 auto;  /* Center the card */
+    height: 60%;
+}
+.top-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%
+}
 
-
+.scrollable-cards {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.results-container {
+    max-height: 60vh; /* Adjust height as needed */
+    margin: 2px auto 0 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px; /* Prevents scrollbar from overlapping content */
+}
 /*=============== PLAYER INFO ===============*/
 .player-info {
     display: flex;
