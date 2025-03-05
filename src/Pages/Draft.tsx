@@ -32,7 +32,7 @@ export default function Draft() {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const handleFetchPlayerInfo = async (name: string) => {
+  const handleFetchPlayerInfo = async () => {
     try {
       const fetchedPlayers = await fetchTopTenPlayers(API_URL);
       setPlayers(fetchedPlayers); // Save all players
