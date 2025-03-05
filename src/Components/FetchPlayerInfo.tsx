@@ -15,6 +15,7 @@ type Player = {
   age: number;
   experience: string;
   jersey: number;
+  yearly_proj: number;
 };
 
 export const fetchPlayerInfo = async (
