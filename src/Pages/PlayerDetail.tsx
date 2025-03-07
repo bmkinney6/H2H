@@ -3,31 +3,42 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import { ACCESS_TOKEN } from "../constants.tsx";
 
-// Define the structure for player stats
+// Define PlayerStats structure (Includes all fields you provided earlier)
 type PlayerStats = {
   week: number;
-  carries?: number;
-  rushing_yards?: number;
-  rushing_tds?: number;
-  receptions?: number;
-  receiving_yards?: number;
-  receiving_tds?: number;
-  targets?: number;
-  fantasy_points: string;
-  projected_fantasy_points: string;
-  field_goals_made?: number;
-  field_goals_attempted?: number;
-  field_goal_percentage?: number;
-  extra_points?: number;
+  total_fantasy_points?: number;
+  proj_fantasy?: number;
+  pass_att?: number;
   completions?: number;
-  attempts?: number;
-  passing_yards?: number;
-  passing_tds?: number;
-  interceptions?: number;
+  pass_yards?: number;
+  pass_tds?: number;
+  ints?: number;
+  sacks?: number;
+  targets?: number;
+  catches?: number;
+  receiving_yards?: number;
+  avg_receiving_yards_perCatch?: number;
+  receiving_tds?: number;
+  carrys?: number;
+  avg_rush_yards_perCarry?: number;
+  rush_yards?: number;
+  rush_tds?: number;
   fumbles?: number;
-  completion_percentage?: number;
+  return_td?: number;
+  two_pt_made?: number;
+  kick_1_19?: number;
+  kick_20_29?: number;
+  kick_30_39?: number;
+  kick_40_49?: number;
+  kick_50?: number;
+  fg_made?: number;
+  fg_attempts?: number;
+  fg_perc?: number;
+  extra_points_made?: number;
+  extra_points_attempts?: number;
 };
 
+// Define Player structure
 type Player = {
   id: string;
   firstName: string;
@@ -38,19 +49,30 @@ type Player = {
   age: number;
   weight: number;
   displayHeight: string;
-  player_stats: PlayerStats[];
+};
+
+type PlayerNews = {
+  headline: string;
+  date: string;
+  text: string;
 };
 
 export default function PlayerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [player, setPlayer] = useState<Player | null>(null);
+  const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]); // ✅ Separate state for stats
+  const [playerNews, setPlayerNews] = useState<PlayerNews[]>([]); // ✅ Separate state for stats
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"stats" | "news">("stats");
 
-  const API_URL = import.meta.env.VITE_PLAYER_URL;
+  // URLs for player info & stats
+  const API_URL_INFO = import.meta.env.VITE_PLAYER_URL;
+  const API_URL_STATS = import.meta.env.VITE_PLAYER_STATS_URL;
+  const API_URL_NEWS = import.meta.env.VITE_PLAYER_NEWS_URL;
 
   useEffect(() => {
-    const fetchPlayerDetail = async () => {
+    const fetchPlayerData = async () => {
       const token = localStorage.getItem(ACCESS_TOKEN);
 
       if (!token) {
@@ -60,100 +82,208 @@ export default function PlayerDetail() {
       }
 
       try {
-        const response = await axios.get(`${API_URL}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // Fetch Player Details
+        const playerResponse = await axios.get(`${API_URL_INFO}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        setPlayer(response.data.Player); // Assuming response contains the player object under 'Player'
+        console.log("Player Data:", playerResponse.data);
+        setPlayer(playerResponse.data.Player); // ✅ Set player data
+
+        // Fetch Player Stats
+        const statsResponse = await axios.get(`${API_URL_STATS}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("Player Stats Data:", statsResponse.data);
+        setPlayerStats(statsResponse.data.Player_stats || []); // ✅ Ensure stats is an array
+
+        // Fetch Player News
+        const newsResponse = await axios.get(`${API_URL_NEWS}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("Player News Data:", newsResponse.data);
+        setPlayerNews(newsResponse.data.Player_news || []); // ✅ Ensure stats is an array
+
         setError(null);
       } catch (err) {
         const axiosError = err as AxiosError;
-
-        if (axiosError.response) {
-          console.error("Error response:", axiosError.response.data);
-        } else if (axiosError.request) {
-          console.error("Error request:", axiosError.request);
-        } else {
-          console.error("Error message:", axiosError.message);
-        }
+        console.error("Error fetching player data:", axiosError);
         setError("Failed to fetch player data.");
       }
     };
 
-    if (id) fetchPlayerDetail();
-  }, [id, API_URL]);
+    if (id) fetchPlayerData();
+  }, [id, API_URL_INFO, API_URL_STATS, API_URL_NEWS]);
 
   return (
-    <div>
-      <h1 className="text-center">Player Details</h1>
-
-      {error && <p>{error}</p>}
+    <div className="container mx-auto p-4 max-w-screen-xl">
+      <h1 className="text-center text-2xl font-bold">Player Details</h1>
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
       {player && (
-        <div className="player-info text-center">
-          <h3>{`${player.firstName} ${player.lastName}`}</h3>
+        <div className="player-info text-center mx-auto w-full max-w-7xl px-8">
+          <h3 className="text-xl font-semibold">{`${player.firstName} ${player.lastName}`}</h3>
           <h5>{`Team: ${player.team}`}</h5>
           <h5>{`Position: ${player.position}`}</h5>
           <p>{`Jersey #: ${player.jersey}`}</p>
           <p>{`Age: ${player.age}`}</p>
           <p>{`Weight: ${player.weight}`}</p>
           <p>{`Height: ${player.displayHeight}`}</p>
-          {/* Display Player Stats if available */}
-          {player.player_stats && player.player_stats.length > 0 ? (
-            <div className="player-stats">
-              <h4>Player Stats</h4>
-              {player.player_stats.map((stat, index) => (
-                <div key={index} className="stat-week">
-                  <h5>Week: {stat.week}</h5>
-                  {/* Display different stats based on player position */}
-                  {player.position === "Running Back" ||
-                  player.position === "Wide Receiver" ||
-                  player.position === "Tight End" ? (
+
+          {/* Tabs for Stats and News */}
+          <div className="flex justify-center mt-4">
+            <button
+              className={`px-4 py-2 border-b-2 ${
+                activeTab === "stats" ? "border-blue-500 font-bold" : "border-gray-300"
+              }`}
+              onClick={() => setActiveTab("stats")}
+            >
+              Stats
+            </button>
+            <button
+              className={`px-4 py-2 border-b-2 ${
+                activeTab === "news" ? "border-blue-500 font-bold" : "border-gray-300"
+              }`}
+              onClick={() => setActiveTab("news")}
+            >
+              News
+            </button>
+          </div>
+
+          {/* Stats Section */}
+          {activeTab === "stats" && playerStats.length > 0 ? (
+            <div className="mt-4 overflow-x-auto w-full">
+              <h4 className="text-lg font-semibold">Weekly Stats</h4>
+              <table className="table-auto border-collapse border border-gray-300 w-full">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border px-4 py-2">Week</th>
+                    <th className="border px-4 py-2">Total Fantasy Pts</th>
+                    <th className="border px-4 py-2">Proj. Fantasy Pts</th>
+                  
+                  {/* Headers for each stat section */}
+                  {player?.position === "Quarter Back" && (
                     <>
-                      <p>Rushing Yards: {stat.rushing_yards}</p>
-                      <p>Rushing TDs: {stat.rushing_tds}</p>
-                      <p>Receptions: {stat.receptions}</p>
-                      <p>Receiving Yards: {stat.receiving_yards}</p>
-                      <p>Receiving TDs: {stat.receiving_tds}</p>
-                      <p>Targets: {stat.targets}</p>
+
+                      <th className="border px-4 py-2">Pass Att</th>
+                      <th className="border px-4 py-2">Completions</th>
+                      <th className="border px-4 py-2">Pass Yards</th>
+                      <th className="border px-4 py-2">Pass TDs</th>
+                      <th className="border px-4 py-2">INTs</th>
+                      <th className="border px-4 py-2">Sacks</th>
+                      
+                      <th className="border px-4 py-2">Rush Yards</th>
+                      <th className="border px-4 py-2">Rush TDs</th>
+                      <th className="border px-4 py-2">Fumbles</th>
                     </>
-                  ) : null}
-                  {player.position === "Place kicker" ? (
+                  )}
+
+                  {(player?.position === "Running Back" || player?.position === "Wide Receiver" || player?.position === "Tight End") && (
                     <>
-                      <p>Field Goals Made: {stat.field_goals_made}</p>
-                      <p>Field Goals Attempted: {stat.field_goals_attempted}</p>
-                      <p>
-                        Field Goal Percentage: {stat.field_goal_percentage}%
-                      </p>
-                      <p>Extra Points: {stat.extra_points}</p>
+                      <th className="border px-4 py-2">Carries</th>
+                      <th className="border px-4 py-2">Rush Yards</th>
+                      <th className="border px-4 py-2">Rush TDs</th>
+
+                      <th className="border px-4 py-2">Targets</th>
+                      <th className="border px-4 py-2">Receptions</th>
+                      <th className="border px-4 py-2">Receiving Yards</th>
+                      <th className="border px-4 py-2">Receiving TDs</th>
+
+                      {player?.position === "Wide Receiver" && (
+                        <>
+                          <th colSpan={1} className="border px-4 py-2 text-left">Return TD</th>
+                        </>
+                      )}
                     </>
-                  ) : null}
-                  {player.position === "Quarterback" ? (
+                  )}
+
+                  {player?.position === "Place kicker" && (
                     <>
-                      <p>Completions: {stat.completions}</p>
-                      <p>Passing Yards: {stat.passing_yards}</p>
-                      <p>Passing TDs: {stat.passing_tds}</p>
-                      <p>Interceptions: {stat.interceptions}</p>
-                      <p>Fumbles: {stat.fumbles}</p>
-                      <p>
-                        Completion Percentage: {stat.completion_percentage}%
-                      </p>
+                      <th className="border px-4 py-2">FG Made</th>
+                      <th className="border px-4 py-2">FG Attempts</th>
+                      <th className="border px-4 py-2">FG %</th>
+                      <th className="border px-4 py-2">Extra Points Made</th>
                     </>
-                  ) : null}
-                  <p>Fantasy Points: {stat.fantasy_points}</p>
-                  <p>
-                    Projected Fantasy Points: {stat.projected_fantasy_points}
-                  </p>
+                  )}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {playerStats.map((stat) => (
+                    <tr key={stat.week} className="text-center">
+                      <td className="border px-4 py-2">{stat.week}</td>
+                      <td className="border px-4 py-2">{stat.total_fantasy_points || "-"}</td>
+                      <td className="border px-4 py-2">{stat.proj_fantasy || "-"}</td>
+
+                      {/* QB Passing */}
+                      {player?.position === "Quarter Back" && (
+                        <>
+                          <td className="border px-4 py-2">{stat.pass_att || "-"}</td>
+                          <td className="border px-4 py-2">{stat.completions || "-"}</td>
+                          <td className="border px-4 py-2">{stat.pass_yards || "-"}</td>
+                          <td className="border px-4 py-2">{stat.pass_tds || "-"}</td>
+                          <td className="border px-4 py-2">{stat.ints || "-"}</td>
+                          <td className="border px-4 py-2">{stat.sacks || "-"}</td>
+                          <td className="border px-4 py-2">{stat.rush_yards || "-"}</td>
+                          <td className="border px-4 py-2">{stat.rush_tds || "-"}</td>
+                          <td className="border px-4 py-2">{stat.fumbles || "-"}</td>
+                        </>
+                      )}
+
+                      {/* RB, WR, TE Rushing & Receiving */}
+                      {(player?.position === "Running back" || player?.position === "Wide Receiver" || player?.position === "Tight End") && (
+                        <>
+                          <td className="border px-4 py-2">{stat.carrys || "-"}</td>
+                          <td className="border px-4 py-2">{stat.rush_yards || "-"}</td>
+                          <td className="border px-4 py-2">{stat.rush_tds || "-"}</td>
+                          <td className="border px-4 py-2">{stat.targets || "-"}</td>
+                          <td className="border px-4 py-2">{stat.catches || "-"}</td>
+                          <td className="border px-4 py-2">{stat.receiving_yards || "-"}</td>
+                          <td className="border px-4 py-2">{stat.receiving_tds || "-"}</td>
+                          {player?.position === "Wide Receiver" && <td className="border px-4 py-2">{stat.return_td || "-"}</td>}
+                        </>
+                      )}
+
+                      {/* Kicker Stats */}
+                      {player?.position === "Place kicker" && (
+                        <>
+                          <td className="border px-4 py-2">{stat.fg_made || "-"}</td>
+                          <td className="border px-4 py-2">{stat.fg_attempts || "-"}</td>
+                          <td className="border px-4 py-2">{stat.fg_perc || "-"}</td>
+                          <td className="border px-4 py-2">{stat.extra_points_made || "-"}</td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : activeTab === "stats" ? (
+            <p>No stats available</p>
+          ) : null}
+
+
+          {/* News Section */}
+          {activeTab === "news" && playerNews.length > 0 ? (
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold">Latest News</h4>
+              {playerNews.map((news) => (
+                <div className="border-b py-2">
+                  <h5 className="font-semibold">{news.headline}</h5>
+                  <p className="text-sm text-gray-600">{news.date}</p>
+                  <p>{news.text}</p>
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No stats available</p>
-          )}
-          <button onClick={() => navigate("/scout")}>Back to Search</button>{" "}
-          {/* Button to go back to the search page */}
+          ) : activeTab === "news" ? (
+            <p>No news available</p>
+          ) : null}
+
+          <button onClick={() => navigate("/scout")} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+            Back to Search
+          </button>
         </div>
       )}
     </div>
