@@ -123,7 +123,8 @@ export default function PlayerDetail() {
       {error && <p className="text-red-500 text-center">{error}</p>}
 
       {player && (
-        <div className="player-info text-center mx-auto w-full max-w-7xl px-8">
+        <div className="player-info text-center w-full border p-4 mt-4">
+
           <h3 className="text-xl font-semibold">{`${player.firstName} ${player.lastName}`}</h3>
           <h5>{`Team: ${player.team}`}</h5>
           <h5>{`Position: ${player.position}`}</h5>
@@ -190,12 +191,6 @@ export default function PlayerDetail() {
                       <th className="border px-4 py-2">Receptions</th>
                       <th className="border px-4 py-2">Receiving Yards</th>
                       <th className="border px-4 py-2">Receiving TDs</th>
-
-                      {player?.position === "Wide Receiver" && (
-                        <>
-                          <th colSpan={1} className="border px-4 py-2 text-left">Return TD</th>
-                        </>
-                      )}
                     </>
                   )}
 
@@ -218,7 +213,7 @@ export default function PlayerDetail() {
                       <td className="border px-4 py-2">{stat.proj_fantasy || "-"}</td>
 
                       {/* QB Passing */}
-                      {player?.position === "Quarter Back" && (
+                      {player?.position === "Quarterback" && (
                         <>
                           <td className="border px-4 py-2">{stat.pass_att || "-"}</td>
                           <td className="border px-4 py-2">{stat.completions || "-"}</td>
@@ -233,7 +228,7 @@ export default function PlayerDetail() {
                       )}
 
                       {/* RB, WR, TE Rushing & Receiving */}
-                      {(player?.position === "Running back" || player?.position === "Wide Receiver" || player?.position === "Tight End") && (
+                      {(player?.position === "Running Back" || player?.position === "Wide Receiver" || player?.position === "Tight End") && (
                         <>
                           <td className="border px-4 py-2">{stat.carrys || "-"}</td>
                           <td className="border px-4 py-2">{stat.rush_yards || "-"}</td>
@@ -242,7 +237,6 @@ export default function PlayerDetail() {
                           <td className="border px-4 py-2">{stat.catches || "-"}</td>
                           <td className="border px-4 py-2">{stat.receiving_yards || "-"}</td>
                           <td className="border px-4 py-2">{stat.receiving_tds || "-"}</td>
-                          {player?.position === "Wide Receiver" && <td className="border px-4 py-2">{stat.return_td || "-"}</td>}
                         </>
                       )}
 
