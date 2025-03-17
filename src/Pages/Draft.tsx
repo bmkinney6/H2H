@@ -2,9 +2,12 @@ import OffenseLineup from "../Components/OffenseLineup.tsx";
 import DefenseLineup from "../Components/DefenseLinup.tsx";
 import BenchPlayers from "../Components/Bench.tsx";
 import SearchForm from "../Components/SearchForm.tsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchTopTenPlayers } from "../Components/FetchPlayerInfo.tsx";
+import {
+  fetchTopTenPlayers,
+  fetchPlayerInfo,
+} from "../Components/FetchPlayerInfo.tsx";
 
 export default function Draft() {
   type Player = {
@@ -32,10 +35,15 @@ export default function Draft() {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const handleFetchPlayerInfo = async () => {
+  const handleFetchPlayerInfo = async (name: string = "") => {
     try {
-      const fetchedPlayers = await fetchTopTenPlayers(API_URL);
-      setPlayers(fetchedPlayers); // Save all players
+      if (name === "") {
+        const fetchedPlayers = await fetchTopTenPlayers(API_URL);
+        setPlayers(fetchedPlayers); // Save top ten players
+      } else {
+        const fetchedPlayers = await fetchPlayerInfo(name, API_URL);
+        setPlayers(fetchedPlayers); // Save searched players
+      }
       setError(null); // Reset error
       setSearchPerformed(true); // Indicate that search was performed
     } catch (error) {
@@ -44,11 +52,16 @@ export default function Draft() {
       setError(error.message);
     }
   };
+
+  useEffect(() => {
+    handleFetchPlayerInfo(); // Fetch top ten players when the component mounts
+  }, []);
+
   return (
     <div>
       <h1 className="text-center">Draft Center</h1>
       <div className="draft-section">
-        <div className="team-view  d-block">
+        <div className="team-view d-block">
           <BenchPlayers />
           <DefenseLineup />
           <OffenseLineup />
@@ -56,7 +69,7 @@ export default function Draft() {
         <div className="draft-search">
           <div className="draft-search-container text-center mx-auto">
             <SearchForm
-              onSubmit={handleFetchPlayerInfo}
+              onSubmit={(name) => handleFetchPlayerInfo(name)}
               placeholder="Enter player name"
             />
             {searchPerformed && players.length > 0 ? (
