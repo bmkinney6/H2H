@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
+import { checkLoginStatus } from "../Components/checkLoginStatus";
+import { useNavigate } from "react-router-dom";
 import '../Styles/MyLeagues.css';
 
 type User = {
+  id: string;
   username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
 };
 
 type League = {
@@ -18,6 +24,7 @@ type League = {
   private: boolean;
   join_code?: string;
   users: Array<User>;
+  draftStarted: boolean;
 };
 
 export default function MyLeagues() {
@@ -27,11 +34,20 @@ export default function MyLeagues() {
   const [loading, setLoading] = useState<boolean>(true);
   const [joinCode, setJoinCode] = useState<string>('');
   const [joinError, setJoinError] = useState<string | null>(null);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_LEAGUE_URL.replace(/\/$/, "");
 
   useEffect(() => {
     fetchLeagues();
+    checkLoginStatus().then((status) => {
+      if (status.isLoggedIn) {
+        setCurrentUsername(status.username ?? null);
+      } else {
+        setError("You are not authenticated. Please log in.");
+      }
+    });
   }, []);
 
   const fetchLeagues = async () => {
@@ -95,9 +111,41 @@ export default function MyLeagues() {
     }
   };
 
+  const handleStartDraft = async (leagueId: string) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/league/${leagueId}/start_draft/`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        fetchLeagues(); // Refresh the leagues list
+        navigate(`/draft/${leagueId}`);
+      } else {
+        setError(response.data.error || "Failed to start the draft.");
+      }
+    } catch (err) {
+      setError("Failed to start the draft.");
+      console.error("Error starting draft:", err);
+    }
+  };
+
+  const handleJoinDraft = (leagueId: string) => {
+    navigate(`/draft/${leagueId}`);
+  };
+
   if (loading) {
     return <p className="text-center">Loading...</p>;
   }
+
+  // Debugging logs
+  console.log("Current Username:", currentUsername);
+  console.log("Selected League Owner:", selectedLeague?.owner);
 
   return (
     <div className="my-leagues-container">
@@ -131,6 +179,13 @@ export default function MyLeagues() {
               <p>Time Per Pick: {selectedLeague.time_per_pick} seconds</p>
               <p>Positional Betting: {selectedLeague.positional_betting ? "Enabled" : "Disabled"}</p>
               <p>Max Capacity: {selectedLeague.max_capacity}</p>
+              {currentUsername === selectedLeague.owner.username ? (
+                <button onClick={() => handleStartDraft(selectedLeague.id)}>Start Draft</button>
+              ) : (
+                selectedLeague.draftStarted && (
+                  <button onClick={() => handleJoinDraft(selectedLeague.id)}>Join Draft</button>
+                )
+              )}
             </div>
           ) : (
             <p className="text-center">Select a league to view details.</p>

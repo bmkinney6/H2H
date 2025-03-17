@@ -53,6 +53,7 @@ export const fetchPlayerInfo = async (
 
 export const fetchTopTenPlayers = async (
   API_URL: string,
+  name: string = "", // Add name parameter with default value
 ): Promise<Player[]> => {
   const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
   if (!token) {
@@ -62,7 +63,7 @@ export const fetchTopTenPlayers = async (
   try {
     const response = await axios.post(
       `${API_URL}/api/topTenPlayers/`,
-      {},
+      { name }, // Include the search term in the request body
       {
         headers: {
           Authorization: `Bearer ${token}`, // Add the token here

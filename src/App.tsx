@@ -85,6 +85,7 @@ function App() {
           <Route path="/leagues" element={<SearchLeague />} />
           <Route path="/leagues/:id" element={<LeagueDetail />} />
           <Route path="/my-leagues" element={<MyLeagues />} />
+          <Route path="/draft/:leagueId" element={<Draft />} />
           <Route path="/search-leagues" element={<LeagueScout />} />
         </Routes>
       </div>

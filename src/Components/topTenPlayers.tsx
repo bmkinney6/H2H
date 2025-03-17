@@ -24,11 +24,12 @@ const TopTenPlayers: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // State to store the search term
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const players = await fetchTopTenPlayers(API_URL);
+        const players = await fetchTopTenPlayers(API_URL, searchTerm); // Pass the search term
         setPlayers(players);
       } catch (err) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -40,7 +41,7 @@ const TopTenPlayers: React.FC = () => {
     };
 
     fetchPlayers();
-  }, []);
+  }, [searchTerm]); // Re-fetch players when search term changes
 
   if (loading) {
     return <div>Loading...</div>;
