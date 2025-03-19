@@ -32,6 +32,7 @@ export default function Draft() {
   const [isMember, setIsMember] = useState<boolean>(false); // State to track if user is a member of the league
   const [draftStarted, setDraftStarted] = useState<boolean>(false); // State to track if the draft has started
   const [draftPicks, setDraftPicks] = useState<any[]>([]); // State to store draft picks
+  const [currentPickUser, setCurrentPickUser] = useState<number | null>(null); // State to track whose turn it is
   const navigate = useNavigate();
   const { leagueId } = useParams<{ leagueId: string }>();
   const ws = useRef<WebSocket | null>(null);
@@ -60,13 +61,21 @@ export default function Draft() {
 
           if (draftStatusResponse.data.draftStarted) {
             setDraftStarted(true);
-            ws.current = new WebSocket(`ws://${window.location.host}/ws/draft/${leagueId}/`);
+            setCurrentPickUser(draftStatusResponse.data.currentPickUser);
+
+            // Initialize WebSocket connection
+            ws.current = new WebSocket(`ws://${window.location.hostname}:8000/ws/draft/${leagueId}/`);
 
             ws.current.onmessage = (event) => {
               const data = JSON.parse(event.data);
               if (data.message.type === 'pick_made') {
                 setDraftPicks((prevPicks) => [...prevPicks, data.message]);
+                setCurrentPickUser(data.message.next_user_id);
               }
+            };
+
+            ws.current.onerror = (err) => {
+              console.error("WebSocket error:", err);
             };
           } else {
             setError("The draft has not started yet.");
@@ -91,24 +100,24 @@ export default function Draft() {
 
   const handleFetchPlayerInfo = async (searchTerm: string) => {
     try {
-      const fetchedPlayers = await fetchTopTenPlayers(API_URL, searchTerm); // Pass the search term
+      const fetchedPlayers = await fetchTopTenPlayers(API_URL, searchTerm, draftPicks); // Pass the search term and draft picks
       setPlayers(fetchedPlayers); // Save all players
       setError(null); // Reset error
       setSearchPerformed(true); // Indicate that search was performed
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setError(error.message);
+      setError("Failed to fetch players.");
+      console.error("Error fetching players:", error);
     }
   };
 
-  const handlePick = (playerId: number) => {
+  const handlePick = (playerId: number, position: string) => {
     if (ws.current) {
       ws.current.send(JSON.stringify({
         message: {
           type: 'make_pick',
           user_id: localStorage.getItem('user_id'), // Assuming user_id is stored in localStorage
           player_id: playerId,
+          position: position,
         }
       }));
     }
@@ -122,7 +131,20 @@ export default function Draft() {
     <div>
       <h1 className="text-center">Draft Center</h1>
       <div className="draft-section">
-        <div className="team-view  d-block">
+        {/* Display whose turn it is */}
+        <div className="current-turn text-center">
+          {currentPickUser !== null ? (
+            currentPickUser === parseInt(localStorage.getItem('user_id') || '') ? (
+              <h2>It's your turn to pick!</h2>
+            ) : (
+              <h2>It's User {currentPickUser}'s turn to pick.</h2>
+            )
+          ) : (
+            <h2>Loading turn information...</h2>
+          )}
+        </div>
+
+        <div className="team-view d-block">
           <BenchPlayers />
           <DefenseLineup />
           <OffenseLineup />
@@ -155,7 +177,9 @@ export default function Draft() {
                             <p className="card-text">
                               {player.displayHeight} - {player.weight} lbs
                             </p>
-                            <button onClick={() => handlePick(player.id)}>Pick</button>
+                            {currentPickUser === parseInt(localStorage.getItem('user_id') || '') && (
+                              <button onClick={() => handlePick(player.id, player.position)}>Pick</button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -168,17 +192,16 @@ export default function Draft() {
                 <p className="no-players-message">
                   No players found with that name.
                 </p>
-              ) // Show this message after search if no players are found
+              )
             )}
           </div>
-          {/* Show error message if there is an error */}
           {error && <p>{error}</p>}
         </div>
         <div className="draft-picks">
           <h2>Draft Picks</h2>
           <ul>
             {draftPicks.map((pick, index) => (
-              <li key={index}>{`User ${pick.user_id} picked Player ${pick.player_id}`}</li>
+              <li key={index}>{`User ${pick.user_id} picked ${pick.player_name} (${pick.position})`}</li>
             ))}
           </ul>
         </div>

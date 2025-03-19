@@ -433,3 +433,34 @@ button:hover {
     border-radius: 50%;
     margin-right: 10px;
 }
+
+
+.league-settings {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #1A2B3C; /* Slightly lighter shade of the button color */
+  }
+
+.league-settings div {
+    margin-bottom: 15px; /* Add spacing between each setting */
+}
+
+.league-settings label {
+    display: block; /* Ensure the label is on its own line */
+    margin-bottom: 5px; /* Add spacing between the label and the input */
+    font-weight: bold; /* Make the label text bold for better readability */
+}
+
+.league-settings input {
+    width: 100%; /* Make inputs take up the full width of the container */
+    padding: 8px; /* Add padding for better usability */
+    border: 1px solid #ccc; /* Add a border to inputs */
+    border-radius: 5px; /* Match the border radius of the settings box */
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+  
+  .text-danger {
+    color: red;
+  }
