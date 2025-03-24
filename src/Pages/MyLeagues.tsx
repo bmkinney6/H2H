@@ -183,7 +183,7 @@ export default function MyLeagues() {
 
     try {
       const response = await axios.post(
-        `${API_URL}/${selectedLeague.id}/start_draft/`,
+        `${API_URL}/league/${selectedLeague.id}/start_draft/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -193,7 +193,8 @@ export default function MyLeagues() {
       if (response.data.success) {
         fetchLeagues(); // Refresh the leagues list
         setDraftError(null);
-        alert("Draft started successfully!");
+        navigate(`/draft/${selectedLeague.id}`);
+        
       } else {
         setDraftError(response.data.error || "Failed to start the draft.");
       }
