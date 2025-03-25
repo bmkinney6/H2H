@@ -86,6 +86,9 @@ export default function Draft() {
                 setDraftPicks((prevPicks) => [...prevPicks, data.message]);
                 setCurrentPickUser(data.message.next_user_id);
                 console.log("Updated draft picks and current pick user:", data.message); // Debugging draft picks update
+              }else if (data.message.type === "draft_complete") {
+                alert("Draft complete!");
+                navigate("/my-leagues"); // Redirect to "My Leagues" page
               }
             };
 

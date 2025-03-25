@@ -25,6 +25,7 @@ type League = {
   join_code?: string;
   users: Array<User>;
   draftStarted: boolean;
+  draftComplete: boolean; // Added field to track if the draft is complete
 };
 
 export default function MyLeagues() {
@@ -194,7 +195,6 @@ export default function MyLeagues() {
         fetchLeagues(); // Refresh the leagues list
         setDraftError(null);
         navigate(`/draft/${selectedLeague.id}`);
-        
       } else {
         setDraftError(response.data.error || "Failed to start the draft.");
       }
@@ -247,6 +247,16 @@ export default function MyLeagues() {
               <p>Max Capacity: {selectedLeague.max_capacity}</p>
               <p>Private: {selectedLeague.private ? "Yes" : "No"}</p>
               <p>Join Code: {selectedLeague.join_code || "N/A"}</p>
+
+              {/* Draft Status */}
+              <p>
+                <strong>Draft Status:</strong>{" "}
+                {selectedLeague.draftComplete
+                  ? "Completed"
+                  : selectedLeague.draftStarted
+                  ? "In-progress"
+                  : "Not Started"}
+              </p>
 
               {currentUsername === selectedLeague.owner.username && (
                 <>
@@ -327,14 +337,14 @@ export default function MyLeagues() {
                     </div>
                   )}
 
-                  {!selectedLeague.draftStarted && (
+                  {!selectedLeague.draftStarted && !selectedLeague.draftComplete && (
                     <button onClick={handleStartDraft}>Start Draft</button>
                   )}
                   {draftError && <p className="text-danger">{draftError}</p>}
                 </>
               )}
 
-              {selectedLeague.draftStarted && (
+              {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
                 <button onClick={handleJoinDraft}>Join Draft</button>
               )}
             </div>
