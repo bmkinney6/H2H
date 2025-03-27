@@ -18,11 +18,17 @@ type Player = {
   yearly_proj: number;
 };
 
+/**
+ * Fetch detailed player information based on a search term.
+ * @param name - The name of the player to search for.
+ * @param API_URL - The base API URL.
+ * @returns A promise resolving to an array of Player objects.
+ */
 export const fetchPlayerInfo = async (
   name: string,
-  API_URL: string,
+  API_URL: string
 ): Promise<Player[]> => {
-  const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
+  const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage
   if (!token) {
     throw new Error("User is not authenticated.");
   }
@@ -51,10 +57,19 @@ export const fetchPlayerInfo = async (
   }
 };
 
+/**
+ * Fetch the top ten players based on a search term, excluding already-picked players.
+ * @param API_URL - The base API URL.
+ * @param name - The search term for player names.
+ * @param draftPicks - An array of already-picked players.
+ * @returns A promise resolving to an array of Player objects.
+ */
 export const fetchTopTenPlayers = async (
   API_URL: string,
+  name: string = "", // Add name parameter with default value
+  draftPicks: any[] = [] // Add draftPicks parameter to exclude already-picked players
 ): Promise<Player[]> => {
-  const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage (or wherever it's stored)
+  const token = localStorage.getItem(ACCESS_TOKEN); // Get the token from localStorage
   if (!token) {
     throw new Error("User is not authenticated.");
   }
@@ -62,14 +77,19 @@ export const fetchTopTenPlayers = async (
   try {
     const response = await axios.post(
       `${API_URL}/api/topTenPlayers/`,
-      {},
+      { name }, // Include the search term in the request body
       {
         headers: {
           Authorization: `Bearer ${token}`, // Add the token here
         },
-      },
+      }
     );
-    return response.data.TopTen; // Return the top ten players
+
+    // Exclude already-picked players
+    const pickedPlayerIds = draftPicks.map((pick) => pick.player_id);
+    return response.data.TopTen.filter(
+      (player: Player) => !pickedPlayerIds.includes(player.id)
+    );
   } catch (err) {
     const axiosError = err as AxiosError;
     if (axiosError.response) {
