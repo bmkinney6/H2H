@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
 import "./Styles/Index.css";
+import "./Styles/LeageuUserDetails.css"
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
@@ -23,6 +24,7 @@ import LeagueScout from "./Pages/LeagueScout";
 import Draft from "./Pages/Draft.tsx";
 import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
 import MyLeagues from './Pages/MyLeagues';
+import LeagueUserDetails from "./Pages/LeagueUserDetails.tsx";
 
 function Logout() {
   localStorage.clear();
@@ -86,6 +88,7 @@ function App() {
           <Route path="/leagues/:id" element={<LeagueDetail />} />
           <Route path="/my-leagues" element={<MyLeagues />} />
           <Route path="/search-leagues" element={<LeagueScout />} />
+          <Route path="/league/:id" element={<LeagueUserDetails />} />
         </Routes>
       </div>
     </Router>

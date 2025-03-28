@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
 import '../Styles/MyLeagues.css';
+import { Link } from "react-router-dom";
 
 type User = {
   username: string;
@@ -109,7 +110,9 @@ export default function MyLeagues() {
               className={`league-tab ${selectedLeague?.id === league.id ? 'selected' : ''}`}
               onClick={() => setSelectedLeague(league)}
             >
-              {league.name}
+              <Link to={`/league/${league.id}`} className="text-blue-500">
+                {league.name}
+              </Link>
             </li>
           ))}
         </ul>
