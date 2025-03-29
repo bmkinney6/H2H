@@ -127,6 +127,52 @@ export default function MyLeagues() {
     }
   };
 
+  const handleLeaveLeague = async (leagueId: string) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/${leagueId}/leave/`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+        window.location.reload() // Redirect to MyLeagues page after leaving
+      } else {
+        setError(response.data.error || "Failed to leave the league.");
+      }
+    } catch (err) {
+      setError("Failed to leave the league.");
+      console.error("Error leaving league:", err);
+    }
+  };
+
+  const handleDeleteLeague = async (leagueId: string) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`${API_URL}/${leagueId}/delete/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+        window.location.reload() // Redirect to MyLeagues page after deleting
+      } else {
+        setError(response.data.error || "Failed to delete the league.");
+      }
+    } catch (err) {
+      setError("Failed to delete the league.");
+      console.error("Error deleting league:", err);
+    }
+  };
+
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type, checked } = e.target;
     setSettings((prev) => ({
@@ -337,11 +383,24 @@ export default function MyLeagues() {
                     </div>
                   )}
 
-                  {!selectedLeague.draftStarted && !selectedLeague.draftComplete && (
-                    <button onClick={handleStartDraft}>Start Draft</button>
+                  {!selectedLeague.draftStarted && (
+                    <button
+                      className="btn btn-danger mt-2"
+                      onClick={() => handleDeleteLeague(selectedLeague.id)}
+                    >
+                      Delete League
+                    </button>
                   )}
-                  {draftError && <p className="text-danger">{draftError}</p>}
                 </>
+              )}
+
+              {currentUsername !== selectedLeague.owner.username && !selectedLeague.draftStarted && (
+                <button
+                  className="btn btn-warning mt-2"
+                  onClick={() => handleLeaveLeague(selectedLeague.id)}
+                >
+                  Leave League
+                </button>
               )}
 
               {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
