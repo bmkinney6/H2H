@@ -1,6 +1,6 @@
 "user client";
-import { useParams, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
 import Loader from "../Components/Loader";
@@ -97,8 +97,6 @@ export default function LeagueUserDetails () {
   const [isEditing, setIsEditing] = useState(false);
   const [tempTitle, setTempTitle] = useState(team?.title || '');
 
-  // for saving progress when leaving page
-  const location = useLocation();
   const dragPerson = useRef<number | null>(null);
   const dragOverPerson = useRef<number | null>(null);
 
@@ -271,51 +269,12 @@ export default function LeagueUserDetails () {
     setError(null);
     setSelected([]);
   };
-
+// // ========================================== Save to backend when team changes ==============================================
   useEffect(() => {
     saveData()
 }, [team]); // Runs when `team` is updated
 
-  // // ========================================== Save to backend when reload, or leave page ==============================================
-
-  // // Function to save data
-  // const saveData = useCallback(() => {
-  //   if (!team){
-  //     console.log(team)
-  //   } // Don't save if there's no valid team
-
-  //   console.log("🚀 Saving data before unload/navigation...", team);
-  //   try {
-  //     const blob = new Blob([JSON.stringify({ team })], {
-  //       type: "application/json",
-  //     });
-  //     // ✅ Use sendBeacon to ensure data is saved before unloading
-  //     const result = navigator.sendBeacon(`${API_URL}/save-data`, blob);
-
-  //     console.log("✅ sendBeacon result:", result ? "Sent successfully" : "Failed to send");
-  //   } catch (error) {
-  //     console.error("❌ Failed to save data:", error);
-  //   }
-  // }, [team]); 
-
-  // useEffect(() => {
-  //   window.addEventListener("beforeunload", saveData);
-  //   return () => {
-  //     window.removeEventListener("beforeunload", saveData);
-  //   };
-  // }, [saveData]);
-
-  // // ✅ Save only when navigating away (not on first load)
-  // useEffect(() => {
-  //   return () => {
-  //     if (team) {
-  //       saveData();
-  //     }
-  //   };
-  // }, [location.pathname, team]); // ✅ Now depends on `team`
   
-  
-  // // ========================================== Save to backend when reload, or leave page ==============================================
 
   // ========================================== Handle temperary save of team.title ==============================================
   const handleSave = () => {
