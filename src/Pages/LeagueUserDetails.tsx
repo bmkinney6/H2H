@@ -340,7 +340,7 @@ export default function LeagueUserDetails () {
                   <div className="UserDetailsPlayerHeader">
                     <span className="UserDetailsPositionLabel"></span>        {/* 1 - position label */}
                     <span className="UserDetailsPlayerName"></span>           {/* 2 - name */}
-                    <span className="UserDetailsPlayerStats"></span>          {/* 3 - stats */}
+                    <span className="UserDetailsPlayerStats">{error && <p className="UserDetailsE">{error}</p>}</span>          {/* 3 - stats */}
                     <span className="UserDetailsPoints">Total</span>          {/* 4 - total points */}
                     <span className="UserDetailsPoints1">Proj</span>           {/* 5 - projected points */}
                     <span className="UserDetailsDrag"></span>                 {/* 6 - drag handle */}
@@ -401,7 +401,6 @@ export default function LeagueUserDetails () {
                     </div>
                   ))}
                 </div>
-                {error && <p className="UserDetailsE">{error}</p>}
               </div>
             </>
           )}
