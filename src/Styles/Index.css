@@ -433,7 +433,33 @@ button:hover {
     border-radius: 50%;
     margin-right: 10px;
 }
+/*==============================LOADER================================*/
+.loader {
+    width: 60px;
+    aspect-ratio: 1;
+    --g: conic-gradient(from -90deg at 10px 10px,#fff 90deg,#0000 0);
+    background: var(--g), var(--g), var(--g);
+    background-size: 50% 50%;
+    animation: l16 1s infinite;
+  }
+  @keyframes l16 {
+     0%   {background-position:0    0   ,10px 10px,20px 20px} 
+     50%  {background-position:0    20px,10px 10px,20px 0   } 
+     100% {background-position:20px 20px,10px 10px,0    0   } 
+  }
 
+  .loader-wrapper {
+    position: fixed;
+    top: 75px;       /* Start below the header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
 .league-settings {
     margin-top: 20px;
