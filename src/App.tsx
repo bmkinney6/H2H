@@ -5,6 +5,7 @@ import { Home, HomePre } from "./Pages/home.tsx";
 import Login from "./Pages/login.tsx";
 import Register from "./Pages/register.tsx";
 import NotFound from "./Pages/notFound.tsx";
+import Inbox from "./Pages/Inbox";
 import {
   BrowserRouter as Router,
   Routes,
@@ -75,6 +76,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateLeaguePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inbox"
+            element={
+              <ProtectedRoute>
+                <Inbox />
               </ProtectedRoute>
             }
           />
