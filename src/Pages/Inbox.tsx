@@ -18,58 +18,91 @@ export default function Inbox() {
     const fetchNotifications = async () => {
       const token = localStorage.getItem(ACCESS_TOKEN);
       if (token) {
-        const response = await axios.get("http://localhost:8000/api/notifications/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setNotifications(response.data);
+        try {
+          const response = await axios.get("http://localhost:8000/api/notifications/", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setNotifications(response.data);
+        } catch (err) {
+          console.error("Error fetching notifications:", err);
+        }
       }
     };
 
     fetchNotifications();
-
-    // Establish WebSocket connection
-    const ws = new WebSocket(`ws://${window.location.host}/ws/notifications/`);
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setNotifications((prev) => [data, ...prev]); // Add new notification to the list
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    return () => {
-      ws.close();
-    };
   }, []);
 
   const markAsRead = async (id: number) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    await axios.post(`http://localhost:8000/api/notifications/${id}/read/`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-    );
+    try {
+      await axios.post(`http://localhost:8000/api/notifications/${id}/read/`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      );
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
   };
 
   const markAsUnread = async (id: number) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    await axios.post(`http://localhost:8000/api/notifications/${id}/unread/`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: false } : n))
-    );
+    try {
+      await axios.post(`http://localhost:8000/api/notifications/${id}/unread/`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, is_read: false } : n))
+      );
+    } catch (err) {
+      console.error("Error marking notification as unread:", err);
+    }
   };
 
   const deleteNotification = async (id: number) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    await axios.delete(`http://localhost:8000/api/notifications/${id}/delete/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    try {
+      await axios.delete(`http://localhost:8000/api/notifications/${id}/delete/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+    }
+  };
+
+  const handleInviteResponse = async (leagueId: number, userResponse: "accept" | "decline", notificationId: number) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) return;
+
+    try {
+      const url = `http://localhost:8000/api/leagues/${leagueId}/invite-response/${userResponse}/`;
+      console.log(`DEBUG: Sending POST request to ${url}`);
+      const res = await axios.post(
+        url,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("DEBUG: Response data:", res.data);
+      deleteNotification(notificationId); // Remove the notification after processing
+    } catch (err) {
+      console.error("DEBUG: Error processing invite response:", err);
+    }
+  };
+
+  const extractLeagueId = (link: string | undefined): number => {
+    if (!link) {
+      console.error("DEBUG: Notification link is missing or invalid.");
+      return 0; // Default to 0 if the link is invalid
+    }
+    const parts = link.split("/");
+    const leagueId = parseInt(parts[3], 10); // Extract the leagueId from the link
+    if (isNaN(leagueId)) {
+      console.error("DEBUG: Failed to parse leagueId from link:", link);
+      return 0;
+    }
+    return leagueId;
   };
 
   return (
@@ -87,38 +120,54 @@ export default function Inbox() {
                   notification.is_read ? "read" : "unread"
                 }`}
               >
-                <p
-                  className="notification-text"
-                  onClick={() => {
-                    if (notification.link) {
-                      window.open(notification.link, "_blank");
-                    }
-                  }}
-                >
-                  {notification.message}
-                </p>
+                <p className="notification-text">{notification.message}</p>
+                {notification.message.includes("invited to join the league") && (
+                  <div className="notification-actions">
+                    <button
+                      className="btn btn-success"
+                      onClick={() =>
+                        handleInviteResponse(
+                          extractLeagueId(notification.link),
+                          "accept",
+                          notification.id
+                        )
+                      }
+                    >
+                      Accept
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() =>
+                        handleInviteResponse(
+                          extractLeagueId(notification.link),
+                          "decline",
+                          notification.id
+                        )
+                      }
+                    >
+                      Decline
+                    </button>
+                  </div>
+                )}
                 <div className="notification-actions">
                   {!notification.is_read ? (
                     <button
-                      className="mark-read-button"
+                      className="btn btn-primary"
                       onClick={() => markAsRead(notification.id)}
                     >
                       Mark as Read
                     </button>
                   ) : (
                     <button
-                      className="mark-unread-button"
+                      className="btn btn-warning"
                       onClick={() => markAsUnread(notification.id)}
                     >
                       Mark as Unread
                     </button>
                   )}
                   <button
-                    className="delete-button"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering the `onClick` for the list item
-                      deleteNotification(notification.id);
-                    }}
+                    className="btn btn-danger"
+                    onClick={() => deleteNotification(notification.id)}
                   >
                     Delete
                   </button>
@@ -127,7 +176,7 @@ export default function Inbox() {
             ))}
           </ul>
         ) : (
-          <p className="no-notifications">No notifications</p>
+          <p>No notifications</p>
         )}
       </div>
     </div>

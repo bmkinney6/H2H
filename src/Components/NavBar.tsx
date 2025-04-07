@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Styles/Index.css";
@@ -15,43 +15,29 @@ type Notification = {
 
 function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to detect page changes
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      const token = localStorage.getItem(ACCESS_TOKEN);
-      if (token) {
-        try {
-          const response = await axios.get("http://localhost:8000/api/notifications/?limit=10", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          console.log("Fetched notifications:", response.data); // Debugging
-          setNotifications(response.data.filter((n) => !n.is_read)); // Only show unread notifications
-        } catch (error) {
-          console.error("Error fetching notifications:", error);
-        }
+  // Function to fetch notifications
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      try {
+        const response = await axios.get("http://localhost:8000/api/notifications/?limit=10", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Fetched notifications:", response.data); // Debugging
+        setNotifications(response.data.filter((n) => !n.is_read)); // Only show unread notifications
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
       }
-    };
+    }
+  };
 
+  // Fetch notifications on initial load and whenever the URL changes
+  useEffect(() => {
     fetchNotifications();
-
-    const ws = new WebSocket(`ws://${window.location.host}/ws/notifications/`);
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setNotifications((prev) => [data, ...prev]); // Add new notification to the list
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    return () => {
-      ws.close();
-    };
-
-
-  }, []);
+  }, [location]); // Trigger fetchNotifications whenever the URL changes
 
   const handleHomeClick = () => {
     navigate("/home");
@@ -61,16 +47,8 @@ function NavBar() {
     navigate("/scout");
   };
 
-  const handleDraftClick = () => {
-    navigate("/draft");
-  };
-
   const handleCreateLeagueClick = () => {
     navigate("/create-league");
-  };
-
-  const handleLeagueClick = () => {
-    navigate("/leagues");
   };
 
   const handleSearchLeaguesClick = () => {
@@ -81,8 +59,8 @@ function NavBar() {
     navigate("/my-leagues");
   };
 
-  const handleUserClick = () => {
-    navigate("/user");
+  const handleUserScoutClick = () => {
+    navigate("/user-search");
   };
 
   const handleViewAllNotifications = () => {
@@ -173,6 +151,15 @@ function NavBar() {
                   </a>
                 </li>
                 <li>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleUserScoutClick}
+                  >
+                    User Search
+                  </a>
+                </li>
+                <li>
                   <a href="#" className="dropdown-item">
                     Room for more features!
                   </a>
@@ -184,19 +171,8 @@ function NavBar() {
                 Players
               </a>
             </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link" onClick={handleDraftClick}>
-                Draft
-              </a>
-            </li>
           </ul>
         </div>
-        <form className="d-flex">
-          <input type="text" className="form-control nav-search my-auto" />
-          <button type="submit" className="btn btn-primary my-auto ms-2">
-            Search
-          </button>
-        </form>
         <div className="d-flex align-items-center">
           {/* Notifications Dropdown */}
           <div className="dropdown mx-2">
@@ -243,6 +219,9 @@ function NavBar() {
     </nav>
   );
 }
+
+
+
 
 function NavBarPre() {
   const navigate = useNavigate();
