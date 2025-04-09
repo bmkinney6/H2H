@@ -5,6 +5,10 @@ import { Home, HomePre } from "./Pages/home.tsx";
 import Login from "./Pages/login.tsx";
 import Register from "./Pages/register.tsx";
 import NotFound from "./Pages/notFound.tsx";
+import Inbox from "./Pages/Inbox";
+import UserScout from "./Pages/UserScout.tsx";
+import UserDetails from "./Pages/UserDetails.tsx";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -65,6 +69,22 @@ function App() {
             }
           />
           <Route
+            path="/user-search"
+            element={
+              <ProtectedRoute>
+                <UserScout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user/:userId"
+            element={
+              <ProtectedRoute>
+                <UserDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/scout/player/:id"
             element={
               <ProtectedRoute>
@@ -77,6 +97,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateLeaguePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inbox"
+            element={
+              <ProtectedRoute>
+                <Inbox />
               </ProtectedRoute>
             }
           />

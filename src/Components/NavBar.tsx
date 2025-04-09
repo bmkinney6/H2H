@@ -1,9 +1,43 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "../Styles/Index.css";
 import LogoutButton from "./LogoutButton.tsx";
+import { ACCESS_TOKEN } from "../constants";
+
+type Notification = {
+  id: number;
+  message: string;
+  link?: string;
+  is_read: boolean;
+  created_at: string;
+};
 
 function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to detect page changes
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Function to fetch notifications
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      try {
+        const response = await axios.get("http://localhost:8000/api/notifications/?limit=10", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Fetched notifications:", response.data); // Debugging
+        setNotifications(response.data.filter((n) => !n.is_read)); // Only show unread notifications
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    }
+  };
+
+  // Fetch notifications on initial load and whenever the URL changes
+  useEffect(() => {
+    fetchNotifications();
+  }, [location]); // Trigger fetchNotifications whenever the URL changes
 
   const handleHomeClick = () => {
     navigate("/home");
@@ -13,28 +47,32 @@ function NavBar() {
     navigate("/scout");
   };
 
-  const handleDraftClick = () => {
-    navigate("/draft");
-  };
-
   const handleCreateLeagueClick = () => {
     navigate("/create-league");
   };
 
-  const handleLeagueClick = () => {
-    navigate("/leagues"); // Navigate to leagues listing page
-  };
-
   const handleSearchLeaguesClick = () => {
-    navigate("/search-leagues"); // Navigate to search leagues page
+    navigate("/search-leagues");
   };
 
   const handleMyLeaguesClick = () => {
-    navigate("/my-leagues") // Navigate to My Leagues page
+    navigate("/my-leagues");
   };
 
-  const handleUserClick = () => {
-    navigate("/user");
+  const handleUserScoutClick = () => {
+    navigate("/user-search");
+  };
+
+  const handleViewAllNotifications = () => {
+    navigate("/inbox");
+  };
+
+  const markAsRead = async (id: number) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    await axios.post(`http://localhost:8000/api/notifications/${id}/read/`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setNotifications((prev) => prev.filter((n) => n.id !== id)); // Remove from dropdown
   };
 
   return (
@@ -89,15 +127,6 @@ function NavBar() {
                   <a
                     href="#"
                     className="dropdown-item"
-                    onClick={handleLeagueClick}
-                  >
-                    View Leagues
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="dropdown-item"
                     onClick={handleCreateLeagueClick}
                   >
                     Create League
@@ -116,9 +145,18 @@ function NavBar() {
                   <a
                     href="#"
                     className="dropdown-item"
-                    onClick={handleMyLeaguesClick} // My Leagues link
+                    onClick={handleMyLeaguesClick}
                   >
                     My Leagues
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="dropdown-item"
+                    onClick={handleUserScoutClick}
+                  >
+                    User Search
                   </a>
                 </li>
                 <li>
@@ -133,27 +171,47 @@ function NavBar() {
                 Players
               </a>
             </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link" onClick={handleDraftClick}>
-                Draft
-              </a>
-            </li>
           </ul>
         </div>
-        <form className="d-flex">
-          <input type="text" className="form-control nav-search my-auto" />
-          <button type="submit" className="btn btn-primary my-auto ms-2">
-            Search
-          </button>
-        </form>
-        <div className=" d-flex align-items-center">
-          <div className="text-center mx-2">
-            <img
-              src="/ProfilePic.png"
-              alt="Profile Icon"
-              className="navbar-icon"
-              onClick={handleUserClick}
-            />
+        <div className="d-flex align-items-center">
+          {/* Notifications Dropdown */}
+          <div className="dropdown mx-2">
+            <button
+              className="btn btn-secondary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Notifications
+            </button>
+            <ul className="dropdown-menu">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <li
+                    key={notification.id}
+                    className="dropdown-item"
+                    onClick={() => {
+                      if (notification.link) {
+                        window.open(notification.link, "_blank");
+                      }
+                      markAsRead(notification.id);
+                    }}
+                  >
+                    <span className="notification-text">{notification.message}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="dropdown-item">No notifications</li>
+              )}
+              <li>
+                <button
+                  className="dropdown-item text-primary"
+                  onClick={handleViewAllNotifications}
+                >
+                  View All
+                </button>
+              </li>
+            </ul>
           </div>
           <LogoutButton />
         </div>
@@ -161,6 +219,9 @@ function NavBar() {
     </nav>
   );
 }
+
+
+
 
 function NavBarPre() {
   const navigate = useNavigate();

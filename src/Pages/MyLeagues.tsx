@@ -306,11 +306,25 @@ export default function MyLeagues() {
                   : "Not Started"}
               </p>
 
+              {/* Conditional Buttons for League Owner */}
               {currentUsername === selectedLeague.owner.username && (
                 <>
-                  <button onClick={() => setSettingsVisible(!settingsVisible)}>
+                  {!selectedLeague.draftStarted && (
+                    <button
+                      className="btn btn-success mt-2"
+                      onClick={handleStartDraft}
+                    >
+                      Start Draft
+                    </button>
+                  )}
+
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={() => setSettingsVisible(!settingsVisible)}
+                  >
                     {settingsVisible ? "Close Settings" : "Open Settings"}
                   </button>
+
                   {settingsVisible && (
                     <div className="league-settings">
                       <h4>League Settings</h4>
@@ -396,6 +410,7 @@ export default function MyLeagues() {
                 </>
               )}
 
+              {/* Conditional Buttons for Non-Owners */}
               {currentUsername !== selectedLeague.owner.username && !selectedLeague.draftStarted && (
                 <button
                   className="btn btn-warning mt-2"
@@ -405,8 +420,14 @@ export default function MyLeagues() {
                 </button>
               )}
 
+              {/* Join Draft Button */}
               {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
-                <button onClick={handleJoinDraft}>Join Draft</button>
+                <button
+                  className="btn btn-primary mt-2"
+                  onClick={handleJoinDraft}
+                >
+                  Join Draft
+                </button>
               )}
             </div>
           ) : (

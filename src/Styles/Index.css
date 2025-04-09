@@ -500,3 +500,156 @@ button:hover {
     margin: 20px auto;
     max-width: 600px;
   }
+
+
+
+  /* General container styling */
+.inbox-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    /*background-color: #f8f9fa; /* Light gray background */
+    min-height: 100vh;
+  }
+  
+  /* Title styling */
+  .inbox-title {
+    background-color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .inbox-title h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  /* Notifications list styling */
+  .notifications-list {
+    background-color: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .notifications-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+    max-width: 600px; /* Limit the width */
+    word-wrap: break-word; /* Ensure text wraps within the box */
+  }
+  
+  .notification-item.unread {
+    background-color: #e9f7ef; /* Light green for unread notifications */
+  }
+  
+  .notification-item.read {
+    background-color: #f8f9fa; /* Light gray for read notifications */
+  }
+  
+  .notification-item:hover {
+    background-color: #d4edda; /* Slightly darker green on hover */
+  }
+  
+
+  
+  .dropdown-menu {
+    max-width: 400px; /* Set a maximum width for the dropdown */
+    word-wrap: break-word; /* Ensure text wraps within the box */
+    white-space: normal; /* Allow text to wrap to the next line */
+    overflow-wrap: break-word; /* Break long words if necessary */
+    max-height: 400px; /* Limit the height of the dropdown */
+    overflow-y: auto; /* Add a vertical scrollbar if content exceeds the height */
+    position: absolute; /* Ensure the dropdown stays within the viewport */
+    right: 0; /* Align the dropdown to the right edge of the button */
+    left: auto; /* Prevent it from expanding to the left */
+
+    z-index: 1050; /* Ensure it appears above other elements */
+  }
+  
+  /* Notification Text Styling */
+  .notification-text {
+    display: block; /* Ensure the text takes up the full width */
+    color: #333; /* Set a readable color */
+    cursor: pointer;
+    text-decoration: none; /* Remove hyperlink styling */
+    padding: 5px 10px; /* Add some padding for better spacing */
+    word-wrap: break-word; /* Ensure long words wrap */
+    overflow-wrap: break-word; /* Break long words if necessary */
+    white-space: normal; /* Allow text to wrap */
+  }
+  
+  .notification-text:hover {
+    text-decoration: underline; /* Add underline on hover for better UX */
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333;
+  }
+
+
+  .notification-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .mark-read-button,
+  .mark-unread-button,
+  .delete-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .mark-read-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .mark-unread-button {
+    background-color: #ffc107;
+  }
+  
+  .mark-unread-button:hover {
+    background-color: #e0a800;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333;
+  }
+
