@@ -1,5 +1,5 @@
 "user client";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
@@ -99,6 +99,7 @@ export default function LeagueUserDetails () {
 
   const dragPerson = useRef<number | null>(null);
   const dragOverPerson = useRef<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fullLeague = async () => {
@@ -333,6 +334,13 @@ export default function LeagueUserDetails () {
                     Managed by: {username} Rank: {team?.rank}
                   </h3>
                 </div>
+                <button
+                    className="UserDetailsTradeBtn"
+                    onClick={() => navigate(`/league/${league?.id}/trade`)}
+                >
+                  Trade Players
+                </button>
+
               </div>
       
               <div className="UserDetailsParent">
