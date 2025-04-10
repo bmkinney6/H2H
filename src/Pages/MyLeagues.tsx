@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
 import { checkLoginStatus } from "../Components/checkLoginStatus";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../Styles/MyLeagues.css";
+import LoaderLink from "../Components/LoaderLink";
 
 type User = {
   id: string;
@@ -28,7 +29,11 @@ type League = {
   draftComplete: boolean; // Added field to track if the draft is complete
 };
 
-export default function MyLeagues() {
+type MyLeaguesProps = {
+  setGlobalLoading: (value: boolean) => void;
+};
+
+export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -269,9 +274,9 @@ export default function MyLeagues() {
               className={`league-tab ${selectedLeague?.id === league.id ? "selected" : ""}`}
               onClick={() => setSelectedLeague(league)}
             >
-              <Link to={`/league/${league.id}`} className="text-blue-500">
+              <LoaderLink to={`/league/${league.id}`} setGlobalLoading={setGlobalLoading}>
                 {league.name}
-              </Link>
+              </LoaderLink>
             </li>
           ))}
         </ul>

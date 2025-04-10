@@ -1,12 +1,25 @@
-import React from "react";
-import "../Styles/Index.css";
+import React, { useEffect, useState } from "react";
+import "../Styles/Loader.css";
 
-const Loader: React.FC = () => {
+interface CurtainLoaderProps {
+  active: boolean;
+}
+
+const Loader: React.FC<CurtainLoaderProps> = ({ active }) => {
+  const [animationClass, setAnimationClass] = useState("");
+
+  useEffect(() => {
+    if (active) {
+      setAnimationClass("curtain-enter");
+    } else {
+      setAnimationClass("curtain-exit");
+    }
+  }, [active]);
+
   return (
-    <div className="loader-wrapper">
-      <div className="loader" />
+    <div className={`curtain-loader ${animationClass}`}>
+      <div className="curtain-spinner" />
     </div>
-
   );
 };
 
