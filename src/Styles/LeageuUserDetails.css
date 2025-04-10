@@ -9,9 +9,16 @@ background-color: rgb(2, 0, 20); }
     flex: 50%;
     max-width: auto;
     align-self: flex-end;
+    padding: 0rem 2rem;
     background-color: rgb(2, 0, 20);
     height: 790px;
   }
+.UserDetailsWeek {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 2rem;
+  text-align: center;
+}
 .UserDetailsList {
     flex: 50%;
     display: flex;
@@ -19,7 +26,7 @@ background-color: rgb(2, 0, 20); }
     justify-content: flex-start;
     max-width: auto;
     overflow: hidden;
-    background-color: rgb(2, 0, 20);
+    background-color: rgb(255, 255, 255);
   }
   .UserDetailsHH {
     background-color: rgb(2, 0, 20);
@@ -63,9 +70,9 @@ background-color: rgb(2, 0, 20); }
     height: 38px;
     background-color: rgb(2, 0, 20) !important;
   }
-  .UserDetailsPositionLabel {
-    display: inline-block;
-    width: 60px; /* adjust as needed */
+.UserDetailsPositionLabel {
+    width: 50px;
+    flex-shrink: 0;
     font-weight: 600;
     color: #ffffff;
   }
@@ -93,9 +100,16 @@ background-color: rgb(2, 0, 20); }
     align-items: right;
     background-color: rgb(2, 0, 20);
   }
-  
   .UserDetailsPoints,
   .UserDetailsPoints1 {
+    text-align: right;
+    min-width: 60px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #ffcc00;
+  }
+  .UserDetailsPointsH,
+  .UserDetailsPoints1H {
     text-align: right;
     min-width: 60px;
     font-weight: bold;

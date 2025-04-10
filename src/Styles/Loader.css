@@ -1,0 +1,41 @@
+/* Styles/CurtainLoader.css */
+
+.curtain-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(2, 0, 20);
+    transform: translateY(-100%);
+    transition: transform 0.8s ease;
+  }
+  
+  .curtain-enter {
+    transform: translateY(0%);
+  }
+  
+  .curtain-exit {
+    transform: translateY(-100%);
+  }
+  
+  .curtain-spinner {
+    width: 60px;
+    aspect-ratio: 1;
+    --g: conic-gradient(from -90deg at 10px 10px, #fff 90deg, #0000 0);
+    background: var(--g), var(--g), var(--g);
+    background-size: 50% 50%;
+    animation: spinLoader 1s infinite;
+  }
+  
+  @keyframes spinLoader {
+    0%   { background-position: 0 0, 10px 10px, 20px 20px }
+    50%  { background-position: 0 20px, 10px 10px, 20px 0 }
+    100% { background-position: 20px 20px, 10px 10px, 0 0 }
+  }
+  
