@@ -8,6 +8,7 @@ import { fetchTopTenPlayers } from "../Components/FetchPlayerInfo.tsx";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
 
+
 export default function Draft() {
   type Player = {
     id: number;
@@ -174,7 +175,6 @@ export default function Draft() {
     }
   };
 
-
   const handleSelectPlayer = (player: Player) => {
     setSelectedPlayer(player);
     const positions = [];
@@ -236,6 +236,7 @@ export default function Draft() {
             <h2>Loading turn information...</h2>
           )}
         </div>
+
 
         <div className="team-view d-block">
           <BenchPlayers />

@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { NavBar, NavBarPre } from "./Components/NavBar.tsx";
 import About from "./Pages/about.tsx";
 import { Home, HomePre } from "./Pages/home.tsx";
 import Login from "./Pages/login.tsx";
+import Loader from "./Components/Loader.tsx";
 import Register from "./Pages/register.tsx";
 import NotFound from "./Pages/notFound.tsx";
 import Inbox from "./Pages/Inbox";
@@ -17,6 +18,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
 import "./Styles/Index.css";
+import "./Styles/LeageuUserDetails.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
@@ -27,6 +29,7 @@ import LeagueScout from "./Pages/LeagueScout";
 import Draft from "./Pages/Draft.tsx";
 import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
 import MyLeagues from './Pages/MyLeagues';
+import LeagueUserDetails from "./Pages/LeagueUserDetails.tsx";
 
 function Logout() {
   localStorage.clear();
@@ -40,11 +43,14 @@ function RegisterAndLogout() {
 
 function App() {
   const { isLoggedIn } = useContext(AuthContext);
+  const [globalLoading, setGlobalLoading] = useState(false);
+
 
   return (
     <Router>
       <div>
         {isLoggedIn ? <NavBar /> : <NavBarPre />}
+        <Loader active={globalLoading} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={isLoggedIn ? <Home /> : <HomePre />} />
@@ -112,9 +118,10 @@ function App() {
           <Route path="*" element={<NotFound />} />
           <Route path="/leagues" element={<SearchLeague />} />
           <Route path="/leagues/:id" element={<LeagueDetail />} />
-          <Route path="/my-leagues" element={<MyLeagues />} />
           <Route path="/draft/:leagueId" element={<Draft />} />
           <Route path="/search-leagues" element={<LeagueScout />} />
+          <Route path="/my-leagues" element={<MyLeagues setGlobalLoading={setGlobalLoading}/>} />
+          <Route path="/league/:id" element={<ProtectedRoute><LeagueUserDetails setGlobalLoading={setGlobalLoading}/></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

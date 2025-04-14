@@ -4,6 +4,7 @@ import { ACCESS_TOKEN } from "../constants";
 import { checkLoginStatus } from "../Components/checkLoginStatus";
 import { useNavigate } from "react-router-dom";
 import "../Styles/MyLeagues.css";
+import LoaderLink from "../Components/LoaderLink";
 
 type User = {
   id: string;
@@ -28,7 +29,11 @@ type League = {
   draftComplete: boolean; // Added field to track if the draft is complete
 };
 
-export default function MyLeagues() {
+type MyLeaguesProps = {
+  setGlobalLoading: (value: boolean) => void;
+};
+
+export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -269,7 +274,9 @@ export default function MyLeagues() {
               className={`league-tab ${selectedLeague?.id === league.id ? "selected" : ""}`}
               onClick={() => setSelectedLeague(league)}
             >
-              {league.name}
+              <LoaderLink to={`/league/${league.id}`} setGlobalLoading={setGlobalLoading}>
+                {league.name}
+              </LoaderLink>
             </li>
           ))}
         </ul>
