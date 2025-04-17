@@ -3,10 +3,11 @@ import {useNavigate, useParams} from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
-import Loader from "../Components/Loader";
-import PlayerSearchList from "../Components/PlayerSearchList";
+import MatchupDisplay from "../Components/MatchupDisplay";
+//import PlayerSearchList from "../Components/PlayerSearchList";
 
-type User = {
+export type User = {
+  id: number;
   username: string;
 };
 
@@ -15,7 +16,7 @@ type Player = {
   player: string;
 };
 
-type PlayerFull = {
+export type PlayerFull = {
   id: number;
   firstName: string;
   lastName: string;
@@ -35,7 +36,7 @@ type PlayerFull = {
 };
 
 type League = {
-  id: string;
+  id: number;
   name: string;
   owner: User;
   draft_date: string;
@@ -47,7 +48,7 @@ type League = {
   users: Array<User>;
 };
 
-type Team = {
+export type Team = {
   id: number;
   author: User;
   league: League;
@@ -79,21 +80,23 @@ const teamKeys: (keyof Team)[] = ["QB", "RB1", "RB2", "WR1", "WR2", "TE", "FLX",
 const statusMap: Record<string, string> = {
   INJURY_STATUS_OUT: "OUT",
   INJURY_STATUS_IR: "IR",
-  INJURY_STATUS_DOUBTFUL: "Doubtful",
-  INJURY_STATUS_QUESTIONABLE: "Questionable",
-  INJURY_STATUS_PROBABLE: "Probable",
+  INJURY_STATUS_DOUBTFUL: "D",
+  INJURY_STATUS_QUESTIONABLE: "Q",
+  INJURY_STATUS_PROBABLE: "P",
 };
-export default function LeagueUserDetails () {
+export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoading: (v: boolean) => void }) {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [parentDataLoaded, setParentDataLoaded] = useState(false);  
+  const [matchupReady, setMatchupReady] = useState(false);
 
   const [league, setLeague] = useState<League | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [player, setPlayerFull] = useState<Array<PlayerFull>>([]);
   const [selected, setSelected] = useState<number[]>([]);
   const [username, setUsername] = useState<string | null>(null);
+  const [members, setMembers] = useState<Array<User>>([]);
+
   const [isEditing, setIsEditing] = useState(false);
   const [tempTitle, setTempTitle] = useState(team?.title || '');
 
@@ -107,10 +110,10 @@ export default function LeagueUserDetails () {
         if (leagueid) {
           const team = await fetchUserTeam(leagueid); // Call function after both values are available
           setTeam(team);
-          console.log("fsdfsd")
-          console.log(team)
           setLeague(team.league);
+          setMembers(team.league.users);
           setUsername(team.author.username);
+          
           const teamListObject = await fetchPlayerDetails(convertToPlayerArray(team));
           setPlayerFull(teamListObject);
           setParentDataLoaded(true);
@@ -119,12 +122,16 @@ export default function LeagueUserDetails () {
     fullLeague();
   }, [id]);
 
-  // to deactivate loading screen (content has loaded)  
   useEffect(() => {
-    if (parentDataLoaded) {
-      setLoading(false);
+    setGlobalLoading(true);
+  }, []);
+  
+  useEffect(() => {
+    if (parentDataLoaded && matchupReady) {
+      setGlobalLoading(false);
     }
-  }, [parentDataLoaded]);
+  }, [parentDataLoaded, matchupReady]);
+  
 
   const fetchPlayerDetails = async (teamList: Array<Player>) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -138,7 +145,7 @@ export default function LeagueUserDetails () {
       const response = await axios.get(`${API_URL}/myPlayers?players=${teamListQuery}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Fetched USER:", response.data);
+      console.log("Fetched hjahjfwehfihehfi:", response.data);
       return response.data;
     } catch (err) {
       console.error("Error fetching USER:", err);
@@ -290,20 +297,22 @@ export default function LeagueUserDetails () {
       handleSave();
     }
   };
+
+  if (!league || !team || player.length === 0) {
+    return null; // hides page until data is ready
+  }
   
   return (
     <>
       <div className="UserDetailsALL">
         <div className = "UserDetailsSearch">
-          <PlayerSearchList
-          />
+          {league && team && player.length > 0 && 
+          <MatchupDisplay players = {player} team = {team} members = {members} leagueID={league.id} onReady={() => setMatchupReady(true)}/>}
+        </div>
+        <div className="UserDetailsWeek">
+          WEEK 12
         </div>
         <div className="UserDetailsList">
-    
-        {/* Show loader until loading is false */}
-          {loading ? (
-            <Loader />
-          ) : (
             <>
               <div className="UserDetailsHH">
                 {isEditing ? (
@@ -349,8 +358,8 @@ export default function LeagueUserDetails () {
                     <span className="UserDetailsPositionLabel"></span>        {/* 1 - position label */}
                     <span className="UserDetailsPlayerName"></span>           {/* 2 - name */}
                     <span className="UserDetailsPlayerStats">{error && <p className="UserDetailsE">{error}</p>}</span>          {/* 3 - stats */}
-                    <span className="UserDetailsPoints">Total</span>          {/* 4 - total points */}
-                    <span className="UserDetailsPoints1">Proj</span>           {/* 5 - projected points */}
+                    <span className="UserDetailsPointsH">Total</span>          {/* 4 - total points */}
+                    <span className="UserDetailsPoints1H">Proj</span>           {/* 5 - projected points */}
                     <span className="UserDetailsDrag"></span>                 {/* 6 - drag handle */}
                   </div>
                   {player.map((player, index) => (
@@ -377,20 +386,20 @@ export default function LeagueUserDetails () {
                           : ""}
                       </span>
                       <span className="UserDetailsPlayerStats">
-                        {player.status === "Active" && player.rush_tds != null && player.position === "Quarterback" && (
+                        {["Active", "INJURY_STATUS_QUESTIONABLE", "INJURY_STATUS_DOUBTFUL", "INJURY_STATUS_PROBABLE"].includes(player.status) && player.rush_tds != null && player.position === "Quarterback" && (
                           <>Passing Yards: {player.pass_yards} | Passing TDs: {player.pass_tds}</>
                         )}
 
-                        {player.status === "Active" && player.rush_tds != null && player.position === "Running Back" && (
+                        {["Active", "INJURY_STATUS_QUESTIONABLE", "INJURY_STATUS_DOUBTFUL", "INJURY_STATUS_PROBABLE"].includes(player.status) && player.rush_tds != null && player.position === "Running Back" && (
                           <>Rushing Yards: {player.rush_yards} | Rushing TDs: {player.rush_tds}</>
                         )}
 
-                        {player.status === "Active" && player.rush_tds != null &&
+                        {["Active", "INJURY_STATUS_QUESTIONABLE", "INJURY_STATUS_DOUBTFUL", "INJURY_STATUS_PROBABLE"].includes(player.status) && player.rush_tds != null &&
                           (player.position === "Wide Receiver" || player.position === "Tight End") && (
                           <>Receiving Yards: {player.receiving_yards} | Receiving TDs: {player.receiving_tds}</>
                         )}
 
-                        {player.status === "Active" && player.rush_tds != null && player.position === "Place kicker" && (
+                        {["Active", "INJURY_STATUS_QUESTIONABLE", "INJURY_STATUS_DOUBTFUL", "INJURY_STATUS_PROBABLE"].includes(player.status) && player.rush_tds != null && player.position === "Place kicker" && (
                           <>Extra Points: {player.extra_points_made} | Field Goals: {player.fg_made}</>
                         )}
                       </span>
@@ -411,7 +420,6 @@ export default function LeagueUserDetails () {
                 </div>
               </div>
             </>
-          )}
         </div>
       </div>
     </>
