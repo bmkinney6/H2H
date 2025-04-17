@@ -30,6 +30,7 @@ import Draft from "./Pages/Draft.tsx";
 import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessary
 import MyLeagues from './Pages/MyLeagues';
 import LeagueUserDetails from "./Pages/LeagueUserDetails.tsx";
+import Trade from "./Pages/Trade.tsx";
 
 function Logout() {
   localStorage.clear();
@@ -120,6 +121,15 @@ function App() {
           <Route path="/leagues/:id" element={<LeagueDetail />} />
           <Route path="/draft/:leagueId" element={<Draft />} />
           <Route path="/search-leagues" element={<LeagueScout />} />
+          <Route path="/league/:id" element={<LeagueUserDetails />} />
+            <Route
+                path="/league/:id/trade"
+                element={
+                    <ProtectedRoute>
+                        <Trade />
+                    </ProtectedRoute>
+                }
+            />
           <Route path="/my-leagues" element={<MyLeagues setGlobalLoading={setGlobalLoading}/>} />
           <Route path="/league/:id" element={<ProtectedRoute><LeagueUserDetails setGlobalLoading={setGlobalLoading}/></ProtectedRoute>} />
         </Routes>
