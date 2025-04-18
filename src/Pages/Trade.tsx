@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { ACCESS_TOKEN } from "../constants.tsx";
+import { jwtDecode } from "jwt-decode";
 
 interface Team {
     id: number;
@@ -42,6 +43,14 @@ interface LeagueData {
 const token = localStorage.getItem(ACCESS_TOKEN); // Retrieve the access token from local storage
 const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
+
+let userId: number | null = null;
+
+if (token) {
+  const decodedToken: { user_id: number } = jwtDecode(token);
+  userId = decodedToken.user_id;
+}
+
 const Trade: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // Extract leagueId from the route
     const [data, setData] = useState<LeagueData | null>(null); // Use LeagueData type
@@ -49,7 +58,9 @@ const Trade: React.FC = () => {
     const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null); // State for selected team
     const [userTeam, setUserTeam] = useState<Team | null>(null); // State for the user's team
 
-    const userId = 8; // Replace this with the logged-in user's ID (retrieved from context, auth, etc.)
+    //const userId = response.data.teams.find(
+      //  (team: Team) => team.author.id === userId
+      //);; // Replace this with the logged-in user's ID (retrieved from context, auth, etc.)
 
     useEffect(() => {
         console.log("League ID:", id); // Debug log
