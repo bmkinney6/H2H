@@ -103,17 +103,24 @@ export default function LeagueUserDetails () {
 
   useEffect(() => {
     const fullLeague = async () => {
-      const leagueid = Number(id);
-      if (leagueid) {
-        const team = await fetchUserTeam(leagueid); // Call function after both values are available
+      try {
+        const leagueid = Number(id);
+        if (!leagueid) throw new Error("Invalid league ID.");
+  
+        const team = await fetchUserTeam(leagueid);
+        if (!team) throw new Error("Failed to fetch user team.");
+  
         setTeam(team);
-        console.log("fsdfsd")
-        console.log(team)
         setLeague(team.league);
         setUsername(team.author.username);
+  
         const teamListObject = await fetchPlayerDetails(convertToPlayerArray(team));
         setPlayerFull(teamListObject);
-        setParentDataLoaded(true);
+      } catch (err) {
+        console.error("Error in fullLeague:", err);
+        setError("Failed to load league details. Please try again.");
+      } finally {
+        setParentDataLoaded(true); // Ensure loading stops even if there's an error
       }
     };
     fullLeague();
@@ -121,10 +128,10 @@ export default function LeagueUserDetails () {
 
   // to deactivate loading screen (content has loaded)
   useEffect(() => {
-    if (parentDataLoaded) {
+    if (parentDataLoaded || error) {
       setLoading(false);
     }
-  }, [parentDataLoaded]);
+  }, [parentDataLoaded, error]);
 
   const fetchPlayerDetails = async (teamList: Array<Player>) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -138,13 +145,38 @@ export default function LeagueUserDetails () {
       const response = await axios.get(`${API_URL}/myPlayers?players=${teamListQuery}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Fetched USER:", response.data);
-      return response.data;
+
+      const playersWithDefaults = response.data.map((player: PlayerFull) => ({
+        ...player,
+        proj_fantasy: player.proj_fantasy ?? 0,
+        total_fantasy_points: player.total_fantasy_points ?? 0,
+        pass_yards: player.pass_yards ?? 0,
+        pass_tds: player.pass_tds ?? 0,
+        receiving_yards: player.receiving_yards ?? 0,
+        receiving_tds: player.receiving_tds ?? 0,
+        rush_yards: player.rush_yards ?? 0,
+        rush_tds: player.rush_tds ?? 0,
+        fg_made: player.fg_made ?? 0,
+        extra_points_made: player.extra_points_made ?? 0,
+      }));
+  
+      console.log("Fetched Players with Defaults:", playersWithDefaults);
+      return playersWithDefaults;
     } catch (err) {
       console.error("Error fetching USER:", err);
-      return;
+      return []; // Return an empty array if there's an error
     }
+      
+ //     console.log("Fetched USER:", response.data);
+//      return response.data;
+ //   } catch (err) {
+  //    console.error("Error fetching USER:", err);
+  //    return;
+  //  }
   };
+
+
+  
 
   const fetchUserTeam = async(leagueid: number) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -376,23 +408,23 @@ export default function LeagueUserDetails () {
                                   ? ` (${statusMap[player.status] || player.status})`
                                   : ""}
                       </span>
-                            <span className="UserDetailsPlayerStats">
-                        {player.status === "Active" && player.rush_tds != null && player.position === "Quarterback" && (
-                            <>Passing Yards: {player.pass_yards} | Passing TDs: {player.pass_tds}</>
+                      <span className="UserDetailsPlayerStats">
+                        {player.status === "Active" && player.position === "Quarterback" && (
+                          <>Passing Yards: {player.pass_yards || 0} | Passing TDs: {player.pass_tds || 0}</>
                         )}
 
-                              {player.status === "Active" && player.rush_tds != null && player.position === "Running Back" && (
-                                  <>Rushing Yards: {player.rush_yards} | Rushing TDs: {player.rush_tds}</>
-                              )}
+                        {player.status === "Active" && player.position === "Running Back" && (
+                          <>Rushing Yards: {player.rush_yards || 0} | Rushing TDs: {player.rush_tds || 0}</>
+                        )}
 
-                              {player.status === "Active" && player.rush_tds != null &&
-                                  (player.position === "Wide Receiver" || player.position === "Tight End") && (
-                                      <>Receiving Yards: {player.receiving_yards} | Receiving TDs: {player.receiving_tds}</>
-                                  )}
+                        {player.status === "Active" &&
+                          (player.position === "Wide Receiver" || player.position === "Tight End") && (
+                            <>Receiving Yards: {player.receiving_yards || 0} | Receiving TDs: {player.receiving_tds || 0}</>
+                          )}
 
-                              {player.status === "Active" && player.rush_tds != null && player.position === "Place kicker" && (
-                                  <>Extra Points: {player.extra_points_made} | Field Goals: {player.fg_made}</>
-                              )}
+                        {player.status === "Active" && player.position === "Place kicker" && (
+                          <>Extra Points: {player.extra_points_made || 0} | Field Goals: {player.fg_made || 0}</>
+                        )}
                       </span>
                             <div className="UserDetailsPointsGroup">
                               <span className="UserDetailsPoints">{player.total_fantasy_points}</span>

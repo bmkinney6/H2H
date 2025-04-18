@@ -15,10 +15,11 @@ type Notification = {
 
 function NavBar() {
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to detect page changes
+  const location = useLocation(); // Track page changes
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isFeaturesHovered, setIsFeaturesHovered] = useState(false); // Track hover state
 
-  // Function to fetch notifications
+  // Fetch notifications
   const fetchNotifications = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
@@ -26,199 +27,175 @@ function NavBar() {
         const response = await axios.get("http://localhost:8000/api/notifications/?limit=10", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Fetched notifications:", response.data); // Debugging
-        setNotifications(response.data.filter((n) => !n.is_read)); // Only show unread notifications
+        setNotifications(response.data.filter((n) => !n.is_read));
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     }
   };
 
-  // Fetch notifications on initial load and whenever the URL changes
+  // Refresh notifications when the page changes
   useEffect(() => {
     fetchNotifications();
-  }, [location]); // Trigger fetchNotifications whenever the URL changes
+  }, [location]);
 
-  const handleHomeClick = () => {
-    navigate("/home");
-  };
-
-  const handlePlayerClick = () => {
-    navigate("/scout");
-  };
-
-  const handleCreateLeagueClick = () => {
-    navigate("/create-league");
-  };
-
-  const handleSearchLeaguesClick = () => {
-    navigate("/search-leagues");
-  };
-
-  const handleMyLeaguesClick = () => {
-    navigate("/my-leagues");
-  };
-
-  const handleUserScoutClick = () => {
-    navigate("/user-search");
-  };
-
-  const handleViewAllNotifications = () => {
-    navigate("/inbox");
-  };
-
-  const markAsRead = async (id: number) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    await axios.post(`http://localhost:8000/api/notifications/${id}/read/`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setNotifications((prev) => prev.filter((n) => n.id !== id)); // Remove from dropdown
-  };
+  const handleCreateLeagueClick = () => navigate("/create-league");
+  const handleSearchLeaguesClick = () => navigate("/search-leagues");
+  const handleMyLeaguesClick = () => navigate("/my-leagues");
+  const handleUserScoutClick = () => navigate("/user-search");
+  const handleViewAllNotifications = () => navigate("/inbox");
 
   return (
-    <nav className="navbar fixed-top navbar-expand-sm navbar-dark">
-      <div className="container-fluid">
-        <a href="#" className="navbar-brand mb-0 h1">
-          <img
-            className="d-inline-block align-top"
-            src="/H2HLogo.jpg"
-            width={30}
-            height={30}
-            alt="Logo"
-          />
-          Head To Head
-        </a>
-        <button
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          className="navbar-toggler"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item active">
-              <a href="#" className="nav-link active" onClick={handleHomeClick}>
-                Home
-              </a>
-            </li>
-            <li className="nav-item dropdown">
-              <a
-                href="#"
-                className="nav-link dropdown-toggle"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+    <>
+      {/* Shadow overlay */}
+      {isFeaturesHovered && (
+        <div
+          className="page-overlay"
+          onMouseLeave={() => setIsFeaturesHovered(false)}
+        ></div>
+      )}
+
+      <nav
+        className={`navbar fixed-top navbar-expand-sm navbar-dark ${
+          isFeaturesHovered ? "navbar-extended" : ""
+        }`}
+        onMouseLeave={() => setIsFeaturesHovered(false)} // Reset hover state when leaving the navbar
+      >
+        <div className="container-fluid">
+          <a href="#" className="navbar-brand mb-0 h1">
+            <img
+              className="d-inline-block align-top"
+              src="/H2HLogo.jpg"
+              width={30}
+              height={30}
+              alt="Logo"
+            />
+            Head To Head
+          </a>
+          <button
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            className="navbar-toggler"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <a href="#" className="nav-link" onClick={() => navigate("/home")}>
+                  Home
+                </a>
+              </li>
+              <li
+                className="nav-item"
+                onMouseEnter={() => setIsFeaturesHovered(true)} // Extend navbar when hovering "Features"
               >
-                Features
-              </a>
-              <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li>
-                  <a href="#" className="dropdown-item">
-                    Betting
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="dropdown-item"
-                    onClick={handleCreateLeagueClick}
-                  >
-                    Create League
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="dropdown-item"
-                    onClick={handleSearchLeaguesClick}
-                  >
-                    Search Leagues
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="dropdown-item"
-                    onClick={handleMyLeaguesClick}
-                  >
-                    My Leagues
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="dropdown-item"
-                    onClick={handleUserScoutClick}
-                  >
-                    User Search
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="dropdown-item">
-                    Room for more features!
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link" onClick={handlePlayerClick}>
-                Players
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className="d-flex align-items-center">
-          {/* Notifications Dropdown */}
-          <div className="dropdown mx-2">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Notifications
-            </button>
-            <ul className="dropdown-menu">
-              {notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <li
-                    key={notification.id}
-                    className="dropdown-item"
-                    onClick={() => {
-                      if (notification.link) {
-                        window.open(notification.link, "_blank");
-                      }
-                      markAsRead(notification.id);
-                    }}
-                  >
-                    <span className="notification-text">{notification.message}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="dropdown-item">No notifications</li>
-              )}
-              <li>
-                <button
-                  className="dropdown-item text-primary"
-                  onClick={handleViewAllNotifications}
-                >
-                  View All
-                </button>
+                <a href="#" className="nav-link">
+                  Features
+                </a>
+              </li>
+              <li className="nav-item">
+                <a href="#" className="nav-link" onClick={() => navigate("/scout")}>
+                  Players
+                </a>
               </li>
             </ul>
           </div>
-          <LogoutButton />
+          <div className="d-flex align-items-center">
+            {/* Notifications Dropdown */}
+            <div className="dropdown mx-2">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Notifications
+              </button>
+              <ul className="dropdown-menu">
+                {notifications.length > 0 ? (
+                  notifications.map((notification) => (
+                    <li
+                      key={notification.id}
+                      className="dropdown-item"
+                      onClick={() => {
+                        if (notification.link) {
+                          window.open(notification.link, "_blank");
+                        }
+                      }}
+                    >
+                      <span className="notification-text">{notification.message}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="dropdown-item">No notifications</li>
+                )}
+                <li>
+                  <button
+                    className="dropdown-item text-primary"
+                    onClick={handleViewAllNotifications}
+                  >
+                    View All
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <LogoutButton />
+          </div>
         </div>
-      </div>
-    </nav>
+        {isFeaturesHovered && (
+          <div className="features-extended-bar">
+            <ul className="features-extended-links">
+              <li>
+                <a
+                  href="#"
+                  className="extended-link"
+                  onClick={handleCreateLeagueClick}
+                >
+                  Create League
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="extended-link"
+                  onClick={handleSearchLeaguesClick}
+                >
+                  Search Leagues
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="extended-link"
+                  onClick={handleMyLeaguesClick}
+                >
+                  My Leagues
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="extended-link"
+                  onClick={handleUserScoutClick}
+                >
+                  User Search
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
+      </nav>
+    </>
   );
 }
+
+
+
 
 
 
