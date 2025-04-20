@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { ACCESS_TOKEN } from "../constants.tsx";
 import { jwtDecode } from "jwt-decode";
+import "../Styles/Trade.css";
 
 interface Team {
     id: number;
@@ -40,59 +41,43 @@ interface LeagueData {
     teams: Team[];
 }
 
-const token = localStorage.getItem(ACCESS_TOKEN); // Retrieve the access token from local storage
+const token = localStorage.getItem(ACCESS_TOKEN);
 const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
-
 
 let userId: number | null = null;
 
 if (token) {
-  const decodedToken: { user_id: number } = jwtDecode(token);
-  userId = decodedToken.user_id;
+    const decodedToken: { user_id: number } = jwtDecode(token);
+    userId = decodedToken.user_id;
 }
 
 const Trade: React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Extract leagueId from the route
-    const [data, setData] = useState<LeagueData | null>(null); // Use LeagueData type
+    const { id } = useParams<{ id: string }>();
+    const [data, setData] = useState<LeagueData | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null); // State for selected team
-    const [userTeam, setUserTeam] = useState<Team | null>(null); // State for the user's team
-
-    //const userId = response.data.teams.find(
-      //  (team: Team) => team.author.id === userId
-      //);; // Replace this with the logged-in user's ID (retrieved from context, auth, etc.)
+    const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+    const [userTeam, setUserTeam] = useState<Team | null>(null);
+    const [selectedUserPlayers, setSelectedUserPlayers] = useState<Record<string, string[]>>({});
+    const [selectedOpponentPlayers, setSelectedOpponentPlayers] = useState<Record<string, string[]>>({});
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("League ID:", id); // Debug log
-        console.log("Token:", token); // Debug log
-
-        if (!id || !token) {
-            console.warn("Missing leagueId or token. Skipping API call.");
-            return;
-        }
+        if (!id || !token) return;
 
         const fetchTradeInfo = async () => {
             try {
-                console.log("Making API request...");
                 const response = await axios.get(
                     `${API_URL}/api/leagues/${id}/trade/`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                console.log("API Response:", response.data);
-
-                // Find the user's team
                 const userTeam = response.data.teams.find(
                     (team: Team) => team.author.id === userId
                 );
-
                 setUserTeam(userTeam);
                 setData(response.data);
             } catch (err: any) {
-                console.error("Error during API request:", err);
                 if (err.response) {
                     setError(`Error: ${err.response.status} - ${err.response.data.error}`);
                 } else if (err.request) {
@@ -104,98 +89,187 @@ const Trade: React.FC = () => {
         };
 
         fetchTradeInfo();
-    }, [id, token]); // Re-fetch data if leagueId or accessToken changes
+    }, [id, token]);
 
-    // Handle dropdown change
-    const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedTeamId(Number(e.target.value)); // Convert the value to a number
+    const handlePlayerSelection = (player: string, position: string, isUserTeam: boolean) => {
+        const updateSelection = (prev: Record<string, string[]>) => {
+            const newSelection = { ...prev };
+
+            if (!newSelection[position]) {
+                newSelection[position] = [];
+            }
+
+            // If the player is already selected, remove them; otherwise, add them
+            if (newSelection[position].includes(player)) {
+                newSelection[position] = newSelection[position].filter((p) => p !== player);
+            } else {
+                newSelection[position].push(player);
+            }
+
+            // If the position array becomes empty, delete the key to keep the state clean
+            if (newSelection[position].length === 0) {
+                delete newSelection[position];
+            }
+
+            return newSelection;
+        };
+
+        if (isUserTeam) {
+            setSelectedUserPlayers((prev) => updateSelection(prev));
+        } else {
+            setSelectedOpponentPlayers((prev) => updateSelection(prev));
+        }
+
+        setValidationError(null);
     };
 
-    // Filter teams to exclude the user's team
-    const otherTeams = data?.teams.filter((team: Team) => team.author.id !== userId);
+    const validateTrade = (): boolean => {
+        const userPositions = Object.keys(selectedUserPlayers);
+        const opponentPositions = Object.keys(selectedOpponentPlayers);
 
-    // Find the selected team
+        if (userPositions.length !== opponentPositions.length) {
+            setValidationError('The number of positions selected must match on both sides.');
+            return false;
+        }
+
+        for (const position of userPositions) {
+            if (
+                !opponentPositions.includes(position) ||
+                selectedUserPlayers[position].length !== selectedOpponentPlayers[position]?.length
+            ) {
+                setValidationError(`Mismatch in selected players for position: ${position}.`);
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    const handleTrade = async () => {
+        if (!validateTrade()) {
+            return;
+        }
+        const payload = {
+            userPlayers: selectedUserPlayers,
+            opponentPlayers: selectedOpponentPlayers,
+            opponentTeamId: selectedTeamId,
+        };
+
+        console.log("Request Payload:", payload); // Log the payload being sent
+        console.log("Authorization Header:", `Bearer ${token}`); // Log the token being sent
+        try {
+            console.log(token);
+            await axios.post(
+                `${API_URL}/api/leagues/${id}/trade/execute/`,
+                {
+                    userPlayers: selectedUserPlayers,
+                    opponentPlayers: selectedOpponentPlayers,
+                    opponentTeamId: selectedTeamId,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            alert('Trade completed successfully!');
+            setSelectedUserPlayers({});
+            setSelectedOpponentPlayers({});
+        } catch (err: any) {
+            alert('Failed to complete the trade. Please try again.');
+        }
+    };
+
+    const otherTeams = data?.teams.filter((team: Team) => team.author.id !== userId);
     const selectedTeam = otherTeams?.find((team: Team) => team.id === selectedTeamId);
 
-    return (
-        <div className="container text-white">
-            <h1>Trade Page</h1>
+    const renderTeamPlayers = (team: Team, isUserTeam: boolean) => {
+        const players = [
+            'QB', 'RB1', 'RB2', 'WR1', 'WR2',
+            'TE', 'FLX', 'K', 'DEF',
+            'BN1', 'BN2', 'BN3', 'BN4', 'BN5', 'BN6',
+            'IR1', 'IR2',
+        ];
+        const selectedPlayers = isUserTeam ? selectedUserPlayers : selectedOpponentPlayers;
 
+        return (
+            <ul>
+                {players.map((position) => (
+                    <li key={position}>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={selectedPlayers[position]?.includes(team[position]) || false}
+                                onChange={() =>
+                                    handlePlayerSelection(team[position], position, isUserTeam)
+                                }
+                                disabled={!team[position]} // Disable if the position is empty
+                            />
+                            {position}: {team[position]}
+                        </label>
+                    </li>
+                ))}
+            </ul>
+        );
+    };
+
+    return (
+        <div className="container-fluid text-white full-page-minus-navbar">
             {error && <div className="alert alert-danger">{error}</div>}
 
             {data ? (
-                <div className="row">
-                    {/* User's Team Section */}
-                    <div className="col-md-6">
-                        <h2>My Team: {userTeam?.title} (Rank: {userTeam?.rank})</h2>
-                        {userTeam ? (
-                            <ul>
-                                <li>QB: {userTeam.QB}</li>
-                                <li>RB1: {userTeam.RB1}</li>
-                                <li>RB2: {userTeam.RB2}</li>
-                                <li>WR1: {userTeam.WR1}</li>
-                                <li>WR2: {userTeam.WR2}</li>
-                                <li>TE: {userTeam.TE}</li>
-                                <li>FLX: {userTeam.FLX}</li>
-                                <li>K: {userTeam.K}</li>
-                                <li>DEF: {userTeam.DEF}</li>
-                                <li>BN1: {userTeam.BN1}</li>
-                                <li>BN2: {userTeam.BN2}</li>
-                                <li>BN3: {userTeam.BN3}</li>
-                                <li>BN4: {userTeam.BN4}</li>
-                                <li>BN5: {userTeam.BN5}</li>
-                                <li>BN6: {userTeam.BN6}</li>
-                                <li>IR1: {userTeam.IR1}</li>
-                                <li>IR2: {userTeam.IR2}</li>
-                            </ul>
-                        ) : (
-                            <p>No team found for the user.</p>
-                        )}
+                <>
+                    <div className="w-100 text-center position-absolute top-0 mt-4">
+                        <h1>Make a trade within {data.league}!</h1>
                     </div>
 
-                    {/* Dropdown and Selected Team Section */}
-                    <div className="col-md-6">
-                        <h2>League: {data.league}</h2>
-                        <h3>Select a Team:</h3>
-                        <select
-                            className="form-select"
-                            onChange={handleTeamChange}
-                            value={selectedTeamId || ''}
-                        >
-                            <option value="" disabled>Select a team</option>
-                            {otherTeams?.map((team: Team) => (
-                                <option key={team.id} value={team.id}>
-                                    {team.title} (Rank: {team.rank})
-                                </option>
-                            ))}
-                        </select>
-                        {/* Display selected team details */}
-                        {selectedTeam && (
-                            <div className="mt-4">
-                                <h4>Team: {selectedTeam.title} (Rank: {selectedTeam.rank})</h4>
-                                <ul>
-                                    <li>QB: {selectedTeam.QB}</li>
-                                    <li>RB1: {selectedTeam.RB1}</li>
-                                    <li>RB2: {selectedTeam.RB2}</li>
-                                    <li>WR1: {selectedTeam.WR1}</li>
-                                    <li>WR2: {selectedTeam.WR2}</li>
-                                    <li>TE: {selectedTeam.TE}</li>
-                                    <li>FLX: {selectedTeam.FLX}</li>
-                                    <li>K: {selectedTeam.K}</li>
-                                    <li>DEF: {selectedTeam.DEF}</li>
-                                    <li>BN1: {selectedTeam.BN1}</li>
-                                    <li>BN2: {selectedTeam.BN2}</li>
-                                    <li>BN3: {selectedTeam.BN3}</li>
-                                    <li>BN4: {selectedTeam.BN4}</li>
-                                    <li>BN5: {selectedTeam.BN5}</li>
-                                    <li>BN6: {selectedTeam.BN6}</li>
-                                    <li>IR1: {selectedTeam.IR1}</li>
-                                    <li>IR2: {selectedTeam.IR2}</li>
-                                </ul>
+                    <div className="trade-layout">
+                        <div className="userTeam">
+                            <h2>My Team: {userTeam?.title} (Rank: {userTeam?.rank})</h2>
+                            {userTeam ? renderTeamPlayers(userTeam, true) : <p>No team found.</p>}
+                        </div>
+
+                        <div className="divider trade-divider d-flex flex-column align-items-center">
+                            <img className="trade-arrows" src="/tradeArrows.png" alt="Trade Arrows" />
+
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleTrade}
+                                disabled={
+                                    Object.keys(selectedUserPlayers).length === 0 ||
+                                    Object.keys(selectedOpponentPlayers).length === 0
+                                }
+                            >
+                                Execute Trade
+                            </button>
+
+                            <div className="validation-message">
+                                {validationError && <span>{validationError}</span>}
                             </div>
-                        )}
+                        </div>
+
+                        <div>
+                            <h2>Select a Team:</h2>
+                            <select
+                                className="form-select w-auto"
+                                onChange={(e) => setSelectedTeamId(Number(e.target.value))}
+                                value={selectedTeamId || ''}
+                            >
+                                <option value="" disabled>Select a team</option>
+                                {otherTeams?.map((team: Team) => (
+                                    <option key={team.id} value={team.id}>
+                                        {team.title} (Rank: {team.rank})
+                                    </option>
+                                ))}
+                            </select>
+
+                            {selectedTeam && (
+                                <div className="mt-2">
+                                    <h2>Team: {selectedTeam.title} (Rank: {selectedTeam.rank})</h2>
+                                    {renderTeamPlayers(selectedTeam, false)}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                </>
             ) : (
                 !error && <div>Loading...</div>
             )}
