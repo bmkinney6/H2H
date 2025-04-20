@@ -1,7 +1,6 @@
 
 
 import Carousel from "../Components/Carousel.tsx";
-import TeamCard from "../Components/TeamCard.tsx";
 import "../Styles/Index.css";
 import { useNavigate } from "react-router-dom";
 

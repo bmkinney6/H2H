@@ -334,7 +334,7 @@ export default function LeagueUserDetails () {
 
             {/* Show loader until loading is false */}
             {loading ? (
-                <Loader active={false} />
+                <Loader active/>
             ) : (
                 <>
                   <div className="UserDetailsHH">

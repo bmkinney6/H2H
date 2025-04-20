@@ -30,11 +30,10 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
                     return;
                 }
             }
-
             const response = await axios.post(
                 "http://localhost:8000/api/leagues/",
                 {
-                    name,
+                    name: name,
                     draft_date: draftDate,
                     time_per_pick: timePerPick,
                     positional_betting: positionalBetting,
