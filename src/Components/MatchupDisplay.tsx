@@ -64,149 +64,153 @@ const positionSlots = [
 const abPositions = ["BN1", "BN2", "BN3", "BN4", "BN5", "BN6", "IR1", "IR2"];
 
 export default function MatchupDisplay({ players, team, members, leagueID, onReady }: MatchupParm) {
-    const [matchupList, setMatchupList] = useState<Array<Matchup>>([]);
-    const [teamList, setTeamList] = useState<Array<FantasyTeam>>([]);
-    const [weekStarted, setWeekStarted] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const [matchupList, setMatchupList] = useState<Array<Matchup>>([]);
+  const [teamList, setTeamList] = useState<Array<FantasyTeam>>([]);
+  const [weekStarted, setWeekStarted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-
-    useEffect(() => {
-        const matchupCreation = async () =>{
-          const memberIDs = members.map(member => member.id);
-          const matchups = await fetchMatchups(memberIDs);
-
-          const index = matchups.findIndex(
-            (matchup: Matchup) =>
-              matchup.team1.username === team.author.username ||
-              matchup.team2.username === team.author.username
-          ); 
-          if (index > 0) {
-            const temp = matchups[0];
-            matchups[0] = matchups[index];
-            matchups[index] = temp;
-          }
-
-          setMatchupList(matchups);
-        };
-        matchupCreation();  
-    },[]);
-    useEffect(() => {
-      const getTeams = async () => {
-        if(!team || players.length === 0 || members.length === 0) return;
+  useEffect(() => {
+      const matchupCreation = async () =>{
         const memberIDs = members.map(member => member.id);
-        const allTeams = await fetchAllTeams(memberIDs, leagueID);
-        setTeamList(allTeams);
-        await addOwn(allTeams, players, team);
-        onReady();
-      };
-      getTeams();
-    },[players, team]);
+        const matchups = await fetchMatchups(memberIDs);
 
-    const fetchMatchups = async(members: Array<number>) => {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        if (!token) {
-          throw new Error("User is not authenticated.");
+        const index = matchups.findIndex(
+          (matchup: Matchup) =>
+            matchup.team1.username === team.author.username ||
+            matchup.team2.username === team.author.username
+        ); 
+        if (index > 0) {
+          const temp = matchups[0];
+          matchups[0] = matchups[index];
+          matchups[index] = temp;
         }
-        try {
-          const response = await axios.get(`${API_URL}/members`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: {members: members.join(",")}
-          });
-          console.log("Fetched Matchups:", response.data);
-          return response.data;
-        } catch (err) {
-          console.error("Error fetching Matchups:", err);
-          return;
-        } 
-      };
-    
-      const addOwn = async(allTeams: FantasyTeam[], players: PlayerFull[], team: Team) => {
-        if (team && players.length === positionSlots.length) {
-            const formattedSelfTeam: any = {
-              id: team.id,
-              title: team.title,
-              rank: team.rank,
-              author: team.author.username
-            };
-          
-            positionSlots.forEach((slot, i) => {
-              const player = players[i];
-              if (player.id == null) {
-                formattedSelfTeam[slot] = null;
-              } else {
-                formattedSelfTeam[slot] = {
-                  id: player.id.toString(),
-                  fullName: player.firstName + " " + player.lastName,
-                  proj_fantasy: player.proj_fantasy,
-                  total_fantasy_points: player.total_fantasy_points
-                };
-              }
-            });
-          
-            const finalTeamList = [...allTeams, formattedSelfTeam];
-            setTeamList(finalTeamList);
-          }          
-    };
-    
-    const fetchAllTeams = async(members: Array<number>, leagueID: number) => {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        if (!token) {
-            throw new Error("User is not authenticated.");
-        }
-        try {
-            const response = await axios.get(`${API_URL}/allTeams`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: {members: members.join(","),
-                leagueID: leagueID
-            }
-            });
-            console.log("Fetched Teams:", response.data);
-            return response.data;
-        } catch (err) {
-            console.error("Error fetching Teams:", err);
-            return;
-        } 
-    };
 
-    const normalizePosition = (slot: string) => {
-      if (slot.startsWith("WR")) return "WR";
-      if (slot.startsWith("RB")) return "RB";
-      return slot;
+        setMatchupList(matchups);
+      };
+      matchupCreation();  
+  },[]);
+
+  useEffect(() => {
+    const getTeams = async () => {
+      if(!team || players.length === 0 || members.length === 0) return;
+      const memberIDs = members.map(member => member.id);
+      const allTeams = await fetchAllTeams(memberIDs, leagueID);
+      setTeamList(allTeams);
+      await addOwn(allTeams, players, team);
+      onReady();
     };
-//============================================================================== help with displaying
-    const getTeamByUsername = (username: string): FantasyTeam | undefined => {
-      return teamList.find(t => t.author === username);
-    };
+    getTeams();
+  },[players, team]);
+
+  const fetchMatchups = async(members: Array<number>) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      throw new Error("User is not authenticated.");
+    }
+    try {
+      const response = await axios.get(`${API_URL}/members`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {members: members.join(",")}
+      });
+      console.log("Fetched Matchups:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Error fetching Matchups:", err);
+      return;
+    } 
+  };
+    
+  const addOwn = async(allTeams: FantasyTeam[], players: PlayerFull[], team: Team) => {
+    if (team && players.length === positionSlots.length) {
+      const formattedSelfTeam: any = {
+        id: team.id,
+        title: team.title,
+        rank: team.rank,
+        author: team.author.username
+      };
+      
+    positionSlots.forEach((slot, i) => {
+      const player = players[i];
+      if (player.id == null) {
+        formattedSelfTeam[slot] = null;
+      } else {
+        formattedSelfTeam[slot] = {
+          id: player.id.toString(),
+          fullName: player.firstName + " " + player.lastName,
+          proj_fantasy: player.proj_fantasy,
+          total_fantasy_points: player.total_fantasy_points
+        };
+      }
+    });
+      
+    const finalTeamList = [...allTeams, formattedSelfTeam];
+    setTeamList(finalTeamList);
+    }          
+  };
+    
+  const fetchAllTeams = async(members: Array<number>, leagueID: number) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+        throw new Error("User is not authenticated.");
+    }
+    try {
+        const response = await axios.get(`${API_URL}/allTeams`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          members: members.join(","),
+          leagueID: leagueID,
+          matchup: true,
+        }
+        });
+        console.log("Fetched Teams for matchup:", response.data);
+        return response.data;
+    } 
+    catch (err) {
+      console.error("Error fetching Teams:", err);
+      return;
+    } 
+  };
   
-    const calculateTeamScore = (team: FantasyTeam): number => {
-      return positionSlots1.reduce((sum, slot) => {
-        const player = team[slot] as PlayerStat | null;
-        const points = parseFloat(player?.total_fantasy_points as any) || 0;
-        return Number ((sum + points).toFixed(2));
-      }, 0);
-    };
 
-    const formatPoints = (player: any): string => {
-      const points = player?.total_fantasy_points;
-      const proj = player?.proj_fantasy;
+  const normalizePosition = (slot: string) => {
+    if (slot.startsWith("WR")) return "WR";
+    if (slot.startsWith("RB")) return "RB";
+    return slot;
+  };
+//============================================================================== help with displaying
+  const getTeamByUsername = (username: string): FantasyTeam | undefined => {
+    return teamList.find(t => t.author === username);
+  };
 
-      if(weekStarted) return points;
-    
-      if (points > 0) {
-        setWeekStarted(true);
-        return points;}
-      if (proj > 0) return proj;
-      return "-";
-    };
+  const calculateTeamScore = (team: FantasyTeam): number => {
+    return positionSlots1.reduce((sum, slot) => {
+      const player = team[slot] as PlayerStat | null;
+      const points = parseFloat(player?.total_fantasy_points as any) || 0;
+      return Number ((sum + points).toFixed(2));
+    }, 0);
+  };
+
+  const formatPoints = (player: any): string => {
+    const points = player?.total_fantasy_points;
+    const proj = player?.proj_fantasy;
+
+    if(weekStarted) return points;
+  
+    if (points > 0) {
+      setWeekStarted(true);
+      return points;}
+    if (proj > 0) return proj;
+    return "-";
+  };
     
 //============================================================================== help with displaying
-    const nextMatchup = () => {
-      setCurrentIndex((prev) => (prev + 1) % matchupList.length);
-    };
+  const nextMatchup = () => {
+    setCurrentIndex((prev) => (prev + 1) % matchupList.length);
+  };
 
-    const prevMatchup = () => {
-      setCurrentIndex((prev) => (prev - 1 + matchupList.length) % matchupList.length);
-    };
+  const prevMatchup = () => {
+    setCurrentIndex((prev) => (prev - 1 + matchupList.length) % matchupList.length);
+  };
 
 
     return (

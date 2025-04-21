@@ -36,6 +36,8 @@ type MyLeaguesProps = {
 export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [joinCode, setJoinCode] = useState<string>("");
@@ -55,9 +57,11 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_LEAGUE_URL.replace(/\/$/, "");
+  const API_URL1 = import.meta.env.VITE_API_URL.replace(/\/$/, "");  
 
   useEffect(() => {
     fetchLeagues();
+    fetchUserDetails(); 
     checkLoginStatus().then((status) => {
       if (status.isLoggedIn) {
         setCurrentUsername(status.username ?? null);
@@ -260,6 +264,24 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
     navigate(`/draft/${selectedLeague.id}`);
   };
 
+  const fetchUserDetails = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API_URL1}/api/user/info/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserId(response.data.user.id);
+    } catch (err) {
+      setError("Failed to fetch user details.");
+      console.error("Error fetching user details:", err);
+    }
+  }
+
   if (loading) {
     return <p className="text-center">Loading...</p>;
   }
@@ -274,7 +296,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
               className={`league-tab ${selectedLeague?.id === league.id ? "selected" : ""}`}
               onClick={() => setSelectedLeague(league)}
             >
-              <LoaderLink to={`/league/${league.id}`} setGlobalLoading={setGlobalLoading}>
+              <LoaderLink to={`/league/${league.id}/${userId}`} setGlobalLoading={setGlobalLoading}>
                 {league.name}
               </LoaderLink>
             </li>
