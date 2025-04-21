@@ -32,6 +32,9 @@ interface Team {
         email: string;
         first_name: string;
         last_name: string;
+        profile: {
+            currency: string; // Currency is stored as a string
+        };
     };
     [key: string]: string | number | object;
 }
@@ -59,7 +62,11 @@ const Trade: React.FC = () => {
     const [userTeam, setUserTeam] = useState<Team | null>(null);
     const [selectedUserPlayers, setSelectedUserPlayers] = useState<Record<string, string[]>>({});
     const [selectedOpponentPlayers, setSelectedOpponentPlayers] = useState<Record<string, string[]>>({});
+    const [currencyOffered, setCurrencyOffered] = useState<number>(0);
+    const [currencyRequested, setCurrencyRequested] = useState<number>(0);
     const [validationError, setValidationError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if (!id || !token) return;
@@ -85,6 +92,8 @@ const Trade: React.FC = () => {
                 } else {
                     setError(`Error: ${err.message}`);
                 }
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -99,14 +108,12 @@ const Trade: React.FC = () => {
                 newSelection[position] = [];
             }
 
-            // If the player is already selected, remove them; otherwise, add them
             if (newSelection[position].includes(player)) {
                 newSelection[position] = newSelection[position].filter((p) => p !== player);
             } else {
                 newSelection[position].push(player);
             }
 
-            // If the position array becomes empty, delete the key to keep the state clean
             if (newSelection[position].length === 0) {
                 delete newSelection[position];
             }
@@ -124,6 +131,30 @@ const Trade: React.FC = () => {
     };
 
     const validateTrade = (): boolean => {
+        if (!selectedTeamId) {
+            setValidationError('Please select a team to trade with.');
+            return false;
+        }
+
+        if (currencyOffered < 0 || currencyRequested < 0) {
+            setValidationError('Currency values cannot be negative.');
+            return false;
+        }
+
+        // Validate user's currency
+        const userCurrency = parseFloat(userTeam?.author.profile.currency || "0");
+        if (userCurrency < currencyOffered) {
+            setValidationError('You do not have enough currency to offer.');
+            return false;
+        }
+
+        // Validate opponent's currency
+        const opponentCurrency = parseFloat(selectedTeam?.author.profile.currency || "0");
+        if (opponentCurrency < currencyRequested) {
+            setValidationError('Opponent does not have enough currency to fulfill your request.');
+            return false;
+        }
+
         const userPositions = Object.keys(selectedUserPlayers);
         const opponentPositions = Object.keys(selectedOpponentPlayers);
 
@@ -149,23 +180,21 @@ const Trade: React.FC = () => {
         if (!validateTrade()) {
             return;
         }
+
         const payload = {
             userPlayers: selectedUserPlayers,
             opponentPlayers: selectedOpponentPlayers,
             opponentTeamId: selectedTeamId,
+            currencyOffered,
+            currencyRequested,
         };
 
-        console.log("Request Payload:", payload); // Log the payload being sent
-        console.log("Authorization Header:", `Bearer ${token}`); // Log the token being sent
+        setIsSubmitting(true);
+        console.log('Trade payload:', payload);
         try {
-            console.log(token);
             await axios.post(
                 `${API_URL}/api/leagues/${id}/trade/execute/`,
-                {
-                    userPlayers: selectedUserPlayers,
-                    opponentPlayers: selectedOpponentPlayers,
-                    opponentTeamId: selectedTeamId,
-                },
+                payload,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -173,8 +202,17 @@ const Trade: React.FC = () => {
             alert('Trade completed successfully!');
             setSelectedUserPlayers({});
             setSelectedOpponentPlayers({});
+            setCurrencyOffered(0);
+            setCurrencyRequested(0);
+            setSelectedTeamId(null);
         } catch (err: any) {
-            alert('Failed to complete the trade. Please try again.');
+            if (err.response && err.response.data.error) {
+                setValidationError(err.response.data.error);
+            } else {
+                setValidationError('Failed to complete the trade. Please try again.');
+            }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -201,7 +239,7 @@ const Trade: React.FC = () => {
                                 onChange={() =>
                                     handlePlayerSelection(team[position], position, isUserTeam)
                                 }
-                                disabled={!team[position]} // Disable if the position is empty
+                                disabled={!team[position]}
                             />
                             {position}: {team[position]}
                         </label>
@@ -210,6 +248,10 @@ const Trade: React.FC = () => {
             </ul>
         );
     };
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container-fluid text-white full-page-minus-navbar">
@@ -224,23 +266,44 @@ const Trade: React.FC = () => {
                     <div className="trade-layout">
                         <div className="userTeam">
                             <h2>My Team: {userTeam?.title} (Rank: {userTeam?.rank})</h2>
+                            <p>Available Currency: ${userTeam?.author.profile.currency}</p>
                             {userTeam ? renderTeamPlayers(userTeam, true) : <p>No team found.</p>}
                         </div>
 
                         <div className="divider trade-divider d-flex flex-column align-items-center">
-                            <img className="trade-arrows" src="/tradeArrows.png" alt="Trade Arrows" />
-
+                            <label>
+                                Currency Offered:
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={currencyOffered}
+                                    onChange={(e) => setCurrencyOffered(Number(e.target.value))}
+                                    min="0"
+                                    max={parseFloat(userTeam?.author.profile.currency || "0")}
+                                />
+                            </label>
+                            <label>
+                                Currency Requested:
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={currencyRequested}
+                                    onChange={(e) => setCurrencyRequested(Number(e.target.value))}
+                                    min="0"
+                                    max={parseFloat(selectedTeam?.author.profile.currency || "0")}
+                                />
+                            </label>
                             <button
                                 className="btn btn-primary"
                                 onClick={handleTrade}
                                 disabled={
                                     Object.keys(selectedUserPlayers).length === 0 ||
-                                    Object.keys(selectedOpponentPlayers).length === 0
+                                    Object.keys(selectedOpponentPlayers).length === 0 ||
+                                    isSubmitting
                                 }
                             >
-                                Execute Trade
+                                {isSubmitting ? 'Submitting...' : 'Execute Trade'}
                             </button>
-
                             <div className="validation-message">
                                 {validationError && <span>{validationError}</span>}
                             </div>
@@ -264,6 +327,7 @@ const Trade: React.FC = () => {
                             {selectedTeam && (
                                 <div className="mt-2">
                                     <h2>Team: {selectedTeam.title} (Rank: {selectedTeam.rank})</h2>
+                                    <p>Opponent's Currency: ${selectedTeam.author.profile.currency}</p>
                                     {renderTeamPlayers(selectedTeam, false)}
                                 </div>
                             )}
@@ -271,7 +335,7 @@ const Trade: React.FC = () => {
                     </div>
                 </>
             ) : (
-                !error && <div>Loading...</div>
+                <div>No data available.</div>
             )}
         </div>
     );
