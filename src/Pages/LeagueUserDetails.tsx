@@ -3,8 +3,11 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
+
+import UserDetailsCarousel from "../Components/UserDetailsCarousel";
 import MatchupDisplay from "../Components/MatchupDisplay";
-//import PlayerSearchList from "../Components/PlayerSearchList";
+import LeagueDisplay from "../Components/LeagueDisplay";
+import PlayerSearchList from "../Components/PlayerSearchList";
 
 export type User = {
   id: number;
@@ -35,7 +38,7 @@ export type PlayerFull = {
   extra_points_made: number | null;
 };
 
-type League = {
+export type League = {
   id: number;
   name: string;
   owner: User;
@@ -54,6 +57,10 @@ export type Team = {
   league: League;
   title: string;
   rank: number;
+  wins: number;
+  losses: number;
+  points_for: number;
+  points_against: number;
   QB: string;
   RB1: string;
   RB2: string;
@@ -74,6 +81,8 @@ export type Team = {
 };
 
 const API_URL = import.meta.env.VITE_LEAGUE_URL.replace(/\/$/, "");
+const API_URL1 = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+
 const abPositions = ["QB", "RB", "RB", "WR", "WR", "TE", "FLX", "K", "DEF", "BN", "BN", "BN", "BN", "BN", "BN", "IR", "IR"];
 const teamKeys: (keyof Team)[] = ["QB", "RB1", "RB2", "WR1", "WR2", "TE", "FLX", "K", "DEF", "BN1", "BN2", "BN3", "BN4", "BN5", "BN6", "IR1", "IR2"];
 
@@ -85,16 +94,19 @@ const statusMap: Record<string, string> = {
   INJURY_STATUS_PROBABLE: "P",
 };
 export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoading: (v: boolean) => void }) {
-  const { id } = useParams<{ id: string }>();
+  const { leagueId, userId } = useParams<{ leagueId: string; userId: string }>();
   const [error, setError] = useState<string | null>(null);
   const [parentDataLoaded, setParentDataLoaded] = useState(false);  
   const [matchupReady, setMatchupReady] = useState(false);
+  const [permission, setPermission] = useState(false);
 
+  const [week, setWeek] = useState<number | null>(null);
   const [league, setLeague] = useState<League | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [player, setPlayerFull] = useState<Array<PlayerFull>>([]);
   const [selected, setSelected] = useState<number[]>([]);
   const [username, setUsername] = useState<string | null>(null);
+  const [myId, setMyId] = useState<number | null>(null);
   const [members, setMembers] = useState<Array<User>>([]);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -105,21 +117,25 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
 
   useEffect(() => {
     const fullLeague = async () => {
-      const leagueid = Number(id);
-        if (leagueid) {
-          const team = await fetchUserTeam(leagueid); // Call function after both values are available
-          setTeam(team);
-          setLeague(team.league);
-          setMembers(team.league.users);
-          setUsername(team.author.username);
-          
-          const teamListObject = await fetchPlayerDetails(convertToPlayerArray(team));
-          setPlayerFull(teamListObject);
-          setParentDataLoaded(true);
-        }
+      fetchWeek();
+      fetchUserDetails();
+
+      const leagueid = Number(leagueId);
+      console.log("League ID:", leagueid);
+      if (leagueid) {
+        const team = await fetchUserTeam(leagueid); 
+        setTeam(team);
+        setLeague(team.league);
+        setMembers(team.league.users);
+        setUsername(team.author.username);
+        
+        const teamListObject = await fetchPlayerDetails(convertToPlayerArray(team));
+        setPlayerFull(teamListObject);
+        setParentDataLoaded(true);
+      }
     };
     fullLeague();
-  }, [id]);
+  }, [leagueId]);
 
   useEffect(() => {
     setGlobalLoading(true);
@@ -131,6 +147,31 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     }
   }, [parentDataLoaded, matchupReady]);
   
+  useEffect(() => {
+    if (myId && userId) {
+      if (myId !== Number(userId)) {
+        setPermission(true);
+      } 
+    }
+  }, [userId, myId]);
+
+  const fetchWeek = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      throw new Error("User is not authenticated.");
+    }
+    try {
+      const response = await axios.get(`${API_URL1}/week`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Fetched Week:", response.data);
+      setWeek(response.data.week);
+      return;
+    } catch (err) {
+      console.error("Error fetching Week:", err);
+      return;
+    }
+  };
 
   const fetchPlayerDetails = async (teamList: Array<Player>) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -140,11 +181,10 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     try {
       const teamListQuery = teamList.map(player => player.player).join(",");
       console.log("Fetching Player Details for:", teamListQuery);
-      console.log("Fetching User from:", `${API_URL}/myPlayers?players=${teamListQuery}`);
       const response = await axios.get(`${API_URL}/myPlayers?players=${teamListQuery}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Fetched hjahjfwehfihehfi:", response.data);
+      console.log("Fetched Details:", response.data);
       return response.data;
     } catch (err) {
       console.error("Error fetching USER:", err);
@@ -172,7 +212,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
 
   const convertToPlayerArray = (team: Team) => {
     return Object.entries(team)
-      .filter(([key]) => key !== "id" && key !== "author" && key !== "league" && key !== "title" && key !== "rank") // Exclude metadata fields
+      .filter(([key]) => key !== "id" && key !== "author" && key !== "league" && key !== "title" && key !== "rank" && key !== 'wins' && key !== 'losses' && key !== 'points_for' && key !== 'points_against') // Exclude metadata fields
       .map(([position, player]) => ({ position, player: String(player) }));
   };
   
@@ -227,7 +267,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     const saveData = async () => {
       if (!team) {
           console.warn("No valid team, aborting request.");
-          return; // Don't send an empty request
+          return; 
       }
   
       const token = localStorage.getItem(ACCESS_TOKEN);
@@ -262,8 +302,8 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       league: team.league ?? {} as League, 
     };
   
-    const key1 = teamKeys[index1] as keyof Omit<Team, "id" | "author" | "league" | "rank" | "title">;
-    const key2 = teamKeys[index2] as keyof Omit<Team, "id" | "author" | "league" | "rank" | "title">;
+    const key1 = teamKeys[index1] as keyof Omit<Team, "id" | "wins" | "losses" | "points_for" | "points_against" | "author" | "league" | "rank" | "title">;
+    const key2 = teamKeys[index2] as keyof Omit<Team, "id" | "wins" | "losses" | "points_for" | "points_against" | "author" | "league" | "rank" | "title">;
   
     if (typeof updatedTeam[key1] === "string" && typeof updatedTeam[key2] === "string") {
       const temp = updatedTeam[key1] as string;
@@ -281,8 +321,6 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     saveData()
 }, [team]); // Runs when `team` is updated
 
-  
-
   // ========================================== Handle temperary save of team.title ==============================================
   const handleSave = () => {
     setIsEditing(false);
@@ -296,6 +334,24 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       handleSave();
     }
   };
+  // ========================================== Get userId for the current user ==============================================
+  const fetchUserDetails = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API_URL1}/api/user/info/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMyId(response.data.user.id);
+    } catch (err) {
+      setError("Failed to fetch user details.");
+      console.error("Error fetching user details:", err);
+    }
+  }
 
   if (!league || !team || player.length === 0) {
     return null; // hides page until data is ready
@@ -305,11 +361,18 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     <>
       <div className="UserDetailsALL">
         <div className = "UserDetailsSearch">
-          {league && team && player.length > 0 && 
-          <MatchupDisplay players = {player} team = {team} members = {members} leagueID={league.id} onReady={() => setMatchupReady(true)}/>}
+          <UserDetailsCarousel
+            tabs={["Matchup", "League Stats", "Search Players"]}
+            components={[
+              <MatchupDisplay players={player} team={team} members={members} leagueID={league.id} onReady={() => setMatchupReady(true)} />,
+              <LeagueDisplay League={league} />,
+              <PlayerSearchList/>,
+              
+            ]}
+          />
         </div>
         <div className="UserDetailsWeek">
-          WEEK 12
+          WEEK{week}
         </div>
         <div className="UserDetailsList">
             <>

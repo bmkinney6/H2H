@@ -13,12 +13,17 @@ background-color: rgb(2, 0, 20); }
     background-color: rgb(2, 0, 20);
     height: 790px;
   }
-.UserDetailsWeek {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font-size: 2rem;
-  text-align: center;
-}
+  .UserDetailsWeek {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 5rem;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    font-family: 'Bebas Neue', sans-serif; 
+    text-align: center;
+    color: #ffffff; 
+  }
+  
 .UserDetailsList {
     flex: 50%;
     display: flex;
@@ -26,24 +31,20 @@ background-color: rgb(2, 0, 20); }
     justify-content: flex-start;
     max-width: auto;
     overflow: hidden;
-    background-color: rgb(255, 255, 255);
-  }
-  .UserDetailsHH {
     background-color: rgb(2, 0, 20);
-    color: white;
-    font-size: 3rem; /* Match the header size */
-    font-weight: bold; /* Match header weight */
-    text-align: left; /* Align like a header */
-    border: none; /* Remove default input border */
-    outline: none; /* Remove default focus outline */
-    width: 100%; /* Ensure width consistency */
-    padding: 0; /* Remove extra spacing */
+  }
+.UserDetailsHH {
+  background-color: rgb(2, 0, 20);
+  color: white;
+  font-size: 3rem; 
+  font-weight: bold;
+  text-align: left; 
 }
 .UserDetailsParent {
   display: flex;
-  flex-direction: row; /* default, but good to be explicit */
-  padding: 0rem 2rem;
+  flex-direction: row; 
   background-color: rgb(2, 0, 20); max-width: auto;
+  margin-left: 5%;
 }
 .UserDetailsTeam {
   display: flex;
@@ -52,7 +53,7 @@ background-color: rgb(2, 0, 20); }
   vertical-align: middle;
   text-align: left;
   background-color: rgb(2, 0, 20);
-  width: 85%;
+  width: 87%;
 }
 .UserDetailsPlayerHeader {
   display: flex;
@@ -96,7 +97,7 @@ background-color: rgb(2, 0, 20); }
   .UserDetailsPointsGroup {
     display: flex;
     gap: 0.2rem;
-    margin-left: auto; /* 👈 pushes the whole group to the right */
+    margin-left: auto; 
     align-items: right;
     background-color: rgb(2, 0, 20);
   }
