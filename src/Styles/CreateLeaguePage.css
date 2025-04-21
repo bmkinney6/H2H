@@ -1,0 +1,24 @@
+.create-league-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--body-color); /* Matches the default website background */
+}
+
+.create-league-container {
+    background-color: #1a2b3c; /* Lighter version of the default website color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    color: white; /* All text inside is white */
+}
+
+.create-league-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}

@@ -9,6 +9,7 @@ import NotFound from "./Pages/notFound.tsx";
 import Inbox from "./Pages/Inbox";
 import UserScout from "./Pages/UserScout.tsx";
 import UserDetails from "./Pages/UserDetails.tsx";
+import Betting from "./Pages/Betting.tsx";
 
 import {
   BrowserRouter as Router,
@@ -65,6 +66,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+           <Route
+            path="/league/:leagueId/matchup/:matchupId/betting"
+            element={
+              <ProtectedRoute>
+                <Betting />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/user"
             element={
@@ -105,6 +114,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+         
           <Route
             path="/inbox"
             element={
@@ -130,6 +140,7 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            
           <Route path="/my-leagues" element={<MyLeagues setGlobalLoading={setGlobalLoading}/>} />
           <Route path="/league/:id" element={<ProtectedRoute><LeagueUserDetails setGlobalLoading={setGlobalLoading}/></ProtectedRoute>} />
         </Routes>
