@@ -626,3 +626,133 @@ button:hover {
     background-color: #c82333;
   }
 
+  .home-container {
+    text-align: center;
+    padding: 2rem;
+    background-color: #0d1b2a;
+    color: #ffffff;
+  }
+  
+  .home-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .home-sections {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .home-card {
+    background-color: #1b263b;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .home-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  }
+  
+  .home-card-image {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+
+
+  .home-card-content {
+    padding: 1rem;
+  }
+  
+  .home-card-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .home-card-content p {
+    font-size: 1rem;
+    color: #a0aec0;
+  }
+
+  .home-card-content, .card-body {
+    color: white; /* Set text color to white for better readability */
+  }
+  
+  .home-card-content h2, .card-body h5 {
+    color: #ffffff; /* Ensure headings are white */
+    font-weight: bold; /* Make headings stand out */
+  }
+  
+  .home-card-content p, .card-body p {
+    color: #d1d5db; /* Use a lighter gray for paragraph text */
+  }
+
+  .card-img-top {
+    color: white; /* Ensures alt text color is white */
+  }
+
+
+
+/* Ensure the navbar stays in place */
+/* Ensure the navbar stays in place */
+.navbar {
+  transition: height 0.3s ease; /* Smooth transition when extending */
+}
+
+.navbar-extended {
+  height: 150px; /* Extend the navbar height when hovered */
+}
+
+/* Extended bar for Features */
+.features-extended-bar {
+  background-color: #0b1623; /* Slightly darker background for the extended bar */
+  width: 100%; /* Full width of the navbar */
+  padding: 1rem 0;
+  position: absolute;
+  top: 100%; /* Position it directly below the main navbar */
+  left: 0;
+  z-index: 9;
+}
+
+/* Links inside the extended bar */
+.features-extended-links {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.features-extended-links li {
+  margin: 0;
+}
+
+.extended-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.extended-link:hover {
+  background-color: #1b263b; /* Slightly darker hover effect */
+  border-radius: 5px;
+}
+
+/* Shadow overlay */
+.page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Slightly lighter semi-transparent black */
+  z-index: 8; /* Below the navbar but above the page content */
+}
