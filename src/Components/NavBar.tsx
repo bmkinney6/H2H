@@ -17,6 +17,7 @@ function NavBar() {
   const navigate = useNavigate();
   const location = useLocation(); // Track page changes
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [currency, setCurrency] = useState<number | null>(null); // State for user currency
   const [isFeaturesHovered, setIsFeaturesHovered] = useState(false); // Track hover state
 
   // Fetch notifications
@@ -34,11 +35,35 @@ function NavBar() {
     }
   };
 
+  const fetchCurrency = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      try {
+        const response = await axios.get("http://localhost:8000/api/get_user_info/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userCurrency = response.data?.profile?.currency;
+        if (userCurrency !== undefined) {
+          setCurrency(parseFloat(userCurrency)); // Ensure the currency is parsed as a number
+        } else {
+          console.error("Currency field is missing in the API response.");
+          setCurrency(0); // Default to 0 if currency is missing
+        }
+      } catch (error) {
+        console.error("Error fetching user currency:", error);
+        setCurrency(0); // Default to 0 in case of an error
+      }
+    }
+  };
   // Refresh notifications when the page changes
   useEffect(() => {
     fetchNotifications();
   }, [location]);
 
+  useEffect(() => {
+    fetchCurrency();
+  }, []); // Ensure this runs only once when the component mounts
+  
   const handleCreateLeagueClick = () => navigate("/create-league");
   const handleSearchLeaguesClick = () => navigate("/search-leagues");
   const handleMyLeaguesClick = () => navigate("/my-leagues");
@@ -105,7 +130,21 @@ function NavBar() {
               </li>
             </ul>
           </div>
+          
+        
+
           <div className="d-flex align-items-center">
+            {/* Currency Display */}
+            <div className="currency-display d-flex align-items-center mx-3">
+              <img
+                src="/dollar.png" // Path to your currency icon
+                alt="Currency"
+                width={20}
+                height={20}
+                className="me-2"
+              />
+              <span className="text-white">{currency !== null ? `$${currency}` : "Loading..."}</span>
+            </div>
             {/* Notifications Dropdown */}
             <div className="dropdown mx-2">
               <button

@@ -756,3 +756,14 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.3); /* Slightly lighter semi-transparent black */
   z-index: 8; /* Below the navbar but above the page content */
 }
+
+.currency-display {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.currency-display img {
+  margin-right: 5px;
+}

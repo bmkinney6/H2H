@@ -92,6 +92,15 @@ const statusMap: Record<string, string> = {
   INJURY_STATUS_QUESTIONABLE: "Q",
   INJURY_STATUS_PROBABLE: "P",
 };
+<<<<<<< HEAD
+export default function LeagueUserDetails () {
+  const { id } = useParams<{ id: string }>();
+  const [matchupId, setMatchupId] = useState<number | null>(null); // State for matchupId
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [parentDataLoaded, setParentDataLoaded] = useState(false);
+=======
+>>>>>>> e13f3c4de67df77876cee6c1af52e660def871a1
 
 export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoading: (v: boolean) => void }) {
   const { leagueId, userId } = useParams<{ leagueId: string; userId: string }>();
@@ -115,6 +124,28 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
   const dragPerson = useRef<number | null>(null);
   const dragOverPerson = useRef<number | null>(null);
   const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    const fetchMatchupId = async () => {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (!token) {
+        setError("You are not authenticated. Please log in.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/api/league/${id}/user-matchup/`);
+        const matchupId = response.data.matchupId; // Ensure this is not null
+        setMatchupId(matchupId);
+    } catch (error) {
+        console.error("Error fetching matchup:", error);
+    }
+    };
+
+    fetchMatchupId();
+  }, [matchupId]);
 
   useEffect(() => {
     const fullLeague = async () => {
@@ -388,6 +419,151 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     <>
       <div className="UserDetailsALL">
         <div className="UserDetailsSearch">
+<<<<<<< HEAD
+          <PlayerSearchList />
+        </div>
+        <div className="UserDetailsList">
+          {loading ? (
+            <Loader active />
+          ) : (
+            <>
+              <div className="UserDetailsHH">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={tempTitle}
+                    onChange={(e) => setTempTitle(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    className="UserDetailsHH"
+                    autoFocus
+                  />
+                ) : (
+                  <div>
+                    <h1
+                      className="UserDetailsHH"
+                      onDoubleClick={() => {
+                        console.log("double click");
+                        setIsEditing(true);
+                      }}
+                    >
+                      {team?.title ? `${team.title}` : "No Team Name? (Double-Click)"}
+                    </h1>
+                  </div>
+                )}
+                <div>
+                  <h3 className="">
+                    Managed by: {username} Rank: {team?.rank}
+                  </h3>
+                </div>
+                <button
+                  className="UserDetailsTradeBtn"
+                  onClick={() => navigate(`/league/${league?.id}/trade`)}
+                >
+                  Trade Players
+                </button>
+                <button
+                  className="UserDetailsBettingBtn"
+                  onClick={() => navigate(`/league/${league?.id}/matchup/${matchupId}/betting`)}
+                >
+                  Go to Betting Page
+                </button>
+              </div>
+
+              <div className="UserDetailsParent">
+                <div className="UserDetailsTeam">
+                  <div className="UserDetailsPlayerHeader">
+                    <span className="UserDetailsPositionLabel"></span>
+                    <span className="UserDetailsPlayerName"></span>
+                    <span className="UserDetailsPlayerStats">
+                      {error && <p className="UserDetailsE">{error}</p>}
+                    </span>
+                    <span className="UserDetailsPoints">Total</span>
+                    <span className="UserDetailsPoints1">Proj</span>
+                    <span className="UserDetailsDrag"></span>
+                  </div>
+                  {player.map((player, index) => (
+                    <div
+                      key={index}
+                      className={`UserDetailsPlayerRow ${
+                        selected.includes(index)
+                          ? "border-blue-500 bg-blue-100"
+                          : "bg-white"
+                      }`}
+                      onDragEnter={() => (dragOverPerson.current = index)}
+                      onDragEnd={swapPlayersCases}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <span className="UserDetailsPositionLabel">
+                        {abPositions[index]}
+                      </span>
+                      <span className="UserDetailsPlayerName">
+                        {player.firstName}
+                        {"\u00A0"}
+                        {player.lastName}
+                        {player.status &&
+                        !["x", "Active"].includes(player.status)
+                          ? ` (${statusMap[player.status] || player.status})`
+                          : ""}
+                      </span>
+                      <span className="UserDetailsPlayerStats">
+                        {player.status === "Active" &&
+                          player.position === "Quarterback" && (
+                            <>
+                              Passing Yards: {player.pass_yards || 0} | Passing
+                              TDs: {player.pass_tds || 0}
+                            </>
+                          )}
+
+                        {player.status === "Active" &&
+                          player.position === "Running Back" && (
+                            <>
+                              Rushing Yards: {player.rush_yards || 0} | Rushing
+                              TDs: {player.rush_tds || 0}
+                            </>
+                          )}
+
+                        {player.status === "Active" &&
+                          (player.position === "Wide Receiver" ||
+                            player.position === "Tight End") && (
+                            <>
+                              Receiving Yards: {player.receiving_yards || 0} |
+                              Receiving TDs: {player.receiving_tds || 0}
+                            </>
+                          )}
+
+                        {player.status === "Active" &&
+                          player.position === "Place kicker" && (
+                            <>
+                              Extra Points: {player.extra_points_made || 0} |
+                              Field Goals: {player.fg_made || 0}
+                            </>
+                          )}
+                      </span>
+                      <div className="UserDetailsPointsGroup">
+                        <span className="UserDetailsPoints">
+                          {player.total_fantasy_points}
+                        </span>
+                        <span className="UserDetailsPoints1">
+                          {player.proj_fantasy}
+                        </span>
+                      </div>
+                      <span
+                        className="UserDetailsDrag"
+                        draggable
+                        onDragStart={() => (dragPerson.current = index)}
+                        title="Drag"
+                      >
+                        ☰
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+=======
           <UserDetailsCarousel
             tabs={["Matchup", "League Stats", "Search Players"]}
             components={[
@@ -506,8 +682,8 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
             </div>
           </>
         </div>
+>>>>>>> e13f3c4de67df77876cee6c1af52e660def871a1
       </div>
     </>
   );
-
 }  

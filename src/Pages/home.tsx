@@ -17,7 +17,7 @@ function Home() {
             onClick={() => navigate("/my-leagues")}
           >
             <img
-              src="/images/my_leagues.png"
+              src="/public/league.png"
               alt="My Leagues"
               className="card-img-top"
             />
@@ -37,7 +37,7 @@ function Home() {
             onClick={() => navigate("/search-leagues")}
           >
             <img
-              src="/images/search_leagues.png"
+              src="/public/american-football-field.png"
               alt="Search Leagues"
               className="card-img-top"
             />
@@ -57,7 +57,7 @@ function Home() {
             onClick={() => navigate("/scout")}
           >
             <img
-              src="/images/player_search.png"
+              src="/public/people.png"
               alt="Player Search"
               className="card-img-top"
             />

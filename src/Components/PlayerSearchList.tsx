@@ -49,6 +49,7 @@ type Player = {
   lastName: string;
   team: string;
   position: string;
+  yearly_proj: number; // Add yearly_proj to display projections
 };
 
 const PlayerSearchList = () => {
@@ -60,8 +61,6 @@ const PlayerSearchList = () => {
     team: "",
     position: "",
     status: "",
-    yearly_proj_min: "",
-    yearly_proj_max: "",
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -160,22 +159,6 @@ const PlayerSearchList = () => {
             </option>
           ))}
         </select>
-        <input
-          type="number"
-          name="yearly_proj_min"
-          placeholder="Min Yearly Projection"
-          value={filters.yearly_proj_min}
-          onChange={handleFilterChange}
-          className="form-control mb-3"
-        />
-        <input
-          type="number"
-          name="yearly_proj_max"
-          placeholder="Max Yearly Projection"
-          value={filters.yearly_proj_max}
-          onChange={handleFilterChange}
-          className="form-control mb-3"
-        />
       </div>
 
       {/* Main Content */}
@@ -219,7 +202,7 @@ const PlayerSearchList = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={3} className="text-center">
+                    <td colSpan={4} className="text-center">
                       No players found.
                     </td>
                   </tr>
