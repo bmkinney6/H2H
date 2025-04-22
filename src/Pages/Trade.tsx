@@ -40,7 +40,7 @@ interface Team {
 }
 
 interface LeagueData {
-    league: string;
+    league: number;
     teams: Team[];
 }
 
