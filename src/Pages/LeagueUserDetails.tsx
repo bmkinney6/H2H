@@ -113,17 +113,12 @@ export default function LeagueUserDetails () {
       }
 
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/league/${id}/user-matchup/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setMatchupId(response.data.matchupId);
-      } catch (err) {
-        console.error("Error fetching matchup ID:", err);
-        setError("Failed to fetch matchup ID.");
-      }
+        const response = await axios.get(`/api/league/${id}/user-matchup/`);
+        const matchupId = response.data.matchupId; // Ensure this is not null
+        setMatchupId(matchupId);
+    } catch (error) {
+        console.error("Error fetching matchup:", error);
+    }
     };
 
     fetchMatchupId();
