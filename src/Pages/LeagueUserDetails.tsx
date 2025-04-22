@@ -92,15 +92,6 @@ const statusMap: Record<string, string> = {
   INJURY_STATUS_QUESTIONABLE: "Q",
   INJURY_STATUS_PROBABLE: "P",
 };
-<<<<<<< HEAD
-export default function LeagueUserDetails () {
-  const { id } = useParams<{ id: string }>();
-  const [matchupId, setMatchupId] = useState<number | null>(null); // State for matchupId
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [parentDataLoaded, setParentDataLoaded] = useState(false);
-=======
->>>>>>> e13f3c4de67df77876cee6c1af52e660def871a1
 
 export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoading: (v: boolean) => void }) {
   const { leagueId, userId } = useParams<{ leagueId: string; userId: string }>();
@@ -108,6 +99,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
   const [parentDataLoaded, setParentDataLoaded] = useState(false);
   const [matchupReady, setMatchupReady] = useState(false);
   const [permission, setPermission] = useState(false);
+  const [matchupId, setMatchupId] = useState<number | null>(null); // State for matchupId
 
   const [week, setWeek] = useState<number | null>(null);
   const [league, setLeague] = useState<League | null>(null);
@@ -136,7 +128,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       }
 
       try {
-        const response = await axios.get(`/api/league/${id}/user-matchup/`);
+        const response = await axios.get(`/api/league/${leagueId}/user-matchup/`);
         const matchupId = response.data.matchupId; // Ensure this is not null
         setMatchupId(matchupId);
     } catch (error) {
