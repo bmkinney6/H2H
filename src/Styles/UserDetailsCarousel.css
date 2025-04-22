@@ -1,0 +1,40 @@
+.tabbed-carousel {
+    width: 100%;
+  }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    background: #f0f0f0;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 1em;
+    text-align: center;
+    cursor: pointer;
+    background: rgb(2, 0, 20);
+    transition: background 0.3s;
+  }
+  
+  .tab.active {
+    background: #2200a9;
+    font-weight: bold;
+    border-bottom: 2px solid white;
+  }
+  
+  .carousel {
+    position: relative;
+    width: 100%;
+  }
+  
+  .slide {
+    display: none;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .slide.active {
+    display: block;
+  }
+  

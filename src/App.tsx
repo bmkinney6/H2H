@@ -19,7 +19,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./Components/ProtectedRoute.tsx";
 import "./Styles/Index.css";
-import "./Styles/LeageuUserDetails.css";
+import "./Styles/LeagueUserDetails.css";
 import PlayerDetail from "./Pages/PlayerDetail.tsx"; // New page to show player details
 import Scout from "./Pages/Scout.tsx";
 import AuthContext from "./Components/AuthContext";
@@ -142,7 +142,7 @@ function App() {
             />
             
           <Route path="/my-leagues" element={<MyLeagues setGlobalLoading={setGlobalLoading}/>} />
-          <Route path="/league/:id" element={<ProtectedRoute><LeagueUserDetails setGlobalLoading={setGlobalLoading}/></ProtectedRoute>} />
+          <Route path="/league/:leagueId/:userId" element={<ProtectedRoute><LeagueUserDetails setGlobalLoading={setGlobalLoading}/></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

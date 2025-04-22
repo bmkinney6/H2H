@@ -1,0 +1,67 @@
+.league-display {
+    padding: 1rem;
+    font-family: sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .team-header-row,
+  .team-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 150px;
+    align-items: center;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    margin-right: 5%;
+    margin-left: 5%;
+  }
+  
+  .team-header-row {
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+  }
+  
+  .team-header-row .stats-column {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .team-header-row .stats-column span {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .rank-column {
+    text-align: center;
+  }
+  
+  .team-name-column {
+    padding-left: 1rem;
+  }
+  
+  .team-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .record {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .stats-column {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stats-column p {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+  }
+  

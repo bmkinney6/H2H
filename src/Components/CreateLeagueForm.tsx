@@ -34,6 +34,7 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
         }
       }
 
+<<<<<<< HEAD
       const response = await axios.post(
         "http://localhost:8000/api/leagues/",
         {
@@ -48,6 +49,40 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
           headers: {
             Authorization: `Bearer ${token}`, // Make sure the token is passed here
           },
+=======
+        try {
+            // Check if the join code is unique
+            if (isPrivate && joinCode) {
+                const checkResponse = await axios.get(`http://localhost:8000/api/leagues/check_join_code/${joinCode}/`);
+                if (checkResponse.data.exists) {
+                    setError("Join code already exists. Please choose a different code.");
+                    return;
+                }
+            }
+            const response = await axios.post(
+                "http://localhost:8000/api/leagues/",
+                {
+                    name: name,
+                    draft_date: draftDate,
+                    time_per_pick: timePerPick,
+                    positional_betting: positionalBetting,
+                    private: isPrivate,
+                    join_code: isPrivate ? joinCode : null,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,  // Make sure the token is passed here
+                    },
+                }
+            );
+
+            if (response.status === 201) {
+                onLeagueCreated();  // Callback after league is created
+            }
+        } catch (err) {
+            setError("Error creating league. Please try again.");
+            console.error("Error details: ", err);  // Log the error details for debugging
+>>>>>>> e13f3c4de67df77876cee6c1af52e660def871a1
         }
       );
 
