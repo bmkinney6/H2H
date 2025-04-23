@@ -7,6 +7,7 @@ import UserDetailsCarousel from "../Components/UserDetailsCarousel";
 import MatchupDisplay from "../Components/MatchupDisplay";
 import LeagueDisplay from "../Components/LeagueDisplay";
 import PlayerSearchList from "../Components/PlayerSearchList";
+import { AxiosError } from "axios";
 
 export type User = {
   id: number;
@@ -128,17 +129,23 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       }
 
       try {
-        const response = await axios.get(`/api/league/${leagueId}/user-matchup/`);
-        const matchupId = response.data.matchupId; // Ensure this is not null
-        setMatchupId(matchupId);
-    } catch (error) {
-        console.error("Error fetching matchup:", error);
-    }
+        const response = await axios.get(
+          `${API_URL1}/api/league/${leagueId}/user-matchup/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setMatchupId(response.data.matchupId);
+      } catch (err) {
+        console.error("Error fetching matchup ID:", err);
+        setError("Failed to fetch matchup ID.");
+      }
     };
 
     fetchMatchupId();
   }, [matchupId]);
 
+ 
   useEffect(() => {
     const fullLeague = async () => {
 
@@ -457,6 +464,12 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                   className="UserDetailsTradeBtn"
                   onClick={() => navigate(`/league/${league?.id}/trade`)}>
                   Trade Players
+                </button>
+                <button
+                  className="UserDetailsBettingBtn"
+                  onClick={() => navigate(`/league/${leagueId}/matchup/${matchupId}/betting`)}
+                  >
+                  Go to Betting Page
                 </button>
               </div>
             </div>

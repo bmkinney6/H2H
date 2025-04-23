@@ -6,6 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchTopTenPlayers } from "../Components/FetchPlayerInfo.tsx";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
+import "../Styles/draft.css";
+
 
 export default function Draft() {
   type Player = {
@@ -39,17 +41,7 @@ export default function Draft() {
   const [userIdToUsername, setUserIdToUsername] = useState<{ [key: number]: string }>({});
   const navigate = useNavigate();
   const { leagueId } = useParams<{ leagueId: string }>();
-  const [positions, setPositions] = useState<{ [key: string]: Player | null }>({
-    QB: null,
-    RB1: null,
-    RB2: null,
-    WR1: null,
-    WR2: null,
-    TE: null,
-    FLX: null,
-    K: null,
-    DEF: null,
-  });
+
   const ws = useRef<WebSocket | null>(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -164,55 +156,6 @@ export default function Draft() {
   };
 
   useEffect(() => {
-    const fetchPicks = async () => {
-      try {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        const response = await axios.get(`${API_URL}/api/league/${leagueId}/draft-picks/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const picks = response.data.picks;
-        setDraftPicks(picks);
-
-        const userId = parseInt(localStorage.getItem("user_id") || "0", 10);
-        const updatedPositions: { [key: string]: Player | null } = { ...positions };
-
-        for (const pick of picks) {
-          if (pick.user_id === userId) {
-            const playerResponse = await axios.get(`${API_URL}/api/player/${pick.player_id}/`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            const player = playerResponse.data;
-
-            updatedPositions[pick.position] = {
-              id: player.id,
-              firstName: player.firstName,
-              lastName: player.lastName,
-              position: pick.position,
-              headshot: player.headshot,
-              status: player.status,
-              team: player.team,
-              location: player.location,
-              weight: player.weight,
-              displayHeight: player.displayHeight,
-              yearly_proj: player.yearly_proj,
-              age: player.age,
-              experience: player.experience,
-              jersey: player.jersey,
-            };
-          }
-        }
-
-        setPositions(updatedPositions);
-      } catch (err) {
-        console.error("Error fetching picks:", err);
-      }
-    };
-
-    fetchPicks();
-  }, [leagueId]);
-
-  useEffect(() => {
     const fetchPicksAndUsernames = async () => {
       try {
         const token = localStorage.getItem(ACCESS_TOKEN);
@@ -272,14 +215,6 @@ export default function Draft() {
         })
       );
 
-      const pickedPlayer = players.find((player) => player.id === playerId);
-      if (pickedPlayer) {
-        setPositions((prevPositions) => ({
-          ...prevPositions,
-          [position]: pickedPlayer,
-        }));
-      }
-
       console.log(`Pick sent: Player ID ${playerId}, Position ${position}`);
     } else {
       console.warn("It's not your turn to pick or WebSocket is not connected.");
@@ -293,97 +228,105 @@ export default function Draft() {
   return (
     <div>
       <h1 className="text-center">Draft Center</h1>
-      <div className="draft-section">
-        <div className="current-turn text-center">
-          {currentPickUser !== null ? (
-            isCurrentPickUser ? (
-              <h2>It's your turn to pick!</h2>
-            ) : (
-              <h2>
-                It's {currentPickUsername ? `${currentPickUsername}'s` : `User ${currentPickUser}'s`} turn to pick.
-              </h2>
-            )
+  
+      {/* Draft Picks Section */}
+      <div className="draft-picks">
+        <DraftLog draftPicks={draftPicks} userIdToUsername={userIdToUsername || {}} />
+      </div>
+  
+      {/* Current Turn Section */}
+      <div className="current-turn text-center">
+        {currentPickUser !== null ? (
+          isCurrentPickUser ? (
+            <h2>It's your turn to pick!</h2>
           ) : (
-            <h2>Loading turn information...</h2>
-          )}
-        </div>
-
-        <div className="team-view">
-          <DraftPositionDisplay positions={positions} />
-        </div>
-
-        <div className="draft-search">
-          <div className="draft-search-container text-center mx-auto">
-            <SearchForm onSubmit={handleFetchPlayerInfo} placeholder="Enter player name" />
-            {searchPerformed && players.length > 0 ? (
-              <div>
-                <h2>Results:</h2>
-                <div className="results-container">
-                  <div className="row g-4">
-                    {players.map((player) => (
-                      <div key={player.id} className="col-12 col-md-6 col-lg-4">
-                        <div className="card h-100">
-                          <img
-                            src={player.headshot}
-                            className="card-img-top rounded-circle w-75 mx-auto mt-3 h-auto"
-                            alt={`${player.firstName} ${player.lastName}`}
-                          />
-                          <div className="card-body text-center">
-                            <h5 className="card-title">
-                              {player.firstName} {player.lastName}
-                            </h5>
-                            <p className="card-text">{player.team}</p>
-                            <p className="card-text">{player.position}</p>
-                            <p className="card-text">
-                              {player.displayHeight} - {player.weight} lbs
-                            </p>
-                            {isCurrentPickUser && (
-                              <>
-                                {selectedPlayer?.id === player.id ? (
-                                  <div className="position-selection">
-                                    <h6>Select Position:</h6>
-                                    {availablePositions.map((position) => (
+            <h2>
+              It's {currentPickUsername ? `${currentPickUsername}'s` : `User ${currentPickUser}'s`} turn to pick.
+            </h2>
+          )
+        ) : (
+          <h2>Loading turn information...</h2>
+        )}
+      </div>
+  
+      {/* Draft Section */}
+      <div className="draft-section">
+        <div className="draft-layout">
+          {/* Draft Position Display */}
+          <div className="team-view">
+            <DraftPositionDisplay leagueId={leagueId!} />
+          </div>
+  
+          {/* Search Component */}
+          <div className="draft-search">
+            <div className="draft-search-container text-center mx-auto">
+              <SearchForm onSubmit={handleFetchPlayerInfo} placeholder="Enter player name" />
+              {searchPerformed && players.length > 0 ? (
+                <div>
+                  <h2>Results:</h2>
+                  <div className="results-container">
+                    <div className="row g-4">
+                      {players.map((player) => (
+                        <div key={player.id} className="col-12 col-md-6 col-lg-4">
+                          <div className="card h-100">
+                            <img
+                              src={player.headshot}
+                              className="card-img-top rounded-circle w-75 mx-auto mt-3 h-auto"
+                              alt={`${player.firstName} ${player.lastName}`}
+                            />
+                            <div className="card-body text-center">
+                              <h5 className="card-title">
+                                {player.firstName} {player.lastName}
+                              </h5>
+                              <p className="card-text">{player.team}</p>
+                              <p className="card-text">{player.position}</p>
+                              <p className="card-text">
+                                {player.displayHeight} - {player.weight} lbs
+                              </p>
+                              {isCurrentPickUser && (
+                                <>
+                                  {selectedPlayer?.id === player.id ? (
+                                    <div className="position-selection">
+                                      <h6>Select Position:</h6>
+                                      {availablePositions.map((position) => (
+                                        <button
+                                          key={position}
+                                          onClick={() => handlePick(player.id, position)}
+                                          className="btn btn-primary btn-sm m-1"
+                                        >
+                                          {position}
+                                        </button>
+                                      ))}
                                       <button
-                                        key={position}
-                                        onClick={() => handlePick(player.id, position)}
-                                        className="btn btn-primary btn-sm m-1"
+                                        onClick={() => setSelectedPlayer(null)}
+                                        className="btn btn-secondary btn-sm m-1"
                                       >
-                                        {position}
+                                        Cancel
                                       </button>
-                                    ))}
+                                    </div>
+                                  ) : (
                                     <button
-                                      onClick={() => setSelectedPlayer(null)}
-                                      className="btn btn-secondary btn-sm m-1"
+                                      onClick={() => handleSelectPlayer(player)}
+                                      className="btn btn-primary btn-sm"
                                     >
-                                      Cancel
+                                      Select
                                     </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={() => handleSelectPlayer(player)}
-                                    className="btn btn-primary btn-sm"
-                                  >
-                                    Select
-                                  </button>
-                                )}
-                              </>
-                            )}
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              searchPerformed && <p className="no-players-message">No players found with that name.</p>
-            )}
+              ) : (
+                searchPerformed && <p className="no-players-message">No players found with that name.</p>
+              )}
+            </div>
+            {error && <p>{error}</p>}
           </div>
-          {error && <p>{error}</p>}
-        </div>
-
-        <div className="draft-picks">
-          <DraftLog draftPicks={draftPicks} userIdToUsername={userIdToUsername || {}} />
         </div>
       </div>
     </div>

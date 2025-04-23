@@ -1,106 +1,212 @@
-.draft-position-display {
-    background-color: #0d1b2a;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 600px;
-  }
-  
-  .positions-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
-  }
-  
-  .position-slot {
-    background-color: #1a2b3c;
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .player-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .player-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-bottom: 5px;
-  }
-  
-  .player-name {
-    font-size: 0.9rem;
-    font-weight: bold;
-  }
-  
-  .player-position {
-    font-size: 0.8rem;
-    color: #ccc;
-  }
-  
-  .empty-slot {
-    color: #888;
-    font-size: 0.9rem;
-  }
-  
-  
-  .draft-log {
-    background-color: #1B263B;
-    padding: 20px;
-    border-radius: 10px;
-    color: white;
-  }
-  
-.draft-log-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.draft-picks {
+  margin-bottom: 20px; /* Add spacing below the draft picks */
+  padding: 15px;
+  background-color: #1b263b;
+  border-radius: 10px;
+  color: white;
+  max-height: 200px; /* Limit the height of the draft picks */
+  overflow-y: auto; /* Enable scrolling if the content exceeds the height */
+}
+
+.draft-section {
+  display: flex;
+  flex-direction: row; /* Align components side by side */
   gap: 20px;
+  padding: 20px;
+}
+
+.team-view {
+  background-image: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  max-width: 100%; /* Prevent overflow */
+  padding: 20px;
+  background-color: #1b263b;
+  border-radius: 10px;
+  overflow: visible;
+}
+
+
+.draft-search {
+  flex: 1; /* Allow the search component to take up more space */
+}
+
+.current-turn {
+  text-align: center;
+  margin-bottom: 20px; /* Add spacing below the current-turn section */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.draft-position-display {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  background-color: #1b263b;
+  border-radius: 10px;
+  color: white;
+  width: calc(100% - 40px); /* Slightly smaller than team-view due to margin */
+  max-width: 100%; /* Prevent overflow */
+  margin: 0 auto; /* Center the display */
+}
+
+.draft-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.unfilled-positions {
+  flex: 1;
+  background-color: #2a3b5f;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  max-height: fit-content; /* Adjust height to fit content */
+}
+
+.unfilled-positions h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-family: "Poppins", sans-serif; /* Use a modern font */
+  font-weight: 600;
+}
+
+.unfilled-positions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.unfilled-positions li {
+  margin-bottom: 5px;
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif; /* Use a modern font */
+  font-weight: 400;
+}
+
+.picked-players {
+  flex: 3;
+  overflow: visible; /* Remove the scrollbar */
+}
+
+
+
+.positions-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Create a 3-column grid */
+  gap: 170px 160px; /* Add spacing between the cards */
+  padding: 0;
+  margin: 0;
+  max-height: 400px; /* Limit the height of the container */
+  width: fit-content; /* Ensure the container spans the full width */
+}
+
+
+.player-card {
+  background-color: #0f1e33; /* Darker and more dull blue */
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  font-family: "Poppins", sans-serif; /* Use a modern font */
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+  text-align: center;
+  width: 150px; /* Square shape */
+  height: 160px; /* Slightly taller to fit longer names */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.player-name {
+  font-size: 0.8rem; /* Slightly reduce font size */
+  font-weight: bold;
+  margin-bottom: 5px;
+  word-wrap: break-word; /* Allow long names to wrap */
+  white-space: normal; /* Allow text to break into multiple lines */
+  text-align: center;
+  line-height: 1.2; /* Adjust line height for better readability */
+  overflow-wrap: break-word; /* Ensure long words break properly */
+}
+
+.player-position {
+  font-size: 0.8rem;
+  color: #d1d1d1;
+}
+
+.empty-slot {
+  background-color: #2a3b5f; /* Match the unfilled positions box */
+  padding: 15px;
+  border-radius: 10px;
+  color: #888;
+  font-family: "Poppins", sans-serif; /* Use a modern font */
+  font-weight: 400;
 }
   
-  .draft-log-item {
-    background-color: #0D1B2A;
-    padding: 10px;
-    border-radius: 5px;
-    color: white;
-  }
+.draft-log {
+  background-color: #1B263B;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+}
 
-  .draft-log {
-    max-height: 600px; /* Extend height to show more picks */
-    overflow-y: auto; /* Enable vertical scrolling */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #888 #444; /* For Firefox */
-    background-color: #1B263B; /* Background color for the entire log */
-    padding: 20px;
-    border-radius: 10px;
-    color: white;
-  }
-  
-  .draft-log::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
-  }
-  
-  .draft-log::-webkit-scrollbar-thumb {
-    background-color: #888; /* Scrollbar color */
-    border-radius: 4px; /* Rounded edges */
-  }
-  
-  .draft-log::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Darker on hover */
-  }
+.draft-log-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 20px;
+}
 
-  .draft-log-header {
-    position: sticky;
-    top: 0;
-    background-color: #162c44; /* Solid background to hide scrolling content */
-    color: white;
-    padding: 10px;
-    z-index: 1;
-    border-bottom: 1px solid #444;
-  }
+.draft-log-item {
+  background-color: #0D1B2A;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.draft-log {
+  max-height: 600px; /* Extend height to show more picks */
+  overflow-y: auto; /* Enable vertical scrolling */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 #444; /* For Firefox */
+  background-color: #1B263B; /* Background color for the entire log */
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+}
+
+.draft-log::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.draft-log::-webkit-scrollbar-thumb {
+  background-color: #888; /* Scrollbar color */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.draft-log::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Darker on hover */
+}
+
+.draft-log-header {
+  position: sticky;
+  top: 0;
+  background-color: #162c44; /* Solid background to hide scrolling content */
+  color: white;
+  padding: 10px;
+  z-index: 1;
+  border-bottom: 1px solid #444;
+}

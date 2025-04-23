@@ -63,7 +63,7 @@ function NavBar() {
 
   useEffect(() => {
     fetchCurrency();
-  }, []); // Ensure this runs only once when the component mounts
+  }, [location]); // Ensure this runs only once when the component mounts
   
   const handleCreateLeagueClick = () => navigate("/create-league");
   const handleSearchLeaguesClick = () => navigate("/search-leagues");
