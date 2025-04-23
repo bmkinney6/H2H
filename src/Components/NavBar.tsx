@@ -39,10 +39,11 @@ function NavBar() {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       try {
-        const response = await axios.get("http://localhost:8000/api/get_user_info/", {
+        const response = await axios.get("http://localhost:8000/api/user/info/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const userCurrency = response.data?.profile?.currency;
+        const userCurrency = response.data.profile?.currency; // Access the currency field
+        console.log("userCurrency", userCurrency);
         if (userCurrency !== undefined) {
           setCurrency(parseFloat(userCurrency)); // Ensure the currency is parsed as a number
         } else {
