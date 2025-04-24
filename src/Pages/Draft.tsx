@@ -39,6 +39,8 @@ export default function Draft() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [availablePositions, setAvailablePositions] = useState<string[]>([]);
   const [userIdToUsername, setUserIdToUsername] = useState<{ [key: number]: string }>({});
+  const [teamPositions, setTeamPositions] = useState<{ [key: string]: string }>({});
+  const [forceRenderKey, setForceRenderKey] = useState<number>(0); // State to force re-render
   const navigate = useNavigate();
   const { leagueId } = useParams<{ leagueId: string }>();
 
@@ -79,6 +81,14 @@ export default function Draft() {
               if (data.message.type === "pick_made") {
                 setDraftPicks((prevPicks) => [...prevPicks, data.message]);
                 setCurrentPickUser(data.message.next_user_id);
+
+                
+              if (data.message.user_id === currentPickUser) {
+                fetchTeamPositions();
+                }
+                
+
+                
               } else if (data.message.type === "draft_complete") {
                 alert("Draft complete!");
                 navigate("/my-leagues");
@@ -144,6 +154,19 @@ export default function Draft() {
     verifyCurrentPickUser();
   }, [currentPickUser, leagueId]);
 
+  const fetchTeamPositions = async () => {
+    try {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      const response = await axios.get(`${API_URL}/api/league/${leagueId}/team-positions/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setTeamPositions(response.data.positions);
+    } catch (error) {
+      console.error("Failed to fetch team positions:", error);
+    }
+  };
+
+
   const handleFetchPlayerInfo = async (searchTerm: string) => {
     try {
       const fetchedPlayers = await fetchTopTenPlayers(API_URL, searchTerm, draftPicks);
@@ -181,6 +204,7 @@ export default function Draft() {
     };
 
     fetchPicksAndUsernames();
+    fetchTeamPositions();
   }, [leagueId]);
 
   const handleSelectPlayer = (player: Player) => {
@@ -197,6 +221,8 @@ export default function Draft() {
       positions.push("Quarterback", "Bench");
     } else if (player.position === "Place kicker") {
       positions.push("Place kicker", "Bench");
+    } else if (player.position === "Defense"|| player.position === "DEF") {
+      positions.push("Defense");
     }
 
     setAvailablePositions(positions);
@@ -214,13 +240,49 @@ export default function Draft() {
           },
         })
       );
-
+  
       console.log(`Pick sent: Player ID ${playerId}, Position ${position}`);
+  
+      // Delay fetching team positions to allow the backend to process the pick
+      setTimeout(() => {
+        fetchTeamPositions();
+      }, 500); // Adjust the delay as needed
     } else {
       console.warn("It's not your turn to pick or WebSocket is not connected.");
     }
   };
 
+  
+  useEffect(() => {
+    if (ws.current) {
+      ws.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+  
+        if (data.message.type === "pick_made") {
+          console.log("Pick made message received:", data);
+  
+          // Update team positions directly from the WebSocket message
+          setTeamPositions(data.message.updated_positions);
+  
+          // Update draft picks
+          setDraftPicks((prevPicks) => [...prevPicks, data.message]);
+  
+          // Update the current pick user
+          setCurrentPickUser(data.message.next_user_id);
+  
+          // Trigger a re-render
+          setForceRenderKey((prevKey) => prevKey + 1);
+        } else if (data.message.type === "draft_complete") {
+          alert("Draft complete!");
+          navigate("/my-leagues");
+        }
+      };
+  
+      ws.current.onerror = (err) => {
+        console.error("WebSocket error:", err);
+      };
+    }
+  }, []);
   if (!isMember || !draftStarted) {
     return <p className="text-center">{error || "Verifying membership and draft status..."}</p>;
   }
@@ -254,7 +316,11 @@ export default function Draft() {
         <div className="draft-layout">
           {/* Draft Position Display */}
           <div className="team-view">
-            <DraftPositionDisplay leagueId={leagueId!} />
+            <DraftPositionDisplay
+              key={forceRenderKey} // Force re-render by changing the key
+              leagueId={leagueId!}
+              teamPositions={teamPositions}
+            />
           </div>
   
           {/* Search Component */}
