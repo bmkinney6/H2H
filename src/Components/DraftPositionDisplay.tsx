@@ -13,7 +13,8 @@ type Player = {
 
 type DraftPositionDisplayProps = {
   leagueId: string;
-};
+  teamPositions: { [key: string]: string }; // Added teamPositions prop
+};;
 
 const defaultPositions = [
   { key: "QB", name: "Quarterback" },
@@ -25,11 +26,28 @@ const defaultPositions = [
   { key: "FLX", name: "Flex" },
   { key: "K", name: "Kicker" },
   { key: "DEF", name: "Defense" },
+  { key: "BN1", name: "Bench 1" },
+  { key: "BN2", name: "Bench 2" },
+  { key: "BN3", name: "Bench 3" },
+  { key: "BN4", name: "Bench 4" },
+  { key: "BN5", name: "Bench 5" },
+  { key: "BN6", name: "Bench 6" },
 ];
 
-export default function DraftPositionDisplay({ leagueId }: DraftPositionDisplayProps) {
+export default function DraftPositionDisplay({ leagueId, teamPositions }: DraftPositionDisplayProps) {
   const [positions, setPositions] = useState<{ [key: string]: Player | null }>({});
   const [unfilledPositions, setUnfilledPositions] = useState(defaultPositions);
+
+  useEffect(() => {
+    // Update positions and unfilled positions whenever teamPositions changes
+    setPositions(teamPositions);
+
+    const filledPositions = Object.keys(teamPositions).filter((key) => teamPositions[key] !== "N/A");
+    setUnfilledPositions(
+      defaultPositions.filter((pos) => !filledPositions.includes(pos.key))
+    );
+  }, [teamPositions]); // Re-run this effect whenever teamPositions changes
+
 
   useEffect(() => {
     const fetchTeamPositions = async () => {
