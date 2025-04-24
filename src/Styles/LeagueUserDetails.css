@@ -160,3 +160,24 @@ background-color: rgb(2, 0, 20); }
     text-align: left;
     max-width: 15rem;
   }
+
+
+.UserDetailsTradeBtn,
+.UserDetailsBettingBtn,
+.UserDetailsTradeRequestsBtn {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: medium;
+  transition: background-color 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.UserDetailsTradeBtn:hover,
+.UserDetailsBettingBtn:hover,
+.UserDetailsTradeRequestsBtn:hover {
+  background-color: #0056b3;
+}
