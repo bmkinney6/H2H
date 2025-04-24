@@ -25,6 +25,7 @@ import UserProfile from "./Pages/User.tsx"; // Adjust the import path as necessa
 import MyLeagues from "./Pages/MyLeagues";
 import LeagueUserDetails from "./Pages/LeagueUserDetails.tsx";
 import Trade from "./Pages/Trade.tsx";
+import TradeRequests from "./Pages/TradeRequests.tsx";
 
 import "./Styles/Index.css";
 import "./Styles/LeagueUserDetails.css";
@@ -85,6 +86,7 @@ function AppContent() {
                             </ProtectedRoute>
                         }
                     />
+                    
                     <Route
                         path="/user-search"
                         element={
@@ -125,6 +127,16 @@ function AppContent() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/leagues/:leagueId/trade-requests"
+                        element={
+                            <ProtectedRoute>
+                                <TradeRequests />
+                            </ProtectedRoute>
+                        }
+                    />
+
+
                     <Route path="/login" element={<Login />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/register" element={<RegisterAndLogout />} />

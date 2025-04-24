@@ -5,6 +5,11 @@ import { ACCESS_TOKEN } from "../constants.tsx";
 import { jwtDecode } from "jwt-decode";
 import "../Styles/Trade.css";
 
+interface Player {
+    id: string;
+    name: string;
+}
+
 interface Team {
     id: number;
     title: string;
@@ -24,16 +29,10 @@ interface Team {
     BN4: string;
     BN5: string;
     BN6: string;
-    IR1: string;
-    IR2: string;
     author: {
         id: number;
-        username: string;
-        email: string;
-        first_name: string;
-        last_name: string;
         profile: {
-            currency: string; // Currency is stored as a string
+            currency: string;
         };
     };
     [key: string]: string | number | object;
@@ -60,13 +59,14 @@ const Trade: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
     const [userTeam, setUserTeam] = useState<Team | null>(null);
-    const [selectedUserPlayers, setSelectedUserPlayers] = useState<Record<string, string[]>>({});
-    const [selectedOpponentPlayers, setSelectedOpponentPlayers] = useState<Record<string, string[]>>({});
+    const [selectedUserPlayer, setSelectedUserPlayer] = useState<{ position: string; id: string } | null>(null);
+    const [selectedOpponentPlayer, setSelectedOpponentPlayer] = useState<{ position: string; id: string } | null>(null);
     const [currencyOffered, setCurrencyOffered] = useState<number>(0);
     const [currencyRequested, setCurrencyRequested] = useState<number>(0);
     const [validationError, setValidationError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [playerNames, setPlayerNames] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (!id || !token) return;
@@ -84,14 +84,36 @@ const Trade: React.FC = () => {
                 );
                 setUserTeam(userTeam);
                 setData(response.data);
+
+                // Fetch player names using the new batch endpoint
+                const playerIds = new Set<string>();
+                response.data.teams.forEach((team: Team) => {
+                    Object.values(team).forEach((value) => {
+                        if (typeof value === "string" && value !== "N/A") {
+                            playerIds.add(value);
+                        }
+                    });
+                });
+
+                const playerResponse = await axios.get(
+                    `${API_URL}/api/player/batch-info/`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        params: { "ids[]": Array.from(playerIds) }, // Pass player IDs as query params
+                    }
+                );
+
+                const names = playerResponse.data.Players.reduce(
+                    (acc: Record<string, string>, player: Player) => {
+                        acc[player.id] = `${player.firstName} ${player.lastName}`;
+                        return acc;
+                    },
+                    {}
+                );
+                setPlayerNames(names);
             } catch (err: any) {
-                if (err.response) {
-                    setError(`Error: ${err.response.status} - ${err.response.data.error}`);
-                } else if (err.request) {
-                    setError('Error: No response from the server.');
-                } else {
-                    setError(`Error: ${err.message}`);
-                }
+                console.error("Error fetching trade info:", err); // Log the error
+                setError(err.response?.data?.error || "Failed to fetch trade info.");
             } finally {
                 setIsLoading(false);
             }
@@ -100,153 +122,79 @@ const Trade: React.FC = () => {
         fetchTradeInfo();
     }, [id, token]);
 
-    const handlePlayerSelection = (player: string, position: string, isUserTeam: boolean) => {
-        const updateSelection = (prev: Record<string, string[]>) => {
-            const newSelection = { ...prev };
-
-            if (!newSelection[position]) {
-                newSelection[position] = [];
-            }
-
-            if (newSelection[position].includes(player)) {
-                newSelection[position] = newSelection[position].filter((p) => p !== player);
-            } else {
-                newSelection[position].push(player);
-            }
-
-            if (newSelection[position].length === 0) {
-                delete newSelection[position];
-            }
-
-            return newSelection;
-        };
-
+    const handlePlayerSelection = (playerId: string, position: string, isUserTeam: boolean) => {
         if (isUserTeam) {
-            setSelectedUserPlayers((prev) => updateSelection(prev));
+            setSelectedUserPlayer((prev) =>
+                prev?.id === playerId ? null : { position, id: playerId }
+            );
         } else {
-            setSelectedOpponentPlayers((prev) => updateSelection(prev));
+            setSelectedOpponentPlayer((prev) =>
+                prev?.id === playerId ? null : { position, id: playerId }
+            );
         }
-
         setValidationError(null);
     };
 
-    const validateTrade = (): boolean => {
-        if (!selectedTeamId) {
-            setValidationError('Please select a team to trade with.');
-            return false;
-        }
+    const renderTeamPlayers = (team: Team, isUserTeam: boolean) => {
+        const positions = [
+            "QB", "RB1", "RB2", "WR1", "WR2", "TE", "FLX", "K", "DEF",
+            "BN1", "BN2", "BN3", "BN4", "BN5", "BN6"
+        ];
 
-        if (currencyOffered < 0 || currencyRequested < 0) {
-            setValidationError('Currency values cannot be negative.');
-            return false;
-        }
+        const selectedPlayer = isUserTeam ? selectedUserPlayer : selectedOpponentPlayer;
 
-        // Validate user's currency
-        const userCurrency = parseFloat(userTeam?.author.profile.currency || "0");
-        if (userCurrency < currencyOffered) {
-            setValidationError('You do not have enough currency to offer.');
-            return false;
-        }
+        return (
+            <ul className="player-list">
+                {positions.map((position) => {
+                    const playerId = team[position];
+                    if (!playerId || playerId === "N/A") return null;
 
-        // Validate opponent's currency
-        const opponentCurrency = parseFloat(selectedTeam?.author.profile.currency || "0");
-        if (opponentCurrency < currencyRequested) {
-            setValidationError('Opponent does not have enough currency to fulfill your request.');
-            return false;
-        }
-
-        const userPositions = Object.keys(selectedUserPlayers);
-        const opponentPositions = Object.keys(selectedOpponentPlayers);
-
-        if (userPositions.length !== opponentPositions.length) {
-            setValidationError('The number of positions selected must match on both sides.');
-            return false;
-        }
-
-        for (const position of userPositions) {
-            if (
-                !opponentPositions.includes(position) ||
-                selectedUserPlayers[position].length !== selectedOpponentPlayers[position]?.length
-            ) {
-                setValidationError(`Mismatch in selected players for position: ${position}.`);
-                return false;
-            }
-        }
-
-        return true;
+                    const isSelected = selectedPlayer?.id === playerId;
+                    return (
+                        <li
+                            key={position}
+                            className={`player-item ${isSelected ? "selected" : ""}`}
+                            onClick={() => handlePlayerSelection(playerId, position, isUserTeam)}
+                        >
+                            {position}: {playerNames[playerId] || playerId}
+                        </li>
+                    );
+                })}
+            </ul>
+        );
     };
 
-    const handleTrade = async () => {
-        if (!validateTrade()) {
+    const handleSubmitTrade = async () => {
+        if (!selectedTeamId || !userTeam || !selectedUserPlayer || !selectedOpponentPlayer) {
+            setValidationError("Please select a team and players for the trade.");
             return;
         }
 
-        const payload = {
-            userPlayers: selectedUserPlayers,
-            opponentPlayers: selectedOpponentPlayers,
-            opponentTeamId: selectedTeamId,
-            currencyOffered,
-            currencyRequested,
-        };
+        const senderPlayers = { [selectedUserPlayer.position]: selectedUserPlayer.id };
+        const receiverPlayers = { [selectedOpponentPlayer.position]: selectedOpponentPlayer.id };
 
         setIsSubmitting(true);
-        console.log('Trade payload:', payload);
         try {
-            await axios.post(
-                `${API_URL}/api/leagues/${id}/trade/execute/`,
-                payload,
+            const response = await axios.post(
+                `${API_URL}/api/leagues/${id}/trade-request/`,
+                {
+                    receiver_team_id: selectedTeamId,
+                    sender_players: senderPlayers,
+                    receiver_players: receiverPlayers,
+                    currency_offered: currencyOffered,
+                    currency_requested: currencyRequested,
+                },
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            alert('Trade completed successfully!');
-            setSelectedUserPlayers({});
-            setSelectedOpponentPlayers({});
-            setCurrencyOffered(0);
-            setCurrencyRequested(0);
-            setSelectedTeamId(null);
+            setValidationError(null);
+            alert("Trade request sent successfully!");
         } catch (err: any) {
-            if (err.response && err.response.data.error) {
-                setValidationError(err.response.data.error);
-            } else {
-                setValidationError('Failed to complete the trade. Please try again.');
-            }
+            setValidationError(err.response?.data?.error || "Failed to send trade request.");
         } finally {
             setIsSubmitting(false);
         }
-    };
-
-    const otherTeams = data?.teams.filter((team: Team) => team.author.id !== userId);
-    const selectedTeam = otherTeams?.find((team: Team) => team.id === selectedTeamId);
-
-    const renderTeamPlayers = (team: Team, isUserTeam: boolean) => {
-        const players = [
-            'QB', 'RB1', 'RB2', 'WR1', 'WR2',
-            'TE', 'FLX', 'K', 'DEF',
-            'BN1', 'BN2', 'BN3', 'BN4', 'BN5', 'BN6',
-            'IR1', 'IR2',
-        ];
-        const selectedPlayers = isUserTeam ? selectedUserPlayers : selectedOpponentPlayers;
-
-        return (
-            <ul>
-                {players.map((position) => (
-                    <li key={position}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={selectedPlayers[position]?.includes(team[position]) || false}
-                                onChange={() =>
-                                    handlePlayerSelection(team[position], position, isUserTeam)
-                                }
-                                disabled={!team[position]}
-                            />
-                            {position}: {team[position]}
-                        </label>
-                    </li>
-                ))}
-            </ul>
-        );
     };
 
     if (isLoading) {
@@ -265,7 +213,7 @@ const Trade: React.FC = () => {
 
                     <div className="trade-layout">
                         <div className="userTeam">
-                            <h2>My Team: {userTeam?.title} (Rank: {userTeam?.rank})</h2>
+                            <h2>Your Team: {userTeam?.title} (Rank: {userTeam?.rank})</h2>
                             <p>Available Currency: ${userTeam?.author.profile.currency}</p>
                             {userTeam ? renderTeamPlayers(userTeam, true) : <p>No team found.</p>}
                         </div>
@@ -290,45 +238,40 @@ const Trade: React.FC = () => {
                                     value={currencyRequested}
                                     onChange={(e) => setCurrencyRequested(Number(e.target.value))}
                                     min="0"
-                                    max={parseFloat(selectedTeam?.author.profile.currency || "0")}
+                                    max={parseFloat(data.teams.find((t) => t.id === selectedTeamId)?.author.profile.currency || "0")}
                                 />
                             </label>
                             <button
                                 className="btn btn-primary"
-                                onClick={handleTrade}
-                                disabled={
-                                    Object.keys(selectedUserPlayers).length === 0 ||
-                                    Object.keys(selectedOpponentPlayers).length === 0 ||
-                                    isSubmitting
-                                }
+                                onClick={handleSubmitTrade}
+                                disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Submitting...' : 'Execute Trade'}
+                                {isSubmitting ? "Submitting..." : "Send Trade Request"}
                             </button>
-                            <div className="validation-message">
-                                {validationError && <span>{validationError}</span>}
-                            </div>
+                            {validationError && <p className="text-danger mt-2">{validationError}</p>}
                         </div>
 
                         <div>
-                            <h2>Select a Team:</h2>
+                            <h2>Select Opponent Team:</h2>
                             <select
-                                className="form-select w-auto"
+                                className="form-select w-auto select-dropdown"
                                 onChange={(e) => setSelectedTeamId(Number(e.target.value))}
-                                value={selectedTeamId || ''}
+                                value={selectedTeamId || ""}
                             >
                                 <option value="" disabled>Select a team</option>
-                                {otherTeams?.map((team: Team) => (
-                                    <option key={team.id} value={team.id}>
-                                        {team.title} (Rank: {team.rank})
-                                    </option>
-                                ))}
+                                {data.teams
+                                    .filter((team) => team.author.id !== userId) // Exclude the user's own team
+                                    .map((team) => (
+                                        <option key={team.id} value={team.id}>
+                                            {team.title} (Rank: {team.rank})
+                                        </option>
+                                    ))}
                             </select>
 
-                            {selectedTeam && (
+                            {selectedTeamId && (
                                 <div className="mt-2">
-                                    <h2>Team: {selectedTeam.title} (Rank: {selectedTeam.rank})</h2>
-                                    <p>Opponent's Currency: ${selectedTeam.author.profile.currency}</p>
-                                    {renderTeamPlayers(selectedTeam, false)}
+                                    <h2>Opponent Team: {data.teams.find((t) => t.id === selectedTeamId)?.title}</h2>
+                                    {renderTeamPlayers(data.teams.find((t) => t.id === selectedTeamId)!, false)}
                                 </div>
                             )}
                         </div>

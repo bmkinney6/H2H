@@ -468,8 +468,14 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                 <button
                   className="UserDetailsBettingBtn"
                   onClick={() => navigate(`/league/${leagueId}/matchup/${matchupId}/betting`)}
-                  >
+                >
                   Go to Betting Page
+                </button>
+                <button
+                  className="UserDetailsTradeRequestsBtn"
+                  onClick={() => navigate(`/leagues/${leagueId}/trade-requests`)}
+                >
+                  Trade Requests
                 </button>
               </div>
             </div>
