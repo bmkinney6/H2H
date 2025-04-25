@@ -46,6 +46,8 @@ export default function Draft() {
 
   const ws = useRef<WebSocket | null>(null);
 
+  const WS_URL = import.meta.env.VITE_WS_URL;
+
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -72,8 +74,8 @@ export default function Draft() {
             setDraftStarted(true);
             setCurrentPickUser(draftStatusResponse.data.currentPickUser);
 
-            ws.current = new WebSocket(`ws://${window.location.hostname}:8000/ws/draft/${leagueId}/`);
-
+            ws.current = new WebSocket(`${WS_URL}/ws/draft/${leagueId}/`);
+            
             ws.current.onmessage = (event) => {
               const data = JSON.parse(event.data);
               console.log("WebSocket message received:", data);
