@@ -12,7 +12,7 @@ type Notification = {
   is_read: boolean;
   created_at: string;
 };
-
+// NavBar component
 function NavBar() {
   const navigate = useNavigate();
   const location = useLocation(); // Track page changes

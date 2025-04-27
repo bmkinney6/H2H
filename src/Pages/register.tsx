@@ -1,6 +1,7 @@
 
 import Form from "../Components/Form.tsx";
 
+// Function to handle registration, call this function in the form component
 export default function Register() {
   return (
     <div className="login-page">

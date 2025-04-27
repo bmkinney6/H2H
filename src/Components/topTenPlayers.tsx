@@ -18,8 +18,9 @@ type Player = {
   jersey: number;
 };
 
-const API_URL = import.meta.env.VITE_API_URL; // Replace with your actual API URL
+const API_URL = import.meta.env.VITE_API_URL;
 
+//function to fetch top 10 players in NFL
 const TopTenPlayers: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

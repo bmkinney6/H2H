@@ -13,22 +13,24 @@ interface ProtectedRouteProps {
 interface DecodedToken {
   exp: number;
 }
-
+//protected route component to make sure users are logged in before accessing certain pages
 function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const { setIsLoggedIn } = useContext(AuthContext);
 
-  const refreshToken = useCallback(async () => {
+  const refreshToken = useCallback(async () => { // Function to refresh the token
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
     try {
       const res = await api.post("/user/token/refresh", {
         refresh: refreshToken,
       });
+      // If the response status is 200, set the new access token
       if (res.status === 200) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         setIsAuthorized(true);
         setIsLoggedIn(true);
-      } else {
+      }// If the response status is not 200, clear the tokens
+      else {
         setIsAuthorized(false);
         setIsLoggedIn(false);
       }
@@ -38,7 +40,7 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
       setIsLoggedIn(false);
     }
   }, [setIsLoggedIn]);
-
+  // Function to check if the user is authorized
   const auth = useCallback(async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (!token) {
@@ -49,7 +51,7 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
     const decoded: DecodedToken = jwtDecode<DecodedToken>(token);
     const tokenExpiration = decoded.exp;
     const now = Date.now() / 1000;
-
+    // Check if the token is expired, if so, refresh the token
     if (tokenExpiration < now) {
       await refreshToken();
     } else {
