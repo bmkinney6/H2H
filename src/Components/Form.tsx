@@ -99,27 +99,18 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
-<<<<<<< HEAD
         navigate("/"); // Redirect to the home page
-=======
-        navigate("/"); // Redirect to the home page after login
->>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
       } else {
         // For registration, redirect to the login page
         console.log("Registration successful:", res.data);
         navigate("/login");
       }
-<<<<<<< HEAD
     } catch (error: any) {
       // Improved error handling
       console.error("Error during form submission:", error.response || error.message);
       const errorMessage =
         error.response?.data?.error || "An error occurred. Please try again.";
       alert(errorMessage);
-=======
-    } catch (error) { // Handle errors
-      alert(error);
->>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
     } finally {
       setLoading(false);
     }
