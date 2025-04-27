@@ -99,12 +99,17 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
+
         navigate("/"); // Redirect to the home page
+
+        navigate("/"); // Redirect to the home page after login
+
       } else {
         // For registration, redirect to the login page
         console.log("Registration successful:", res.data);
         navigate("/login");
       }
+
     } catch (error: any) {
       // Improved error handling
       console.error("Error during form submission:", error.response || error.message);
