@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../Styles/draft.css";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
@@ -13,8 +13,8 @@ type Player = {
 
 type DraftPositionDisplayProps = {
   leagueId: string;
-  teamPositions: { [key: string]: string }; // Added teamPositions prop
-};;
+  teamPositions: { [key: string]: Player | null }; // Updated type
+};
 
 const defaultPositions = [
   { key: "QB", name: "Quarterback" },
@@ -42,7 +42,7 @@ export default function DraftPositionDisplay({ leagueId, teamPositions }: DraftP
     // Update positions and unfilled positions whenever teamPositions changes
     setPositions(teamPositions);
 
-    const filledPositions = Object.keys(teamPositions).filter((key) => teamPositions[key] !== "N/A");
+    const filledPositions = Object.keys(teamPositions).filter((key) => teamPositions[key] !== null && teamPositions[key] !== undefined);
     setUnfilledPositions(
       defaultPositions.filter((pos) => !filledPositions.includes(pos.key))
     );

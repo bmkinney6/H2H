@@ -20,12 +20,15 @@ function NavBar() {
   const [currency, setCurrency] = useState<number | null>(null); // State for user currency
   const [isFeaturesHovered, setIsFeaturesHovered] = useState(false); // Track hover state
 
+  const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Ensure no trailing slash
+
+
   // Fetch notifications
   const fetchNotifications = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       try {
-        const response = await axios.get("http://localhost:8000/api/notifications/?limit=10", {
+        const response = await axios.get(`${API_URL}/api/notifications/?limit=10`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotifications(response.data.filter((n) => !n.is_read));
@@ -39,7 +42,7 @@ function NavBar() {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       try {
-        const response = await axios.get("http://localhost:8000/api/user/info/", {
+        const response = await axios.get(`${API_URL}/api/user/info/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userCurrency = response.data.profile?.currency; // Access the currency field
@@ -156,7 +159,7 @@ function NavBar() {
               >
                 Notifications
               </button>
-              <ul className="dropdown-menu">
+                <ul className="dropdown-menu notification-dropdown">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
                     <li
@@ -169,18 +172,18 @@ function NavBar() {
                       }}
                     >
                       <span className="notification-text">{notification.message}</span>
+                      <div className="notification-separator"></div>
+
                     </li>
+                    
                   ))
                 ) : (
                   <li className="dropdown-item">No notifications</li>
                 )}
                 <li>
-                  <button
-                    className="dropdown-item text-primary"
-                    onClick={handleViewAllNotifications}
-                  >
+                  <a href="/inbox" className="view-all-link">
                     View All
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>

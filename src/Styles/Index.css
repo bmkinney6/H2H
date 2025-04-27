@@ -542,38 +542,135 @@ button:hover {
     background-color: #d4edda; /* Slightly darker green on hover */
   }
   
+/* ############################################################### */
+/* ############################################################### */
+/* ############################################################### */
 
-  
-  .dropdown-menu {
-    max-width: 400px; /* Set a maximum width for the dropdown */
-    word-wrap: break-word; /* Ensure text wraps within the box */
-    white-space: normal; /* Allow text to wrap to the next line */
-    overflow-wrap: break-word; /* Break long words if necessary */
-    max-height: 400px; /* Limit the height of the dropdown */
-    overflow-y: auto; /* Add a vertical scrollbar if content exceeds the height */
-    position: absolute; /* Ensure the dropdown stays within the viewport */
-    right: 0; /* Align the dropdown to the right edge of the button */
-    left: auto; /* Prevent it from expanding to the left */
 
-    z-index: 1050; /* Ensure it appears above other elements */
-  }
+
+  /* Notifications Dropdown Styling */
+
+/* View All Link Styling */
+.dropdown-menu .view-all-link {
+  font-weight: bold;
+  color: #5dade2; /* Faint light blue */
+  text-align: center;
+  display: block;
+  padding: 10px 0;
+  text-decoration: none;
+  transition: background-color 0.5s ease, color 0.5s ease; /* Smooth transition for both background and text color */
   
-  /* Notification Text Styling */
-  .notification-text {
-    display: block; /* Ensure the text takes up the full width */
-    color: #333; /* Set a readable color */
-    cursor: pointer;
-    text-decoration: none; /* Remove hyperlink styling */
-    padding: 5px 10px; /* Add some padding for better spacing */
-    word-wrap: break-word; /* Ensure long words wrap */
-    overflow-wrap: break-word; /* Break long words if necessary */
-    white-space: normal; /* Allow text to wrap */
-  }
+}
+
+.dropdown-menu .view-all-link:hover {
+  color: #3498db; /* Slightly darker blue on hover */
+  background-color: #2a3b5f; /* Match the hover background color of notifications */
+  border-radius: 5px; /* Optional: Add rounded corners for consistency */
   
-  .notification-text:hover {
-    text-decoration: underline; /* Add underline on hover for better UX */
-  }
-  
+
+}
+
+/* Notification Separator */
+.dropdown-menu .notification-separator {
+  width: 90%; /* Centered with edges cutting off */
+  height: 2px;
+  background-color: #2a3b5f; /* Slightly lighter blue */
+  margin: 5px auto; /* Add spacing around the separator */
+}
+
+/* Ensure Dropdown Stays On Screen */
+.dropdown-menu {
+  position: absolute;
+  right: 0; /* Align to the right edge of the screen */
+  left: auto; /* Prevent overflow on the left */
+  max-width: 90vw; /* Ensure it doesn't exceed the viewport width */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  background-color: #1b263b; /* Match dropdown background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  padding: 10px 0; /* Add padding for spacing */
+}
+
+
+.notification-dropdown .dropdown-item {
+  background-color: #1b263b; /* Match dropdown background */
+  color: white; /* White text */
+  padding: 10px 15px; /* Add padding for better spacing */
+  border: none; /* Remove default border */
+  transition: background-color 0.5s ease; /* Smooth hover transition */
+}
+
+
+/* Hover Effect */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #2a3b5f; /* Slightly lighter blue */
+  color: white; /* Keep text white */
+}
+
+/* Scrollbar Styling */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px; /* Narrow scrollbar */
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #2a3b5f; /* Match hover color */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background-color: #3c4e6f; /* Slightly darker on hover */
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background-color: #1b263b; /* Match dropdown background */
+}
+
+.view-all-link {
+  font-weight: bold; /* Bold font */
+  color: #5dade2; /* Faded light blue */
+  text-align: center;
+  display: block;
+  padding: 10px 0;
+  text-decoration: none; /* Remove underline */
+  transition: color 2.0s ease; /* Smooth color transition */
+}
+
+.view-all-link:hover {
+  color: #3498db; /* Slightly darker blue on hover */
+}
+
+.notification-dropdown {
+  max-height: 300px; /* Limit the height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  width: 227px; /* Slightly wider dropdown */
+  background-color: #1b263b; /* Match dropdown background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  padding: 10px 0; /* Add padding for spacing */
+}
+
+
+
+.notification-text {
+  display: block; /* Ensure the text takes up the full width */
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none; /* Remove hyperlink styling */
+  padding: 5px 10px; /* Add some padding for better spacing */
+  word-wrap: break-word; /* Ensure long words wrap */
+  overflow-wrap: break-word; /* Break long words if necessary */
+  white-space: normal; /* Allow text to wrap */
+}
+
+/* ############################################################### */
+/* ############################################################### */
+/* ############################################################### */
+
+
+
+
+
+
   .delete-button {
     background-color: #dc3545;
     color: white;

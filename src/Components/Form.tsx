@@ -51,6 +51,8 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Dynamically set the form title based on the method
   name = method === "login" ? "Login" : "Register";
 
   // Check if the method is "login" or "register"
@@ -59,12 +61,14 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
     setLoading(true);
     e.preventDefault(); // Prevents the form from submitting
 
+    // Validate password match for registration
     if (password !== confirmPassword && method === "register") {
       alert("Passwords do not match");
       setLoading(false);
       return;
     }
 
+    // Prepare form data
     const formData = new FormData();
     formData.append("username", username);
     if (method === "register") {
@@ -79,26 +83,49 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
     formData.append("password", password);
 
     try {
+      // Debugging log for the route
+      console.log("Submitting to route:", route);
+
+      // Axios request using the dynamic route
       const res = await axios.post(route, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
+      // Handle login-specific logic
       if (method === "login") {
+        console.log("Login successful:", res.data);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
+<<<<<<< HEAD
+        navigate("/"); // Redirect to the home page
+=======
         navigate("/"); // Redirect to the home page after login
+>>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
       } else {
+        // For registration, redirect to the login page
+        console.log("Registration successful:", res.data);
         navigate("/login");
       }
+<<<<<<< HEAD
+    } catch (error: any) {
+      // Improved error handling
+      console.error("Error during form submission:", error.response || error.message);
+      const errorMessage =
+        error.response?.data?.error || "An error occurred. Please try again.";
+      alert(errorMessage);
+=======
     } catch (error) { // Handle errors
       alert(error);
+>>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
     } finally {
       setLoading(false);
     }
   };
 
+  // Calculate password strength
   const strength = passwordStrength(password);
   const { label, color } = strengthLabel(strength);
 

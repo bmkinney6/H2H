@@ -103,7 +103,10 @@
   padding: 0;
   margin: 0;
   max-height: 400px; /* Limit the height of the container */
-  width: fit-content; /* Ensure the container spans the full width */
+  min-width: 50%; /* Ensure the container spans the full width */
+  overflow: visible; /* Ensure content is not clipped */
+
+
 }
 
 
@@ -116,12 +119,13 @@
   font-weight: 500;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
   text-align: center;
-  width: 150px; /* Square shape */
-  height: 160px; /* Slightly taller to fit longer names */
+  width: 9%; /* Square shape */
+  height: 18%; /* Slightly taller to fit longer names */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
 }
 
 .player-card img {
@@ -133,14 +137,17 @@
 }
 
 .player-name {
-  font-size: 0.8rem; /* Slightly reduce font size */
+  font-size: 0.7rem; /* Slightly reduce font size */
   font-weight: bold;
   margin-bottom: 5px;
   word-wrap: break-word; /* Allow long names to wrap */
   white-space: normal; /* Allow text to break into multiple lines */
   text-align: center;
-  line-height: 1.2; /* Adjust line height for better readability */
+  line-height: 1.1; /* Adjust line height for better readability */
   overflow-wrap: break-word; /* Ensure long words break properly */
+  min-width:80%;
+
+  
 }
 
 .player-position {
