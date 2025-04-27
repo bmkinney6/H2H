@@ -34,12 +34,22 @@ const strengthLabel = (strength: number) => {
   }
 };
 
+// Alert Component
+const Alert: React.FC<{ message: string; type: string; onClose: () => void }> = ({ message, type, onClose }) => {
+  return (
+      <div className={`alert alert-${type} alert-dismissible fade show`} role="alert">
+        {message}
+        <button type="button" className="btn-close m-auto" onClick={onClose}></button>
+      </div>
+  );
+};
+
 // LoginForm component
 const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
-  name,
-  method,
-  route,
-}) => {
+                                                                                name,
+                                                                                method,
+                                                                                route,
+                                                                              }) => {
   const [username, setUsername] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
@@ -49,6 +59,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const [dob, setDob] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [alert, setAlert] = useState<{ message: string; type: string } | null>(null);
   const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -63,7 +74,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
 
     // Validate password match for registration
     if (password !== confirmPassword && method === "register") {
-      alert("Passwords do not match");
+      setAlert({ message: "Passwords do not match", type: "danger" });
       setLoading(false);
       return;
     }
@@ -99,11 +110,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
-
         navigate("/"); // Redirect to the home page
-
-        navigate("/"); // Redirect to the home page after login
-
       } else {
         // For registration, redirect to the login page
         console.log("Registration successful:", res.data);
@@ -114,8 +121,8 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
       // Improved error handling
       console.error("Error during form submission:", error.response || error.message);
       const errorMessage =
-        error.response?.data?.error || "An error occurred. Please try again.";
-      alert(errorMessage);
+          error.response?.data?.error || "Wrong password. Please try again.";
+      setAlert({ message: errorMessage, type: "danger" });
     } finally {
       setLoading(false);
     }
@@ -128,88 +135,95 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   // Render the form
   return (
       <div>
-    <form onSubmit={handleSubmit} className="form-container glass text-center">
-      <img // our logo
-        className="mt-5 rounded-2 mx-auto"
-        src="../../public/H2HLogo.jpg"
-        width={100}
-        height={100}
-        alt="Logo"
-      />
-      <h1>{name}</h1>
-      <input
-        className="form-control mb-2"
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      {method === "register" && (
-        <>
-          <input
-            className="form-control mb-2"
-            type="text"
-            placeholder="First Name"
-            value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
+        {alert && (
+            <Alert
+                message={alert.message}
+                type={alert.type}
+                onClose={() => setAlert(null)}
+            />
+        )}
+        <form onSubmit={handleSubmit} className="form-container glass text-center">
+          <img
+              className="mt-5 rounded-2 mx-auto"
+              src="../../public/H2HLogo.jpg"
+              width={100}
+              height={100}
+              alt="Logo"
           />
+          <h1>{name}</h1>
           <input
-            className="form-control mb-2"
-            type="text"
-            placeholder="Last Name"
-            value={lastname}
-            onChange={(e) => setLastname(e.target.value)}
+              className="form-control mb-2"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
           />
+          {method === "register" && (
+              <>
+                <input
+                    className="form-control mb-2"
+                    type="text"
+                    placeholder="First Name"
+                    value={firstname}
+                    onChange={(e) => setFirstname(e.target.value)}
+                />
+                <input
+                    className="form-control mb-2"
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastname}
+                    onChange={(e) => setLastname(e.target.value)}
+                />
+                <input
+                    className="form-control mb-2"
+                    type="text"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                    className="form-control mb-2"
+                    type="date"
+                    placeholder="Date of Birth"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                />
+                <input
+                    className="form-control mb-2"
+                    type="file"
+                    onChange={(e) => setProfilePicture(e.target.files?.[0] || null)}
+                />
+              </>
+          )}
           <input
-            className="form-control mb-2"
-            type="text"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+              className="form-control mb-2"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
           />
-          <input
-            className="form-control mb-2"
-            type="date"
-            placeholder="Date of Birth"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-          />
-          <input
-            className="form-control mb-2"
-            type="file"
-            onChange={(e) => setProfilePicture(e.target.files?.[0] || null)}
-          />
-        </>
-      )}
-      <input
-        className="form-control mb-2"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {method === "register" && (
-        <>
-          <div>
-            Password strength: <span style={{ color }}>{label}</span>
-          </div>
-          <input
-            className="form-control mb-2"
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </>
-      )}
-      <button // Submit button, load while form is submitted
-        className="btn btn-lg btn-primary btn-block mt-3"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : name}
-      </button>
-    </form>
+          {method === "register" && (
+              <>
+                <div>
+                  Password strength: <span style={{ color }}>{label}</span>
+                </div>
+                <input
+                    className="form-control mb-2"
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </>
+          )}
+          <button
+              className="btn btn-lg btn-primary btn-block mt-3"
+              type="submit"
+              disabled={loading}
+          >
+            {loading ? "Loading..." : name}
+          </button>
+        </form>
       </div>
   );
 };
