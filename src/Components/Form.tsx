@@ -48,18 +48,22 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Dynamically set the form title based on the method
   name = method === "login" ? "Login" : "Register";
 
   const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
     e.preventDefault(); // Prevents the form from submitting
 
+    // Validate password match for registration
     if (password !== confirmPassword && method === "register") {
       alert("Passwords do not match");
       setLoading(false);
       return;
     }
 
+    // Prepare form data
     const formData = new FormData();
     formData.append("username", username);
     if (method === "register") {
@@ -74,26 +78,40 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
     formData.append("password", password);
 
     try {
+      // Debugging log for the route
+      console.log("Submitting to route:", route);
+
+      // Axios request using the dynamic route
       const res = await axios.post(route, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
+      // Handle login-specific logic
       if (method === "login") {
+        console.log("Login successful:", res.data);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
-        navigate("/");
+        navigate("/"); // Redirect to the home page
       } else {
+        // For registration, redirect to the login page
+        console.log("Registration successful:", res.data);
         navigate("/login");
       }
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      // Improved error handling
+      console.error("Error during form submission:", error.response || error.message);
+      const errorMessage =
+        error.response?.data?.error || "An error occurred. Please try again.";
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+  // Calculate password strength
   const strength = passwordStrength(password);
   const { label, color } = strengthLabel(strength);
 
