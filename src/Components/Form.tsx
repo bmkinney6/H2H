@@ -6,6 +6,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; // Adjust the import
 import "../Styles/Form.css";
 import "../Styles/Index.css";
 
+// Function to calculate password strength
 const passwordStrength = (password: string) => {
   let strength = 0;
   if (password.length >= 8) strength++;
@@ -16,6 +17,7 @@ const passwordStrength = (password: string) => {
   return strength;
 };
 
+// Function to get strength label and color
 const strengthLabel = (strength: number) => {
   switch (strength) {
     case 0:
@@ -32,6 +34,7 @@ const strengthLabel = (strength: number) => {
   }
 };
 
+// LoginForm component
 const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   name,
   method,
@@ -50,6 +53,8 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const navigate = useNavigate();
   name = method === "login" ? "Login" : "Register";
 
+  // Check if the method is "login" or "register"
+  // handle login or register request
   const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
     e.preventDefault(); // Prevents the form from submitting
@@ -83,11 +88,11 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
-        navigate("/");
+        navigate("/"); // Redirect to the home page after login
       } else {
         navigate("/login");
       }
-    } catch (error) {
+    } catch (error) { // Handle errors
       alert(error);
     } finally {
       setLoading(false);
@@ -97,6 +102,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const strength = passwordStrength(password);
   const { label, color } = strengthLabel(strength);
 
+  // Render the form
   return (
       <div>
     <form onSubmit={handleSubmit} className="form-container glass text-center">
@@ -173,7 +179,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
           />
         </>
       )}
-      <button
+      <button // Submit button, load while form is submitted
         className="btn btn-lg btn-primary btn-block mt-3"
         type="submit"
         disabled={loading}

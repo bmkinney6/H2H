@@ -18,6 +18,7 @@ interface Profile {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// UserProfile component
 const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile>({
@@ -29,6 +30,7 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Fetch user information, and set user and profile state for display
     const fetchUserInfo = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/user/info/`, {
@@ -51,7 +53,7 @@ const UserProfile: React.FC = () => {
 
     fetchUserInfo();
   }, []);
-
+  // Handle form submission for updating user information
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);

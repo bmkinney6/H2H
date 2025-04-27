@@ -1,5 +1,6 @@
 import { Pagination } from "react-bootstrap";
 
+// This function generates pagination items for a pagination component. prevents infinite scrolling by segmenting results
 const getPaginationItems = (
   currentPage: number,
   totalPages: number,

@@ -5,10 +5,10 @@ import { checkLoginStatus } from "./checkLoginStatus";
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);    // State to track login status
 
   useEffect(() => {
-    const verifyLoginStatus = async () => {
+    const verifyLoginStatus = async () => { // Check login status on component mount
       const { isLoggedIn } = await checkLoginStatus();
       setIsLoggedIn(isLoggedIn);
     };

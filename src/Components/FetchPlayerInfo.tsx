@@ -64,6 +64,8 @@ export const fetchPlayerInfo = async (
  * @param draftPicks - An array of already-picked players.
  * @returns A promise resolving to an array of Player objects.
  */
+
+// This function fetches the top ten players based on a search term and excludes already-picked players.
 export const fetchTopTenPlayers = async (
   API_URL: string,
   name: string = "", // Add name parameter with default value

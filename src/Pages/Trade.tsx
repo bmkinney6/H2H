@@ -53,6 +53,7 @@ if (token) {
     userId = decodedToken.user_id;
 }
 
+// Trade component to handle trade requests
 const Trade: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [data, setData] = useState<LeagueData | null>(null);
@@ -102,7 +103,7 @@ const Trade: React.FC = () => {
                         params: { "ids[]": Array.from(playerIds) }, // Pass player IDs as query params
                     }
                 );
-
+                // Map player IDs to names
                 const names = playerResponse.data.Players.reduce(
                     (acc: Record<string, string>, player: Player) => {
                         acc[player.id] = `${player.firstName} ${player.lastName}`;
@@ -110,7 +111,7 @@ const Trade: React.FC = () => {
                     },
                     {}
                 );
-                setPlayerNames(names);
+                setPlayerNames(names); // Store player names in state
             } catch (err: any) {
                 console.error("Error fetching trade info:", err); // Log the error
                 setError(err.response?.data?.error || "Failed to fetch trade info.");

@@ -35,7 +35,7 @@ function Logout() {
     localStorage.clear();
     return <Navigate to="/login" />;
 }
-
+//when user logs out, clear local storage (tokens) and redirect to login page
 function RegisterAndLogout() {
     localStorage.clear();
     return <Register />;
@@ -52,10 +52,11 @@ function AppContent() {
         setupAxiosInterceptor(navigate); // Pass navigate to the interceptor
     }, [navigate]);
 
+    // use protected route to check if user is logged in, if not, redirect to login page
     return (
         <>
             <div>
-                {isLoggedIn ? <NavBar /> : <NavBarPre />}
+                {isLoggedIn ? <NavBar /> : <NavBarPre />} {/* Render NavBar based on login status */}
                 <Loader active={globalLoading} />
                 <Routes>
                     <Route path="/" element={<Home />} />
