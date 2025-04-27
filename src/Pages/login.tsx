@@ -5,10 +5,14 @@ import "../Styles/Form.css";
 export default function Login() {
   const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Ensure no trailing slash
   return (
-    <Form
-      name="Login"
-      route={`${API_URL}/user/token`} // Use the environment variable
-      method="login"
-    />
+      <div className="login-page">
+        <div className="form-wrapper">
+          <Form
+              name="Login"
+              route="http://localhost:8000/user/token"
+              method="login"
+          />
+        </div>
+      </div>
   );
 }
