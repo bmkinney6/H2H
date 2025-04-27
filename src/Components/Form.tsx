@@ -98,9 +98,10 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const { label, color } = strengthLabel(strength);
 
   return (
-    <form onSubmit={handleSubmit} className="form-container text-center">
-      <img // Replace with your logo
-        className="mt-5 rounded-2"
+      <div>
+    <form onSubmit={handleSubmit} className="form-container glass text-center">
+      <img // our logo
+        className="mt-5 rounded-2 mx-auto"
         src="../../public/H2HLogo.jpg"
         width={100}
         height={100}
@@ -180,6 +181,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         {loading ? "Loading..." : name}
       </button>
     </form>
+      </div>
   );
 };
 
