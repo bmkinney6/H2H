@@ -6,6 +6,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; // Adjust the import
 import "../Styles/Form.css";
 import "../Styles/Index.css";
 
+// Function to calculate password strength
 const passwordStrength = (password: string) => {
   let strength = 0;
   if (password.length >= 8) strength++;
@@ -16,6 +17,7 @@ const passwordStrength = (password: string) => {
   return strength;
 };
 
+// Function to get strength label and color
 const strengthLabel = (strength: number) => {
   switch (strength) {
     case 0:
@@ -32,6 +34,7 @@ const strengthLabel = (strength: number) => {
   }
 };
 
+// LoginForm component
 const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   name,
   method,
@@ -52,6 +55,8 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   // Dynamically set the form title based on the method
   name = method === "login" ? "Login" : "Register";
 
+  // Check if the method is "login" or "register"
+  // handle login or register request
   const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
     e.preventDefault(); // Prevents the form from submitting
@@ -94,18 +99,27 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         setIsLoggedIn(true); // Update the login state
+<<<<<<< HEAD
         navigate("/"); // Redirect to the home page
+=======
+        navigate("/"); // Redirect to the home page after login
+>>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
       } else {
         // For registration, redirect to the login page
         console.log("Registration successful:", res.data);
         navigate("/login");
       }
+<<<<<<< HEAD
     } catch (error: any) {
       // Improved error handling
       console.error("Error during form submission:", error.response || error.message);
       const errorMessage =
         error.response?.data?.error || "An error occurred. Please try again.";
       alert(errorMessage);
+=======
+    } catch (error) { // Handle errors
+      alert(error);
+>>>>>>> 49813b7c80296db5e03d75aac35a68a2be30a41a
     } finally {
       setLoading(false);
     }
@@ -115,10 +129,12 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
   const strength = passwordStrength(password);
   const { label, color } = strengthLabel(strength);
 
+  // Render the form
   return (
-    <form onSubmit={handleSubmit} className="form-container text-center">
-      <img // Replace with your logo
-        className="mt-5 rounded-2"
+      <div>
+    <form onSubmit={handleSubmit} className="form-container glass text-center">
+      <img // our logo
+        className="mt-5 rounded-2 mx-auto"
         src="../../public/H2HLogo.jpg"
         width={100}
         height={100}
@@ -190,7 +206,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
           />
         </>
       )}
-      <button
+      <button // Submit button, load while form is submitted
         className="btn btn-lg btn-primary btn-block mt-3"
         type="submit"
         disabled={loading}
@@ -198,6 +214,7 @@ const LoginForm: React.FC<{ name: string; method: string; route: string }> = ({
         {loading ? "Loading..." : name}
       </button>
     </form>
+      </div>
   );
 };
 

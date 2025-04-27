@@ -26,6 +26,7 @@ const PlayerInfo: React.FC<{ playerId: string }> = ({ playerId }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        // Fetch player information from the API
         const fetchPlayerInfo = async () => {
             try {
                 const response = await axios.get(`${API_URL}/playerInfo/${playerId}`);

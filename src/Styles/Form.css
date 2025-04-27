@@ -1,5 +1,44 @@
 form {
     max-width: 480px;
+    /*max-height: 750px;*/
     margin: 0 auto;
 
+}
+.form-container {
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+form:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+}
+.glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid;
+}
+.login-page {
+    background: url('../../public/FormBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 94vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-wrapper {
+    position: absolute;
+    top: 20%; /* Adjust this value to move the form up or down */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
 }
