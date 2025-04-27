@@ -147,7 +147,7 @@ function NavBar() {
               <span className="text-white">{currency !== null ? `$${currency}` : "Loading..."}</span>
             </div>
             {/* Notifications Dropdown */}
-            <div className="dropdown mx-2">
+            <div className="dropdown mx-2 mb-3">
               <button
                 className="btn btn-secondary dropdown-toggle"
                 type="button"
@@ -185,6 +185,16 @@ function NavBar() {
               </ul>
             </div>
             <LogoutButton />
+            <div className="profile-display d-flex align-items-center mx-3">
+              <img
+                  src="/ProfileDefault.png" // Path to your currency icon
+                  alt="Currency"
+                  width={40}
+                  height={40}
+                  className="me-2"
+                  onClick={() => navigate("/user")}
+              />
+            </div>
           </div>
         </div>
         {isFeaturesHovered && (
