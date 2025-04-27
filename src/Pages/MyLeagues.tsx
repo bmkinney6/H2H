@@ -26,7 +26,16 @@ type League = {
   join_code?: string;
   users: Array<User>;
   draftStarted: boolean;
-  draftComplete: boolean; // Added field to track if the draft is complete
+  draftComplete: boolean;
+};
+
+type Team = {
+  user_id: string;
+  username: string;
+  team: {
+    team_title: string;
+    players: { [key: string]: string };
+  } | null;
 };
 
 type MyLeaguesProps = {
@@ -37,7 +46,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [joinCode, setJoinCode] = useState<string>("");
@@ -52,16 +61,36 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
     private: true,
     join_code: "",
   });
+  const positionMap: { [key: string]: string } = {
+    QB: "Quarterback",
+    RB1: "Running Back 1",
+    RB2: "Running Back 2",
+    WR1: "Wide Receiver 1",
+    WR2: "Wide Receiver 2",
+    TE: "Tight End",
+    FLX: "Flex",
+    K: "Kicker",
+    DEF: "Defense",
+    BN1: "Bench 1",
+    BN2: "Bench 2",
+    BN3: "Bench 3",
+    BN4: "Bench 4",
+    BN5: "Bench 5",
+    BN6: "Bench 6",
+    IR1: "Injured Reserve 1",
+    IR2: "Injured Reserve 2",
+  };
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [draftError, setDraftError] = useState<string | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]); // New state for teams
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_LEAGUE_URL.replace(/\/$/, "");
-  const API_URL1 = import.meta.env.VITE_API_URL.replace(/\/$/, "");  
+  const API_URL1 = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
   useEffect(() => {
     fetchLeagues();
-    fetchUserDetails(); 
+    fetchUserDetails();
     checkLoginStatus().then((status) => {
       if (status.isLoggedIn) {
         setCurrentUsername(status.username ?? null);
@@ -70,6 +99,14 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedLeague) {
+      // Fetch teams for the selected league
+      fetchTeams(selectedLeague.id);
+    }
+  }, [selectedLeague]);
+
 
   const fetchLeagues = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -94,6 +131,26 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       setLoading(false);
     }
   };
+
+  const fetchTeams = async (leagueId: string) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+  
+    try {
+      const response = await axios.get(`${API_URL1}/api/leagues/${leagueId}/users-and-teams/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      setTeams(response.data); // Assuming the response contains the list of users and their teams
+    } catch (err) {
+      setError("Failed to fetch teams.");
+      console.error("Error fetching teams:", err);
+    }
+  };
+
 
   const removeDuplicateLeagues = (leagues: League[]) => {
     const uniqueLeaguesMap = new Map<string, League>();
@@ -126,7 +183,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
 
       if (response.status === 200) {
         setJoinError(null);
-        fetchLeagues(); // Refresh the leagues list after joining
+        fetchLeagues();
       } else {
         setJoinError(response.data.error || "Failed to join the league.");
       }
@@ -149,7 +206,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       });
 
       if (response.status === 200) {
-        window.location.reload() // Redirect to MyLeagues page after leaving
+        window.location.reload();
       } else {
         setError(response.data.error || "Failed to leave the league.");
       }
@@ -170,9 +227,9 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       const response = await axios.delete(`${API_URL}/${leagueId}/delete/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+      const [teams, setTeams] = useState<Team[]>([]); // New state for teams
       if (response.status === 200) {
-        window.location.reload() // Redirect to MyLeagues page after deleting
+        window.location.reload();
       } else {
         setError(response.data.error || "Failed to delete the league.");
       }
@@ -193,11 +250,9 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   const handleSaveSettings = async () => {
     if (!selectedLeague) return;
 
-    const formattedDraftDate = new Date(settings.draft_date).toISOString().slice(0, 19);
-
     const updatedSettings = {
-      ...settings,
-      draft_date: formattedDraftDate,
+      max_capacity: settings.max_capacity,
+      private: settings.private,
     };
 
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -216,7 +271,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       );
 
       if (response.data.success) {
-        fetchLeagues();
+        fetchLeagues(); // Refresh the leagues list
         setSettingsVisible(false);
         setSettingsError(null);
       } else {
@@ -247,7 +302,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       );
 
       if (response.data.success) {
-        fetchLeagues(); // Refresh the leagues list
+        fetchLeagues();
         setDraftError(null);
         navigate(`/draft/${selectedLeague.id}`);
       } else {
@@ -263,6 +318,8 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
     if (!selectedLeague) return;
     navigate(`/draft/${selectedLeague.id}`);
   };
+
+  
 
   const fetchUserDetails = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -280,7 +337,81 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
       setError("Failed to fetch user details.");
       console.error("Error fetching user details:", err);
     }
-  }
+  };
+
+  const fetchPlayerDetails = async (playerIds: string[]) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      setError("You are not authenticated. Please log in.");
+      return;
+    }
+  
+    try {
+      const response = await axios.get(`${API_URL1}/api/player/batch-info/`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { ids: playerIds },
+      });
+  
+      const players = response.data.Players.reduce((acc: any, player: any) => {
+        acc[player.id] = `${player.firstName} ${player.lastName}`;
+        return acc;
+      }, {});
+  
+      return players;
+    } catch (err) {
+      setError("Failed to fetch player details.");
+      console.error("Error fetching player details:", err);
+      return {};
+    }
+  };
+  
+  const handleTeamSelection = async (team: Team) => {
+    try {
+      setSelectedTeam(team);
+  
+      if (team.team && team.team.players) {
+        const playerIds = Object.values(team.team.players).filter(
+          (id) => id && id !== "N/A"
+        );
+  
+        if (playerIds.length === 0) {
+          console.warn("No valid player IDs found.");
+          return;
+        }
+  
+        const playerDetails = await fetchPlayerDetails(playerIds);
+  
+        if (!playerDetails) {
+          console.error("Failed to fetch player details.");
+          return;
+        }
+  
+        const updatedPlayers = Object.entries(team.team.players).reduce(
+          (acc: Record<string, string>, [position, playerId]) => {
+            acc[position] = playerDetails[playerId] || "N/A";
+            return acc;
+          },
+          {}
+        );
+  
+        setSelectedTeam((prev) => ({
+          ...prev,
+          team: {
+            ...prev?.team,
+            players: updatedPlayers,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error("Error in handleTeamSelection:", error);
+      setError("Failed to select the team.");
+    }
+  };
+  
+  const handleLeagueSelection = (league: League) => {
+    setSelectedLeague(league);
+    setSelectedTeam(null); // Clear the selected team
+  };
 
   if (loading) {
     return <p className="text-center">Loading...</p>;
@@ -288,50 +419,95 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
 
   return (
     <div className="my-leagues-container">
+      {/* Sidebar */}
       <div className="leagues-sidebar">
+                {/* League Tabs */}
         <ul className="league-list">
           {leagues.map((league) => (
             <li
               key={league.id}
               className={`league-tab ${selectedLeague?.id === league.id ? "selected" : ""}`}
-              onClick={() => setSelectedLeague(league)}
+              onClick={() => handleLeagueSelection(league)}
             >
-              <LoaderLink to={`/league/${league.id}/${userId}`} setGlobalLoading={setGlobalLoading}>
-                {league.name}
-              </LoaderLink>
+              {league.name}
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="league-details-container">
-        <div className="my-leagues-title">
-          <h1>My Leagues</h1>
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Team Display */}
+        <div className={`team-display ${teams.length === 0 ? "empty" : ""}`}>
+          <h4 className="team-display-title">Teams in League</h4>
+          {teams.length > 0 ? (
+            <ul className="team-list">
+              {teams.map((team) => (
+                <li
+                  key={team.user_id}
+                  className="team-item"
+                  onClick={() => handleTeamSelection(team)}
+                >
+                  <strong>{team.username}</strong>
+                  <p>{team.team?.team_title || "No team assigned"}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="no-teams-message">Draft has yet to begin.</p>
+          )}
+          {selectedTeam && selectedTeam.team && (
+            <div className="selected-team">
+              <button
+                className="close-team-btn"
+                onClick={() => setSelectedTeam(null)}
+              >
+                X
+              </button>
+              <h5>{selectedTeam.username}'s Team</h5>
+              <ul className="player-list">
+                {Object.entries(selectedTeam.team.players).map(([position, player]) => (
+                  <li key={position} className="player-item">
+                    <span className="player-position">
+                      {positionMap[position] || position}:
+                    </span>
+                    <span className="player-name">{player}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
-        {error && <p className="text-danger text-center">{error}</p>}
-
-        <div className="league-details">
+        {/* League Details */}
+        <div className="league-details-container">
           {selectedLeague ? (
             <div className="league-info">
               <h3>{selectedLeague.name}</h3>
               <p>Owner: {selectedLeague.owner.username}</p>
-              <p>Draft Date: {new Date(selectedLeague.draft_date).toLocaleString()}</p>
-              <p>Time Per Pick: {selectedLeague.time_per_pick} seconds</p>
-              <p>Positional Betting: {selectedLeague.positional_betting ? "Enabled" : "Disabled"}</p>
               <p>Max Capacity: {selectedLeague.max_capacity}</p>
               <p>Private: {selectedLeague.private ? "Yes" : "No"}</p>
               <p>Join Code: {selectedLeague.join_code || "N/A"}</p>
 
-              {/* Draft Status */}
-              <p>
-                <strong>Draft Status:</strong>{" "}
-                {selectedLeague.draftComplete
-                  ? "Completed"
-                  : selectedLeague.draftStarted
-                  ? "In-progress"
-                  : "Not Started"}
-              </p>
+              <div className="league-actions">
+                
+                {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={() => navigate(`/draft/${selectedLeague.id}`)}
+                  >
+                    Join Draft
+                  </button>
+                )}
+                <button
+                  className="btn btn-primary mt-2"
+                  onClick={() => navigate(`/league/${selectedLeague.id}/${userId}`)}
+                >
+                  League Details
+                </button>
+              </div>
+
+              
 
               {/* Conditional Buttons for League Owner */}
               {currentUsername === selectedLeague.owner.username && (
@@ -357,39 +533,6 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
                       <h4>League Settings</h4>
                       <div>
                         <label>
-                          Draft Date:
-                          <input
-                            type="datetime-local"
-                            name="draft_date"
-                            value={settings.draft_date}
-                            onChange={handleSettingsChange}
-                          />
-                        </label>
-                      </div>
-                      <div>
-                        <label>
-                          Time Per Pick (seconds):
-                          <input
-                            type="number"
-                            name="time_per_pick"
-                            value={settings.time_per_pick}
-                            onChange={handleSettingsChange}
-                          />
-                        </label>
-                      </div>
-                      <div>
-                        <label>
-                          Positional Betting:
-                          <input
-                            type="checkbox"
-                            name="positional_betting"
-                            checked={settings.positional_betting}
-                            onChange={handleSettingsChange}
-                          />
-                        </label>
-                      </div>
-                      <div>
-                        <label>
                           Max Capacity:
                           <input
                             type="number"
@@ -410,68 +553,29 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
                           />
                         </label>
                       </div>
-                      <div>
-                        <label>
-                          Join Code:
-                          <input
-                            type="text"
-                            name="join_code"
-                            value={settings.join_code}
-                            onChange={handleSettingsChange}
-                          />
-                        </label>
-                      </div>
                       <button onClick={handleSaveSettings}>Save Settings</button>
                       {settingsError && <p className="text-danger">{settingsError}</p>}
                     </div>
                   )}
-
-                  {!selectedLeague.draftStarted && (
-                    <button
-                      className="btn btn-danger mt-2"
-                      onClick={() => handleDeleteLeague(selectedLeague.id)}
-                    >
-                      Delete League
-                    </button>
-                  )}
                 </>
-              )}
-
-              {/* Conditional Buttons for Non-Owners */}
-              {currentUsername !== selectedLeague.owner.username && !selectedLeague.draftStarted && (
-                <button
-                  className="btn btn-warning mt-2"
-                  onClick={() => handleLeaveLeague(selectedLeague.id)}
-                >
-                  Leave League
-                </button>
-              )}
-
-              {/* Join Draft Button */}
-              {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
-                <button
-                  className="btn btn-primary mt-2"
-                  onClick={handleJoinDraft}
-                >
-                  Join Draft
-                </button>
               )}
             </div>
           ) : (
             <p className="text-center">Select a league to view details.</p>
           )}
-        </div>
 
-        <div className="join-league-container">
-          <h3 className="join-league-title">Join a Private League</h3>
-          <input
-            type="text"
-            value={joinCode}
-            onChange={(e) => setJoinCode(e.target.value)}
-            placeholder="Enter join code"
-          />
-          <button onClick={handleJoinLeague}>Join League</button>
-          {joinError && <p className="text-danger">{joinError}</p>}
+          {/* Join Private League */}
+          <div className="join-league-container">
+            <h3 className="join-league-title">Join a Private League</h3>
+            <input
+              type="text"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value)}
+              placeholder="Enter join code"
+            />
+            <button onClick={handleJoinLeague}>Join League</button>
+            {joinError && <p className="text-danger">{joinError}</p>}
+          </div>
         </div>
       </div>
     </div>

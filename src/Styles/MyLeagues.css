@@ -1,80 +1,232 @@
 .my-leagues-container {
-    display: flex;
-    flex-direction: row;
-  }
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+}
+
+.leagues-sidebar {
+  width: 200px;
+  border-right: 1px solid #ccc;
+}
+
+.league-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* League tab styling */
+.league-tab {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #1b263b; /* Dark pale blue */
+  border-bottom: 1px solid #ccc;
+  color: white;
+  text-align: center;
+  transition: background-color 0.5s ease; /* Fade effect */
+}
+
+.league-tab:hover {
+  background-color: #2a3b5f; /* Slightly lighter blue */
+}
+
+.league-tab.selected {
+  background-color: #3c4e6f; /* Even lighter blue */
+}
+
+.league-details-container {
+  flex: 2;
+  background-color: #1b263b;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  max-height: 82vh; /* Maximum height */
+  overflow-y: auto;
+}
+
+.league-info {
+  flex: 2;
+  text-align: center;
+  color: #a0a0a0; /* Light gray color for the text */
+}
+
+.my-leagues-title {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px;
+  color: #a0a0a0; /* Light gray color for the text */
+  font-weight: bold; /* Make the text bold */
+}
+
+.join-league-container {
+  margin-top: 20px;
+  text-align: center;
+  color: #a0a0a0; /* Light gray color for the text */
+}
+
+.join-league-container input {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.join-league-container button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.join-league-container button:hover {
+  background-color: #0056b3;
+}
+
+.text-danger {
+  color: red;
+}
+
+.team-display {
+  flex: 1;
+  max-width: 30%; /* Fixed width for the team display */
+  background-color: #1b263b;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  overflow-y: auto;
+  min-height: 100px; /* Minimum height */
+  max-height: 80vh; /* Maximum height */
+}
+
+.team-display.empty {
+  height: auto; /* Adjust height dynamically */
+}
+
+.team-display-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.settings-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #2a3b5f;
+  border-radius: 10px;
+  color: white;
   
-  .leagues-sidebar {
-    width: 200px;
-    border-right: 1px solid #ccc;
-  }
-  
-  .league-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .league-tab {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .league-tab:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .league-tab.selected {
-    background-color: #d0d0d0;
-  }
-  
-  .league-details-container {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .league-info {
-    text-align: center;
-    color: #a0a0a0; /* Light gray color for the text */
-  }
-  
-  .my-leagues-title {
-    text-align: center;
-    width: 100%;
-    margin-bottom: 20px;
-    color: #a0a0a0; /* Light gray color for the text */
-    font-weight: bold; /* Make the text bold */
-  }
-  
-  .join-league-container {
-    margin-top: 20px;
-    text-align: center;
-    color: #a0a0a0; /* Light gray color for the text */
-  }
-  
-  .join-league-container input {
-    padding: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .join-league-container button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .join-league-container button:hover {
-    background-color: #0056b3;
-  }
-  
-  .text-danger {
-    color: red;
-  }
+}
+
+.team-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center; /* Center-align text */
+}
+
+.team-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #2a3b5f;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center; /* Center-align text */
+}
+
+.team-item:hover {
+  background-color: #3c4e6f;
+}
+
+.no-teams-message {
+  text-align: center;
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+.selected-team {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #1b263b; /* Match "Teams in League" background */
+  border-radius: 10px;
+  color: white;
+}
+
+.player-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #1b263b;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #2a3b5f; /* Match "Teams in League" item background */
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.player-position {
+  font-weight: bold;
+  color: #ffffff; /* Gold for positions */
+}
+
+.player-name {
+  color: #ffffff;
+}
+
+.close-team-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.close-team-btn:hover {
+  background-color: #cc0000;
+}
+
+/* Center the settings container */
+.league-settings {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #2a3b5f;
+  border-radius: 10px;
+  color: white;
+  width: 300px; /* Reduced width */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.league-settings div {
+  margin-bottom: 15px; /* Add spacing between each setting */
+}
+
+.league-settings label {
+  display: block; /* Ensure the label is on its own line */
+  margin-bottom: 5px; /* Add spacing between the label and the input */
+  font-weight: bold; /* Make the label text bold for better readability */
+}
+
+.league-settings input {
+  width: 100%; /* Make inputs take up the full width of the container */
+  padding: 8px; /* Add padding for better usability */
+  border: 1px solid #ccc; /* Add a border to inputs */
+  border-radius: 5px; /* Match the border radius of the settings box */
+  box-sizing: border-box; /* Include padding and border in the width */
+}

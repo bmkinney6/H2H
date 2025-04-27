@@ -159,7 +159,7 @@ function NavBar() {
               >
                 Notifications
               </button>
-              <ul className="dropdown-menu">
+                <ul className="dropdown-menu notification-dropdown">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
                     <li
@@ -172,18 +172,18 @@ function NavBar() {
                       }}
                     >
                       <span className="notification-text">{notification.message}</span>
+                      <div className="notification-separator"></div>
+
                     </li>
+                    
                   ))
                 ) : (
                   <li className="dropdown-item">No notifications</li>
                 )}
                 <li>
-                  <button
-                    className="dropdown-item text-primary"
-                    onClick={handleViewAllNotifications}
-                  >
+                  <a href="/inbox" className="view-all-link">
                     View All
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
