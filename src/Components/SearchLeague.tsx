@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../constants.tsx";
+import "../Styles/Index.css";
 
 type League = {
   id: string;
@@ -82,105 +83,111 @@ const SearchLeague: React.FC = () => {
   };
 
   return (
-    <div className="d-flex">
-      {/* Sidebar for Filters */}
-      <div className="sidebar p-3 border-end">
-        <h4>Filters</h4>
-        <label>Private/Public</label>
-        <select
-          name="private"
-          value={filters.private}
-          onChange={handleFilterChange}
-          className="form-select mb-3"
-        >
-          <option value="">All</option>
-          <option value="1">Private</option>
-          <option value="0">Public</option>
-        </select>
-        <label>Positional Betting</label>
-        <select
-          name="positional_betting"
-          value={filters.positional_betting}
-          onChange={handleFilterChange}
-          className="form-select mb-3"
-        >
-          <option value="">All</option>
-          <option value="1">Enabled</option>
-          <option value="0">Disabled</option>
-        </select>
-        <label>Draft Status</label>
-        <select
-          name="draft_status"
-          value={filters.draft_status}
-          onChange={handleFilterChange}
-          className="form-select mb-3"
-        >
-          <option value="">All</option>
-          <option value="0">Not Started</option>
-          <option value="1">In Progress</option>
-          <option value="2">Completed</option>
-        </select>
-        <label>Draft Date</label>
-        <input
-          type="date"
-          name="draft_date"
-          value={filters.draft_date}
-          onChange={handleFilterChange}
-          className="form-control mb-3"
-        />
-        <button onClick={handleApplyFilters} className="btn btn-primary w-100">
-          Apply Filters
-        </button>
-      </div>
-
-      {/* Main Content */}
-      <div className="main-content flex-grow-1 p-3">
-        <h1 className="text-center">Search Leagues</h1>
-        <form onSubmit={handleSearchSubmit}>
+      <div className="row">
+        {/* Sidebar for Filters */}
+        <div className="col-md-3 p-3 border-end">
+          <h4>Filters</h4>
+          <label>Private/Public</label>
+          <select
+              name="private"
+              value={filters.private}
+              onChange={handleFilterChange}
+              className="form-select mb-3"
+          >
+            <option value="">All</option>
+            <option value="1">Private</option>
+            <option value="0">Public</option>
+          </select>
+          <label>Positional Betting</label>
+          <select
+              name="positional_betting"
+              value={filters.positional_betting}
+              onChange={handleFilterChange}
+              className="form-select mb-3"
+          >
+            <option value="">All</option>
+            <option value="1">Enabled</option>
+            <option value="0">Disabled</option>
+          </select>
+          <label>Draft Status</label>
+          <select
+              name="draft_status"
+              value={filters.draft_status}
+              onChange={handleFilterChange}
+              className="form-select mb-3"
+          >
+            <option value="">All</option>
+            <option value="0">Not Started</option>
+            <option value="1">In Progress</option>
+            <option value="2">Completed</option>
+          </select>
+          <label>Draft Date</label>
           <input
-            type="text"
-            placeholder="Search by Name"
-            value={nameQuery}
-            onChange={handleNameSearch}
-            className="form-control mb-3"
+              type="date"
+              name="draft_date"
+              value={filters.draft_date}
+              onChange={handleFilterChange}
+              className="form-control mb-3"
           />
-        </form>
+          <button onClick={handleApplyFilters} className="btn btn-primary w-100">
+            Apply Filters
+          </button>
+        </div>
 
-        {error && <p className="text-danger text-center">{error}</p>}
+        {/* Main Content */}
+        <div className="col-md-9 p-3">
+          <h1 className="text-center">Search Leagues</h1>
+          <form onSubmit={handleSearchSubmit}>
+            <input
+                type="text"
+                placeholder="Search by Name"
+                value={nameQuery}
+                onChange={handleNameSearch}
+                className="form-control mb-3"
+            />
+          </form>
 
-        {searchPerformed && leagues.length > 0 ? (
-          <ul className="list-group">
-            {leagues.map((league) => (
-              <li
-                key={league.id}
-                className="list-group-item list-group-item-action"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/leagues/${league.id}`)}
-              >
-                {league.name} - {league.private ? "Private" : "Public"}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          searchPerformed && <p className="text-center">No leagues found.</p>
-        )}
+          {error && <p className="text-danger text-center">{error}</p>}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="pagination mt-3">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                className={`btn btn-sm ${filters.page === i + 1 ? "btn-primary" : "btn-outline-primary"}`}
-                onClick={() => handlePageChange(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )}
+          {searchPerformed && leagues.length > 0 ? (
+              <div>
+                {/* Display Search Results */}
+                <ul className="list-group mb-3">
+                  {leagues.map((league) => (
+                      <li
+                          key={league.id}
+                          className="list-group-item list-group-item-action"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => navigate(`/leagues/${league.id}`)}
+                      >
+                        {league.name} - {league.private ? "Private" : "Public"}
+                      </li>
+                  ))}
+                </ul>
+
+                {/* Pagination - Ensure it's placed after the results */}
+                {totalPages > 1 && (
+                    <div className="d-flex justify-content-center mt-3">
+                      {Array.from({ length: totalPages }, (_, i) => (
+                          <button
+                              key={i}
+                              className={`btn btn-sm ${filters.page === i + 1 ? "btn-primary" : "btn-outline-primary"}`}
+                              onClick={() => handlePageChange(i + 1)}
+                          >
+                            {i + 1}
+                          </button>
+                      ))}
+                    </div>
+                )}
+              </div>
+          ) : (
+              searchPerformed && <p className="text-center">No leagues found.</p>
+          )}
+        </div>
       </div>
-    </div>
+
+
+
   );
 };
 
