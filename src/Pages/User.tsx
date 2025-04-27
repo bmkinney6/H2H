@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
+import "../Styles/Form.css";
 
 interface User {
   id: number;
@@ -90,8 +91,8 @@ const UserProfile: React.FC = () => {
 
   return (
       <div className="user-profile">
-        <h1>User Profile</h1>
-        <form onSubmit={handleSubmit}>
+        <h1 className="text-center">User Profile</h1>
+        <form onSubmit={handleSubmit} className="form-container glass text-center">
           <div className="form-group">
             <label>Username</label>
             <input
@@ -174,3 +175,4 @@ const UserProfile: React.FC = () => {
 };
 
 export default UserProfile;
+
