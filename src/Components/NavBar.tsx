@@ -299,53 +299,8 @@ function NavBarPre() {
                 Home
               </a>
             </li>
-            <li className="nav-item dropdown">
-              <a
-                href="#"
-                className="nav-link dropdown-toggle"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Features
-              </a>
-              <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li>
-                  <a href="#" className="dropdown-item">
-                    Betting
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="dropdown-item">
-                    League
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="dropdown-item">
-                    Create League
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="dropdown-item">
-                    Room for more features!
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link">
-                About
-              </a>
-            </li>
           </ul>
         </div>
-        <form className="d-flex">
-          <input type="text" className="form-control me-2 my-auto" />
-          <button type="submit" className="btn btn-primary my-auto">
-            Search
-          </button>
-        </form>
         <div className="ms-2">
           <button
             className="btn btn-outline-primary me-2 my-auto"
