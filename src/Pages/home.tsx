@@ -102,7 +102,7 @@ function HomePre() {
         {showAlert && (
             <div className="alert alert-warning alert-dismissible fade show mt-3" role="alert">
               You must be logged in to access this feature.
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setShowAlert(false)}></button>
+              <button type="button" className="btn-close m-auto" data-bs-dismiss="alert" aria-label="Close" onClick={() => setShowAlert(false)}></button>
             </div>
         )}
 
