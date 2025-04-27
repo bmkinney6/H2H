@@ -1,0 +1,176 @@
+/* General Container */
+.league-search-container {
+    padding: 20px;
+    background-color: #1b263b; /* Dark pale blue */
+    color: white;
+    border-radius: 10px;
+  }
+  
+  /* Search Bar */
+  .form-control {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white;
+    border: 1px solid #2a3b5f; /* Slightly lighter blue */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .form-control::placeholder {
+    color: #a0a0a0; /* Light gray placeholder */
+  }
+  
+  .form-control:focus {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+    box-shadow: 0 0 5px #3c4e6f; /* Subtle glow effect */
+    outline: none;
+  }
+  
+  /* Filters */
+  .filters-container select {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white;
+    border: 1px solid #2a3b5f;
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .filters-container select:hover {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+  }
+  
+  /* Search Results */
+  .search-results {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  .search-result-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #1b263b; /* Dark pale blue */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-result-item:hover {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+  }
+  
+  /* Pagination */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .pagination-container .btn {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white;
+    border: 1px solid #2a3b5f;
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .pagination-container .btn:hover {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+  }
+  
+  .pagination-container .btn-primary {
+    background-color: #3c4e6f; /* Even lighter blue */
+    border: none;
+  }
+  
+  .pagination-container .btn-primary:hover {
+    background-color: #4a5b7f; /* Slightly lighter on hover */
+  }
+
+
+
+/* Style for the search result items */
+.list-group-item {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white; /* White text */
+    border: 1px solid #2a3b5f; /* Slightly lighter blue border */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    cursor: pointer;
+  }
+  
+  .list-group-item:hover {
+    background-color: #2a3b5f; /* Slightly lighter blue on hover */
+    color: white; /* Keep text white */
+  }
+  
+  /* Ensure the clickable behavior is styled */
+  .list-group-item-action {
+    background-color: #141e30; /* Inherit background from .list-group-item */
+    color: white; /* Inherit text color */
+    border-radius: 5px; /* Add rounded corners */
+  }
+  
+  .list-group-item-action:hover {
+    background-color: #3c4e6f; /* Even lighter blue on hover */
+    color: white; /* Keep text white */
+  }
+
+
+
+  /* Filters Section */
+.col-md-3 select.form-select {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white; /* White text */
+    border: 1px solid #2a3b5f; /* Slightly lighter blue border */
+    border-radius: 5px;
+    padding: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .col-md-3 select.form-select:focus {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+    color: white; /* Keep text white */
+    outline: none;
+    box-shadow: 0 0 5px #3c4e6f; /* Subtle glow effect */
+  }
+  
+  .col-md-3 select.form-select option {
+    background-color: #1b263b; /* Match the dropdown background */
+    color: white; /* White text */
+  }
+  
+  /* Filters Button */
+  .col-md-3 .btn-primary {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white; /* White text */
+    border: 1px solid #2a3b5f; /* Slightly lighter blue border */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .col-md-3 .btn-primary:hover {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+    color: white; /* Keep text white */
+  }
+  
+  /* Search Bar */
+  .form-control {
+    background-color: #1b263b; /* Dark pale blue */
+    color: white; /* White text */
+    border: 1px solid #2a3b5f; /* Slightly lighter blue border */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .form-control::placeholder {
+    color: #a0a0a0; /* Light gray placeholder */
+  }
+  
+  .form-control:focus {
+    background-color: #2a3b5f; /* Slightly lighter blue */
+    color: white; /* Keep text white */
+    outline: none;
+    box-shadow: 0 0 5px #3c4e6f; /* Subtle glow effect */
+  }
