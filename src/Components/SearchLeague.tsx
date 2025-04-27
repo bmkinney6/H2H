@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../constants.tsx";
 import "../Styles/Index.css";
+import "../Styles/SearchLeague.css";
 
 type League = {
   id: string;
@@ -30,8 +31,8 @@ const SearchLeague: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const navigate = useNavigate();
 
-  const API_URL = "http://localhost:8000/api/leagues/search/";
-
+  const API_URL = `${import.meta.env.VITE_API_URL}/api/leagues/search/`;
+  
   const fetchLeagues = async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (!token) {
@@ -98,17 +99,7 @@ const SearchLeague: React.FC = () => {
             <option value="1">Private</option>
             <option value="0">Public</option>
           </select>
-          <label>Positional Betting</label>
-          <select
-              name="positional_betting"
-              value={filters.positional_betting}
-              onChange={handleFilterChange}
-              className="form-select mb-3"
-          >
-            <option value="">All</option>
-            <option value="1">Enabled</option>
-            <option value="0">Disabled</option>
-          </select>
+
           <label>Draft Status</label>
           <select
               name="draft_status"
@@ -121,14 +112,7 @@ const SearchLeague: React.FC = () => {
             <option value="1">In Progress</option>
             <option value="2">Completed</option>
           </select>
-          <label>Draft Date</label>
-          <input
-              type="date"
-              name="draft_date"
-              value={filters.draft_date}
-              onChange={handleFilterChange}
-              className="form-control mb-3"
-          />
+          
           <button onClick={handleApplyFilters} className="btn btn-primary w-100">
             Apply Filters
           </button>
