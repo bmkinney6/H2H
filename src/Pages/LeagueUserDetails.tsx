@@ -14,7 +14,7 @@ export type User = {
   username: string;
 };
 
-type Player = {
+export type Player = {
   position: string;
   player: string;
 };
@@ -116,6 +116,8 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
 
   const dragPerson = useRef<number | null>(null);
   const dragOverPerson = useRef<number | null>(null);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+
   const navigate = useNavigate();
 
 
@@ -145,7 +147,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
     fetchMatchupId();
   }, [matchupId]);
 
- 
+
   useEffect(() => {
     const fullLeague = async () => {
 
@@ -218,40 +220,12 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       });
       console.log("Fetched Details:", response.data);
       return response.data;
-      // =======
 
-      //       const playersWithDefaults = response.data.map((player: PlayerFull) => ({
-      //         ...player,
-      //         proj_fantasy: player.proj_fantasy ?? 0,
-      //         total_fantasy_points: player.total_fantasy_points ?? 0,
-      //         pass_yards: player.pass_yards ?? 0,
-      //         pass_tds: player.pass_tds ?? 0,
-      //         receiving_yards: player.receiving_yards ?? 0,
-      //         receiving_tds: player.receiving_tds ?? 0,
-      //         rush_yards: player.rush_yards ?? 0,
-      //         rush_tds: player.rush_tds ?? 0,
-      //         fg_made: player.fg_made ?? 0,
-      //         extra_points_made: player.extra_points_made ?? 0,
-      //       }));
-
-      //       console.log("Fetched Players with Defaults:", playersWithDefaults);
-      //       return playersWithDefaults;
-      // >>>>>>> master
-      //     } catch (err) {
-      //       console.error("Error fetching USER:", err);
-      //       return []; // Return an empty array if there's an error
-      //     }
-
-      console.log("Fetched USER:", response.data);
-      return response.data;
     } catch (err) {
       console.error("Error fetching USER:", err);
       return;
     }
   };
-
-
-
 
   const fetchUserTeam = async (leagueid: number) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -413,7 +387,13 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
       console.error("Error fetching user details:", err);
     }
   }
-
+  const totalFantasyPoints = player.reduce((acc, playerObj, index) => {
+    if (index <= 8) { // Only count first 9 players (QB, RB1, RB2, WR1, WR2, TE, FLX, K, DEF)
+      return acc + (playerObj.total_fantasy_points ?? 0);
+    }
+    return acc; // Skip bench/IR players
+  }, 0);
+  
   return (
     <>
       <div className="UserDetailsALL">
@@ -432,7 +412,7 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
         </div>
         <div className="UserDetailsList">
           <>
-            <div className="UserDetailsHH">
+            <div className="UserDetailsHH0">
               {isEditing ? (
                 <input
                   type="text"
@@ -440,11 +420,11 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                   onChange={(e) => setTempTitle(e.target.value)}
                   onBlur={handleSave}
                   onKeyDown={handleKeyDown}
-                  className="UserDetailsHH"
+                  className="UserDetailsHH0"
                   autoFocus
                 />
               ) : (
-                <div>
+                <div className="UserDetailsTopBar">
                   <h1
                     className="UserDetailsHH"
                     onDoubleClick={() => {
@@ -454,29 +434,33 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                   >
                     {team?.title ? `${team.title}` : "No Team Name? (Double-Click)"}
                   </h1>
+                  <button
+                    className="UserDetailsTradeBtn"
+                    onClick={() => navigate(`/league/${league?.id}/trade`)}>
+                    Trade Players
+                  </button>
+                  <button
+                    className="UserDetailsBettingBtn"
+                    onClick={() => navigate(`/league/${leagueId}/matchup/${matchupId}/betting`)}
+                  >
+                    Go to Betting Page
+                  </button>
+                  <button
+                    className="UserDetailsTradeRequestsBtn"
+                    onClick={() => navigate(`/leagues/${leagueId}/trade-requests`)}
+                  >
+                    Trade Requests
+                  </button>
                 </div>
               )}
               <div className="UserDetailsHH2">
                 <h3>
-                  Managed by: {username} Rank: {team?.rank}
+                  Managed by: {username}
                 </h3>
-                <button
-                  className="UserDetailsTradeBtn"
-                  onClick={() => navigate(`/league/${league?.id}/trade`)}>
-                  Trade Players
-                </button>
-                <button
-                  className="UserDetailsBettingBtn"
-                  onClick={() => navigate(`/league/${leagueId}/matchup/${matchupId}/betting`)}
-                >
-                  Go to Betting Page
-                </button>
-                <button
-                  className="UserDetailsTradeRequestsBtn"
-                  onClick={() => navigate(`/leagues/${leagueId}/trade-requests`)}
-                >
-                  Trade Requests
-                </button>
+                <div className="TotalFantasyPoints">
+                  Total Points: {totalFantasyPoints.toFixed(2)}
+                </div>
+
               </div>
             </div>
 
@@ -494,14 +478,23 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                   <div
                     key={index}
                     className={`UserDetailsPlayerRow ${selected.includes(index)
-                        ? "border-blue-500 bg-blue-100"
-                        : "bg-white"
-                      }`}
+                      ? "border-blue-500 bg-blue-100"
+                      : "bg-white"
+                      }${draggingIndex === index ? "opacity-50 scale-95" : ""}`}
+                    draggable
+                    onDragStart={() => {
+                      dragPerson.current = index;
+                      setDraggingIndex(index);
+                    }}
                     onDragEnter={() => (dragOverPerson.current = index)}
-                    onDragEnd={swapPlayersCases}
+                    onDragEnd={() => {
+                      swapPlayersCases();
+                      setDraggingIndex(null);
+                    }}
+
                     onDragOver={(e) => e.preventDefault()}
                   >
-                    <span className="UserDetailsPositionLabel">
+                    <span className="UserDetailsPositionLabel" style={{ color: index == 0 ? '#b50d0d' : index == 1 ? '#00a4e1' : index == 2 ? '#00a4e1' : index == 3 ? '#36df77' : index == 4 ? '#36df77' : index == 5 ? '#f0f757' : index == 6 ? '#ed3f54' : index == 7 ? '#772d8b' : index == 8 ? 'white' : index >= 9 ? 'peru' : 'white' }}>
                       {abPositions[index]}
                     </span>
                     <span className="UserDetailsPlayerName">
@@ -536,8 +529,6 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
                     </div>
                     <span
                       className="UserDetailsDrag"
-                      draggable
-                      onDragStart={() => (dragPerson.current = index)}
                       title="Drag"
                     >
                       ☰

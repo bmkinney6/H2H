@@ -1,0 +1,62 @@
+.matchup-ticker-wrapper {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: rgb(2, 0, 20);
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .ticker-track {
+    display: flex;
+    width: 200%; /* 👈 ensures the full duplicate fits */
+    animation: scroll-ticker 40s linear infinite;
+  }
+  
+  .ticker-content {
+    display: flex;
+    width: 50%; /* 👈 this is half of .ticker-track */
+  }
+  
+  .matchup-card {
+    text-align: center;
+    display: inline-block;
+    white-space: nowrap;
+    width: fit-content;
+    max-width: none;
+    min-width: 300px;
+    margin-right: 20px;
+    margin-left: 20px;
+    background-color: white;
+    color: rgb(255, 255, 255);
+    padding: 10px 15px;    
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  @keyframes scroll-ticker {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .league_news-container {
+    display: flex;
+    align-items: flex-start; /* align items at the top of the container */
+    justify-content: space-between;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .league-section,
+  .news-section {
+    flex: 1; /* Make each section take up equal width */
+    padding: 0 20px; /* Optional: adds space inside each section */
+    box-sizing: border-box; /* Ensure padding doesn't increase the width */
+  }
+  
+  

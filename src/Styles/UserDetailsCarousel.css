@@ -6,6 +6,8 @@
     display: flex;
     border-bottom: 2px solid #ccc;
     background: #f0f0f0;
+    width: 81%;
+    margin: 0 auto;
   }
   
   .tab {
@@ -15,10 +17,12 @@
     cursor: pointer;
     background: rgb(2, 0, 20);
     transition: background 0.3s;
+    width: 90%;
+
   }
   
   .tab.active {
-    background: #2200a9;
+    background: #01097e;
     font-weight: bold;
     border-bottom: 2px solid white;
   }

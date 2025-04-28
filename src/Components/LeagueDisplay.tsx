@@ -22,7 +22,7 @@ export default function LeagueDisplay({League}: LeagueDisplayParm) {
       setTeams(sortedTeams);
     };
     displayLeague();
-  },[]);
+  },[League]);
 
   useEffect(() => {
     if(teams.length > 0) {
@@ -55,6 +55,9 @@ export default function LeagueDisplay({League}: LeagueDisplayParm) {
     
   return (
   <div className="league-display">
+    <div className="league-name">
+      {League.name}
+    </div>
     {/* Header row */}
     <div className="team-header-row">
       <div className="rank-column"></div>
