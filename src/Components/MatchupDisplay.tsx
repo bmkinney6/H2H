@@ -17,7 +17,7 @@ type FantasyTeam = {
   id: number;
   title: string;
   rank: number;
-  author: string; // or use `User` type if you have it
+  author: string; 
   QB: PlayerStat | null;
   RB1: PlayerStat | null;
   RB2: PlayerStat | null;

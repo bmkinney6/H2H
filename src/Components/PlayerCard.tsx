@@ -22,22 +22,21 @@ export default function PlayerSearchCard() {
     jersey: number;
   };
 
-  const [players, setPlayers] = useState<Player[]>([]); // State to store fetched player data
-  const [error, setError] = useState<string | null>(null); // State to store errors
-  const [searchPerformed, setSearchPerformed] = useState<boolean>(false); // State to track if search has been performed
-  const navigate = useNavigate(); // Hook for navigation
+  const [players, setPlayers] = useState<Player[]>([]); 
+  const [error, setError] = useState<string | null>(null); 
+  const [searchPerformed, setSearchPerformed] = useState<boolean>(false); 
+  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleFetchPlayerInfo = async (name: string) => {
     try {
       const fetchedPlayers = await fetchPlayerInfo(name, API_URL);
-      setPlayers(fetchedPlayers); // Save all players
-      setError(null); // Reset error
-      setSearchPerformed(true); // Indicate that search was performed
+      setPlayers(fetchedPlayers); 
+      setError(null); 
+      setSearchPerformed(true); 
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      
       setError(error.message);
     }
   };
@@ -46,30 +45,30 @@ export default function PlayerSearchCard() {
     <div>
       <h1 className="text-center">Search Player Info</h1>
 
-      {/* Use the SearchForm component */}
+      
       <SearchForm
         onSubmit={handleFetchPlayerInfo}
         placeholder="Enter player name"
       />
 
-      {/* Show error message if there is an error */}
+      
       {error && <p>{error}</p>}
 
       <div id="PlayerCard" className="container-sm p-3 mt-3">
-        {/* Display initial message when no search has been performed */}
+       
         {!searchPerformed && <p>Please enter a player's name.</p>}
 
-        {/* Show results or a message if no players are found */}
+       
         {searchPerformed && players.length > 0 ? (
           <div>
             <h3>Results:</h3>
             <ul className="list-group">
               {players.map((player) => (
                 <li
-                  key={`playercard-${player.id}`} // Ensure unique key by prefixing with component name
+                  key={`playercard-${player.id}`} 
                   className="list-group-item list-group-item-action"
                   style={{ cursor: "pointer" }}
-                  onClick={() => navigate(`/scout/player/${player.id}`)} // Navigate to the player detail page
+                  onClick={() => navigate(`/scout/player/${player.id}`)} 
                 >
                   <img
                     src={player.headshot}
@@ -86,7 +85,7 @@ export default function PlayerSearchCard() {
             <p className="no-players-message">
               No players found with that name.
             </p>
-          ) // Show this message after search if no players are found
+          ) 
         )}
       </div>
     </div>

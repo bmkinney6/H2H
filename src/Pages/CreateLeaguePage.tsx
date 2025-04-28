@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import CreateLeagueForm from "../Components/CreateLeagueForm";
-import "../Styles/CreateLeaguePage.css"; // Import the CSS file for styling
+import "../Styles/CreateLeaguePage.css"; 
 
 const CreateLeaguePage = () => {
   const navigate = useNavigate();
 
   const handleLeagueCreated = () => {
-    // After successful league creation, navigate to the leagues page or a specific league page
-    navigate("/"); // You can customize the route if needed
+    navigate("/"); 
   };
 
   return (

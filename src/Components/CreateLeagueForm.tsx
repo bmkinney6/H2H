@@ -1,9 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
-import "../Styles/CreateLeagueForm.css"; // Import the CSS file for styling
-
-const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Ensure no trailing slash
+import "../Styles/CreateLeagueForm.css"; 
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); 
 
 const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) => {
   const [name, setName] = useState("");
@@ -13,7 +12,7 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Reset error on new submit
+    setError(""); 
 
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (!token) {
@@ -22,7 +21,7 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
     }
 
     try {
-      // Check if the join code is unique
+      
       if (isPrivate && joinCode) {
         const checkResponse = await axios.get(
           `${API_URL}/api/leagues/check_join_code/${joinCode}/`
@@ -33,10 +32,10 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
         }
       }
 
-      // Default values for Draft Date, Time Per Pick, and Positional Betting
-      const draftDate = "2002-09-05T00:00:00"; // September 5th, 2002
-      const timePerPick = 60; // 60 seconds
-      const positionalBetting = true; // Enabled
+     
+      const draftDate = "2002-09-05T00:00:00"; 
+      const timePerPick = 60; 
+      const positionalBetting = true; 
 
       const response = await axios.post(
         `${API_URL}/api/leagues/`,
@@ -50,17 +49,17 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Make sure the token is passed here
+            Authorization: `Bearer ${token}`, 
           },
         }
       );
 
       if (response.status === 201) {
-        onLeagueCreated(); // Callback after league is created
+        onLeagueCreated(); 
       }
     } catch (err) {
       setError("Error creating league. Please try again.");
-      console.error("Error details: ", err); // Log the error details for debugging
+      console.error("Error details: ", err); 
     }
   };
 

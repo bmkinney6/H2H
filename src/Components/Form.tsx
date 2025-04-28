@@ -1,12 +1,11 @@
 import React, { useState, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "./AuthContext"; // Adjust the import path as necessary
+import AuthContext from "./AuthContext"; 
 import axios from "axios";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; // Adjust the import path as necessary
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; 
 import "../Styles/Form.css";
 import "../Styles/Index.css";
 
-// Function to calculate password strength
 const passwordStrength = (password: string) => {
   let strength = 0;
   if (password.length >= 8) strength++;

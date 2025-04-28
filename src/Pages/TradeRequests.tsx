@@ -89,13 +89,14 @@ const TradeRequests: React.FC = () => {
                     headers: { Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` },
                 }
             );
-            alert(`Trade request ${response}ed successfully.`);
-            setTradeRequests((prev) =>
-                prev.map((request) =>
-                    request.id === tradeRequestId ? { ...request, status: response } : request
-                )
+            const updatedRequests = await axios.get(
+                `${API_URL}/api/leagues/${leagueId}/trade-requests/`,
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` },
+                }
             );
-            filterRequests(activeTab);
+            setTradeRequests(updatedRequests.data);
+            filterRequests(activeTab, updatedRequests.data);
         } catch (err: any) {
             alert(err.response?.data?.error || "Failed to respond to trade request.");
         }

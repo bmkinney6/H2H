@@ -20,21 +20,19 @@ type Player = {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-//function to fetch top 10 players in NFL
 const TopTenPlayers: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State to store the search term
+  const [searchTerm, setSearchTerm] = useState<string>(""); 
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const players = await fetchTopTenPlayers(API_URL, searchTerm); // Pass the search term
+        const players = await fetchTopTenPlayers(API_URL, searchTerm); 
         setPlayers(players);
       } catch (err) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        
         setError(err.message);
       } finally {
         setLoading(false);
@@ -42,7 +40,7 @@ const TopTenPlayers: React.FC = () => {
     };
 
     fetchPlayers();
-  }, [searchTerm]); // Re-fetch players when search term changes
+  }, [searchTerm]); 
 
   if (loading) {
     return <div>Loading...</div>;

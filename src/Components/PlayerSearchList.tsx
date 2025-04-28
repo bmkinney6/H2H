@@ -103,12 +103,12 @@ const PlayerSearchList = () => {
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1); 
   };
 
   const handleNameSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, name: e.target.value }));
-    setCurrentPage(1); // Reset to first page when name changes
+    setCurrentPage(1); 
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -117,7 +117,7 @@ const PlayerSearchList = () => {
 
   return (
     <div className="d-flex">
-      {/* Sidebar for Filters */}
+     
       <div className="sidebar p-3 border-end">
         <h4>Filters</h4>
         <select
@@ -149,7 +149,7 @@ const PlayerSearchList = () => {
         
       </div>
 
-      {/* Main Content */}
+      
       <Container className="flex-grow-1">
         <h1 className="my-4 text-center">NFL Players</h1>
         <input
@@ -198,7 +198,7 @@ const PlayerSearchList = () => {
               </tbody>
             </Table>
 
-            {/* Pagination */}
+           
             {totalPages > 1 && (
               <Pagination className="justify-content-center mt-3">
                 <Pagination.First

@@ -13,7 +13,7 @@ type Player = {
 
 type DraftPositionDisplayProps = {
   leagueId: string;
-  teamPositions: { [key: string]: Player | null }; // Updated type
+  teamPositions: { [key: string]: Player | null }; 
 };
 
 const defaultPositions = [
@@ -39,15 +39,14 @@ export default function DraftPositionDisplay({ leagueId, teamPositions }: DraftP
   const [unfilledPositions, setUnfilledPositions] = useState(defaultPositions);
 
   useEffect(() => {
-    // Update positions and unfilled positions whenever teamPositions changes
+    
     setPositions(teamPositions);
 
     const filledPositions = Object.keys(teamPositions).filter((key) => teamPositions[key] !== null && teamPositions[key] !== undefined);
     setUnfilledPositions(
       defaultPositions.filter((pos) => !filledPositions.includes(pos.key))
     );
-  }, [teamPositions]); // Re-run this effect whenever teamPositions changes
-
+  }, [teamPositions]); 
 
   useEffect(() => {
     const fetchTeamPositions = async () => {
@@ -58,7 +57,6 @@ export default function DraftPositionDisplay({ leagueId, teamPositions }: DraftP
         });
         const teamPositions = response.data.positions;
 
-        // Update positions and unfilled positions
         const filledPositions = Object.keys(teamPositions).filter((key) => teamPositions[key]);
         setPositions(teamPositions);
         setUnfilledPositions(
@@ -87,7 +85,7 @@ export default function DraftPositionDisplay({ leagueId, teamPositions }: DraftP
         <h3>Your Team</h3>
         <ul className="positions-container">
           {defaultPositions
-            .filter(({ key }) => positions[key]) // Only display filled positions
+            .filter(({ key }) => positions[key]) 
             .map(({ key, name }) => (
               <li key={key} className="player-card-container">
                 <div className="player-card">
