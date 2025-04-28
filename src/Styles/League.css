@@ -4,6 +4,11 @@
     max-width: 800px;
     margin: 0 auto;
   }
+  .league-name {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+  }
   
   .team-header-row,
   .team-row {
