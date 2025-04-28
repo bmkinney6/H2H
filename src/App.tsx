@@ -146,7 +146,6 @@ function AppContent() {
                     <Route path="/leagues/:id" element={<LeagueDetail />} />
                     <Route path="/draft/:leagueId" element={<Draft />} />
                     <Route path="/search-leagues" element={<LeagueScout />} />
-                    <Route path="/league/:id" element={<LeagueUserDetails />} />
                     <Route
                         path="/league/:id/trade"
                         element={
