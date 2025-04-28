@@ -3,11 +3,10 @@ import axios from "axios";
 import { ACCESS_TOKEN } from "../constants";
 import "../Styles/CreateLeagueForm.css"; // Import the CSS file for styling
 
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Ensure no trailing slash
+
 const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) => {
   const [name, setName] = useState("");
-  const [draftDate, setDraftDate] = useState("");
-  const [timePerPick, setTimePerPick] = useState(60);
-  const [positionalBetting, setPositionalBetting] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +25,7 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
       // Check if the join code is unique
       if (isPrivate && joinCode) {
         const checkResponse = await axios.get(
-          `http://localhost:8000/api/leagues/check_join_code/${joinCode}/`
+          `${API_URL}/api/leagues/check_join_code/${joinCode}/`
         );
         if (checkResponse.data.exists) {
           setError("Join code already exists. Please choose a different code.");
@@ -34,8 +33,13 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
         }
       }
 
+      // Default values for Draft Date, Time Per Pick, and Positional Betting
+      const draftDate = "2002-09-05T00:00:00"; // September 5th, 2002
+      const timePerPick = 60; // 60 seconds
+      const positionalBetting = true; // Enabled
+
       const response = await axios.post(
-        "http://localhost:8000/api/leagues/",
+        `${API_URL}/api/leagues/`,
         {
           name,
           draft_date: draftDate,
@@ -75,40 +79,7 @@ const CreateLeagueForm = ({ onLeagueCreated }: { onLeagueCreated: () => void }) 
         />
       </label>
 
-      <label className="form-label">
-        Draft Date:
-        <input
-          type="datetime-local"
-          value={draftDate}
-          onChange={(e) => setDraftDate(e.target.value)}
-          className="form-input"
-          required
-        />
-      </label>
-
-      <label className="form-label">
-        Time Per Pick (seconds):
-        <input
-          type="number"
-          value={timePerPick}
-          onChange={(e) => setTimePerPick(Number(e.target.value))}
-          className="form-input"
-          min="10"
-          required
-        />
-      </label>
-
       <div className="form-checkbox-group">
-        <label className="form-checkbox-label">
-          Positional Betting:
-          <input
-            type="checkbox"
-            checked={positionalBetting}
-            onChange={(e) => setPositionalBetting(e.target.checked)}
-            className="form-checkbox"
-          />
-        </label>
-
         <label className="form-checkbox-label">
           Private League:
           <input

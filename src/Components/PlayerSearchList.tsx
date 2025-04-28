@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import { Container, Table, Pagination } from "react-bootstrap";
 import { ACCESS_TOKEN } from "../constants";
 import getPaginationItems from "./Pagination.tsx";
-
+import "../Styles/PlayerSearchList.css";
 const teams = [
   { displayName: "Arizona Cardinals", queryName: "Cardinals" },
   { displayName: "Atlanta Falcons", queryName: "Falcons" },
@@ -146,19 +146,7 @@ const PlayerSearchList = () => {
             </option>
           ))}
         </select>
-        <select
-          name="status"
-          value={filters.status}
-          onChange={handleFilterChange}
-          className="form-select mb-3"
-        >
-          <option value="">All Statuses</option>
-          {statuses.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
+        
       </div>
 
       {/* Main Content */}
@@ -179,7 +167,7 @@ const PlayerSearchList = () => {
           </div>
         ) : (
           <>
-            <Table striped bordered hover className="player_table">
+            <Table  bordered hover className="player_table">
               <thead>
                 <tr>
                   <th>Name</th>

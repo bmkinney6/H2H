@@ -490,7 +490,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
               <p>Join Code: {selectedLeague.join_code || "N/A"}</p>
 
               <div className="league-actions">
-                
+                {/* Join Draft Button */}
                 {selectedLeague.draftStarted && !selectedLeague.draftComplete && (
                   <button
                     className="btn btn-primary mt-2"
@@ -499,12 +499,16 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
                     Join Draft
                   </button>
                 )}
-                <button
-                  className="btn btn-primary mt-2"
-                  onClick={() => navigate(`/league/${selectedLeague.id}/${userId}`)}
-                >
-                  League Details
-                </button>
+
+                {/* League Details Button */}
+                {selectedLeague.draftComplete && (
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={() => navigate(`/league/${selectedLeague.id}/${userId}`)}
+                  >
+                    League Details
+                  </button>
+                )}
               </div>
 
               

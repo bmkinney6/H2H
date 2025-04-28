@@ -28,6 +28,7 @@ const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 const TradeRequests: React.FC = () => {
     const { leagueId } = useParams<{ leagueId: string }>();
     const [tradeRequests, setTradeRequests] = useState<TradeRequest[]>([]);
+    const [leagueName, setLeagueName] = useState<string>(""); // New state for league name
     const [filteredRequests, setFilteredRequests] = useState<TradeRequest[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<string>("Pending");
@@ -48,7 +49,22 @@ const TradeRequests: React.FC = () => {
             }
         };
 
+        const fetchLeagueName = async () => {
+            try {
+                const response = await axios.get(
+                    `${API_URL}/api/leagues/${leagueId}/`,
+                    {
+                        headers: { Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` },
+                    }
+                );
+                setLeagueName(response.data.name); // Set the league name
+            } catch (err: any) {
+                console.error("Failed to fetch league name:", err);
+            }
+        };
+
         fetchTradeRequests();
+        fetchLeagueName(); // Fetch the league name
     }, [leagueId]);
 
     const filterRequests = (status: string, requests: TradeRequest[] = tradeRequests) => {
@@ -89,6 +105,7 @@ const TradeRequests: React.FC = () => {
         <div className="container-fluid text-white full-page-minus-navbar">
             <div className="trade-requests-header">
                 <h1>Trade Requests</h1>
+                <h3>League: {leagueName}</h3> {/* Display the league name */}
             </div>
             {error && <div className="alert alert-danger">{error}</div>}
 
@@ -110,13 +127,16 @@ const TradeRequests: React.FC = () => {
                         <div key={request.id} className="trade-request-card">
                             <h3>Trade Request</h3>
                             <p>
+                                <strong>League:</strong> {leagueName} {/* Display the league name */}
+                            </p>
+                            <p>
                                 <strong>From:</strong> {request.sender_team.author.username}
                             </p>
                             <p>
                                 <strong>To:</strong> You
                             </p>
                             <p>
-                                <strong>Sender Players:</strong>
+                                <strong>You Will Give:</strong>
                                 <ul>
                                     {Object.entries(request.sender_players).map(([position, player]) => (
                                         <li key={position}>
@@ -126,7 +146,7 @@ const TradeRequests: React.FC = () => {
                                 </ul>
                             </p>
                             <p>
-                                <strong>Receiver Players:</strong>
+                                <strong>You Will Receive:</strong>
                                 <ul>
                                     {Object.entries(request.receiver_players).map(([position, player]) => (
                                         <li key={position}>
