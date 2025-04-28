@@ -6,8 +6,9 @@ import { jwtDecode } from "jwt-decode";
 import "../Styles/Trade.css";
 
 interface Player {
-    id: string;
-    name: string;
+id: string;
+firstName: string;
+lastName: string;
 }
 
 interface Team {
@@ -86,7 +87,7 @@ const Trade: React.FC = () => {
                 setUserTeam(userTeam);
                 setData(response.data);
 
-                // Fetch player names using the new batch endpoint
+                // Fetch player names using the new batch endpoint, create array of player IDs
                 const playerIds = new Set<string>();
                 response.data.teams.forEach((team: Team) => {
                     Object.values(team).forEach((value) => {

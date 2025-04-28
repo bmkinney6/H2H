@@ -61,8 +61,8 @@ export default function PlayerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [player, setPlayer] = useState<Player | null>(null);
-  const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]); // ✅ Separate state for stats
-  const [playerNews, setPlayerNews] = useState<PlayerNews[]>([]); // ✅ Separate state for stats
+  const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
+  const [playerNews, setPlayerNews] = useState<PlayerNews[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"stats" | "news">("stats");
 
@@ -88,7 +88,7 @@ export default function PlayerDetail() {
         });
 
         console.log("Player Data:", playerResponse.data);
-        setPlayer(playerResponse.data.Player); // ✅ Set player data
+        setPlayer(playerResponse.data.Player); // Set player data
 
         // Fetch Player Stats
         const statsResponse = await axios.get(`${API_URL_STATS}/${id}`, {
@@ -96,7 +96,7 @@ export default function PlayerDetail() {
         });
 
         console.log("Player Stats Data:", statsResponse.data);
-        setPlayerStats(statsResponse.data.Player_stats || []); // ✅ Ensure stats is an array
+        setPlayerStats(statsResponse.data.Player_stats || []); // Ensure stats is an array
 
         // Fetch Player News
         const newsResponse = await axios.get(`${API_URL_NEWS}/${id}`, {
@@ -104,7 +104,7 @@ export default function PlayerDetail() {
         });
 
         console.log("Player News Data:", newsResponse.data);
-        setPlayerNews(newsResponse.data.Player_news || []); // ✅ Ensure stats is an array
+        setPlayerNews(newsResponse.data.Player_news || []);
 
         setError(null);
       } catch (err) {
@@ -153,7 +153,7 @@ export default function PlayerDetail() {
             </button>
           </div>
 
-          {/* Stats Section */}
+
           {activeTab === "stats" && playerStats.length > 0 ? (
             <div className="mt-4 overflow-x-auto w-full">
               <h4 className="text-lg font-semibold">Weekly Stats</h4>
