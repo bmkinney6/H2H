@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Define the type for the SearchForm props
 type SearchFormProps = {
   onSubmit: (name: string) => void;
   placeholder: string;

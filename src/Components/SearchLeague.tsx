@@ -27,7 +27,7 @@ const SearchLeague: React.FC = () => {
     draft_date: "",
     page: 1,
   });
-  const [nameQuery, setNameQuery] = useState<string>(""); // Separate name search
+  const [nameQuery, setNameQuery] = useState<string>(""); 
   const [totalPages, setTotalPages] = useState<number>(1);
   const navigate = useNavigate();
 
@@ -41,13 +41,13 @@ const SearchLeague: React.FC = () => {
     }
   
     try {
-      console.log("Filters being sent to the backend:", { ...filters, name: nameQuery }); // Debugging log
+      console.log("Filters being sent to the backend:", { ...filters, name: nameQuery }); 
       const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
-        params: { ...filters, name: nameQuery }, // Include name query
+        params: { ...filters, name: nameQuery },
       });
   
-      console.log("Response from backend:", response.data); // Debugging log
+      console.log("Response from backend:", response.data); 
       setLeagues(response.data.results || []);
       setTotalPages(response.data.totalPages || 1);
       setError(null);
@@ -61,31 +61,30 @@ const SearchLeague: React.FC = () => {
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-    console.log(`Filter updated: ${name} = ${value}`); // Debugging log
+    console.log(`Filter updated: ${name} = ${value}`); 
   };
 
   const handleNameSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameQuery(e.target.value);
-    fetchLeagues(); // Immediately update results for name search
+    fetchLeagues(); 
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent page reload
-    fetchLeagues(); // Trigger search
+    e.preventDefault(); 
+    fetchLeagues(); 
   };
 
   const handleApplyFilters = () => {
-    fetchLeagues(); // Trigger search when "Apply Filters" is clicked
+    fetchLeagues(); 
   };
 
   const handlePageChange = (page: number) => {
     setFilters((prev) => ({ ...prev, page }));
-    fetchLeagues(); // Fetch leagues for the selected page
+    fetchLeagues(); 
   };
 
   return (
       <div className="row">
-        {/* Sidebar for Filters */}
         <div className="col-md-3 p-3 border-end">
           <h4>Filters</h4>
           <label>Private/Public</label>
@@ -118,7 +117,6 @@ const SearchLeague: React.FC = () => {
           </button>
         </div>
 
-        {/* Main Content */}
         <div className="col-md-9 p-3">
           <h1 className="text-center">Search Leagues</h1>
           <form onSubmit={handleSearchSubmit}>
@@ -135,7 +133,6 @@ const SearchLeague: React.FC = () => {
 
           {searchPerformed && leagues.length > 0 ? (
               <div>
-                {/* Display Search Results */}
                 <ul className="list-group mb-3">
                   {leagues.map((league) => (
                       <li
@@ -149,7 +146,6 @@ const SearchLeague: React.FC = () => {
                   ))}
                 </ul>
 
-                {/* Pagination - Ensure it's placed after the results */}
                 {totalPages > 1 && (
                     <div className="d-flex justify-content-center mt-3">
                       {Array.from({ length: totalPages }, (_, i) => (

@@ -37,10 +37,8 @@ const PlayerList = () => {
           },
         });
 
-        // Log the API response for debugging
         console.log("API Response:", response.data);
 
-        // Ensure the response has the expected structure
         if (response.data && Array.isArray(response.data.Player)) {
           const allPlayers = response.data.Player;
           const playersPerPage = 50;
@@ -50,8 +48,7 @@ const PlayerList = () => {
               page * playersPerPage,
             ),
           );
-          setTotalPages(Math.ceil(allPlayers.length / playersPerPage)); // Assuming 50 results per page
-        } else {
+          setTotalPages(Math.ceil(allPlayers.length / playersPerPage));
           setError("Invalid API response structure.");
         }
       } catch (err) {
@@ -97,7 +94,6 @@ const PlayerList = () => {
               {players.map((player, index) => (
                 <tr key={`playerlist-${player.id}-${index}`}>
                   {" "}
-                  {/* Ensure unique key by prefixing with component name */}
                   <td>{`${player.firstName} ${player.lastName}`}</td>
                   <td>{player.team}</td>
                   <td>{player.position}</td>

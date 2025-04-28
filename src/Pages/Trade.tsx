@@ -87,7 +87,7 @@ const Trade: React.FC = () => {
                 setUserTeam(userTeam);
                 setData(response.data);
 
-                // Fetch player names using the new batch endpoint, create array of player IDs
+                
                 const playerIds = new Set<string>();
                 response.data.teams.forEach((team: Team) => {
                     Object.values(team).forEach((value) => {
@@ -101,10 +101,10 @@ const Trade: React.FC = () => {
                     `${API_URL}/api/player/batch-info/`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { "ids[]": Array.from(playerIds) }, // Pass player IDs as query params
+                        params: { "ids[]": Array.from(playerIds) }, s
                     }
                 );
-                // Map player IDs to names
+              
                 const names = playerResponse.data.Players.reduce(
                     (acc: Record<string, string>, player: Player) => {
                         acc[player.id] = `${player.firstName} ${player.lastName}`;
@@ -112,9 +112,9 @@ const Trade: React.FC = () => {
                     },
                     {}
                 );
-                setPlayerNames(names); // Store player names in state
+                setPlayerNames(names); 
             } catch (err: any) {
-                console.error("Error fetching trade info:", err); // Log the error
+                console.error("Error fetching trade info:", err); 
                 setError(err.response?.data?.error || "Failed to fetch trade info.");
             } finally {
                 setIsLoading(false);
@@ -262,7 +262,7 @@ const Trade: React.FC = () => {
                             >
                                 <option value="" disabled>Select a team</option>
                                 {data.teams
-                                    .filter((team) => team.author.id !== userId) // Exclude the user's own team
+                                    .filter((team) => team.author.id !== userId) 
                                     .map((team) => (
                                         <option key={team.id} value={team.id}>
                                             {team.title} (Rank: {team.rank})

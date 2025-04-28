@@ -82,7 +82,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
   };
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [draftError, setDraftError] = useState<string | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]); // New state for teams
+  const [teams, setTeams] = useState<Team[]>([]); 
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_LEAGUE_URL.replace(/\/$/, "");
@@ -102,7 +102,6 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
 
   useEffect(() => {
     if (selectedLeague) {
-      // Fetch teams for the selected league
       fetchTeams(selectedLeague.id);
     }
   }, [selectedLeague]);
@@ -144,7 +143,7 @@ export default function MyLeagues({ setGlobalLoading }: MyLeaguesProps) {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      setTeams(response.data); // Assuming the response contains the list of users and their teams
+      setTeams(response.data); 
     } catch (err) {
       setError("Failed to fetch teams.");
       console.error("Error fetching teams:", err);
