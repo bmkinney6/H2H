@@ -106,7 +106,7 @@ const TradeRequests: React.FC = () => {
         <div className="container-fluid text-white full-page-minus-navbar">
             <div className="trade-requests-header">
                 <h1>Trade Requests</h1>
-                <h3>League: {leagueName}</h3> {/* Display the league name */}
+                <h3>League: {leagueName}</h3>
             </div>
             {error && <div className="alert alert-danger">{error}</div>}
 
@@ -128,7 +128,7 @@ const TradeRequests: React.FC = () => {
                         <div key={request.id} className="trade-request-card">
                             <h3>Trade Request</h3>
                             <p>
-                                <strong>League:</strong> {leagueName} {/* Display the league name */}
+                                <strong>League:</strong> {leagueName}
                             </p>
                             <p>
                                 <strong>From:</strong> {request.sender_team.author.username}

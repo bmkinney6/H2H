@@ -467,12 +467,12 @@ export default function LeagueUserDetails({ setGlobalLoading }: { setGlobalLoadi
             <div className="UserDetailsParent">
               <div className="UserDetailsTeam">
                 <div className="UserDetailsPlayerHeader">
-                  <span className="UserDetailsPositionLabel"></span>        {/* 1 - position label */}
-                  <span className="UserDetailsPlayerName"></span>           {/* 2 - name */}
-                  <span className="UserDetailsPlayerStats">{error && <p className="UserDetailsE">{error}</p>}</span>          {/* 3 - stats */}
-                  <span className="UserDetailsPoints">Total</span>          {/* 4 - total points */}
-                  <span className="UserDetailsPoints1">Proj</span>           {/* 5 - projected points */}
-                  <span className="UserDetailsDrag"></span>                 {/* 6 - drag handle */}
+                  <span className="UserDetailsPositionLabel"></span>
+                  <span className="UserDetailsPlayerName"></span>
+                  <span className="UserDetailsPlayerStats">{error && <p className="UserDetailsE">{error}</p>}</span>
+                  <span className="UserDetailsPoints">Total</span>
+                  <span className="UserDetailsPoints1">Proj</span>
+                  <span className="UserDetailsDrag"></span>
                 </div>
                 {player.map((player, index) => (
                   <div
