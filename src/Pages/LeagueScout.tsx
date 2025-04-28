@@ -6,7 +6,7 @@ import SearchLeague from "../Components/SearchLeague";  // Import your search co
 export default function LeagueSearch() {
   return (
     <div className="container-fluid">
-      <SearchLeague />  {/* Your league search component */}
+      <SearchLeague />
     </div>
   );
 }
