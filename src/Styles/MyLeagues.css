@@ -1,7 +1,10 @@
+
+
 .my-leagues-container {
   display: flex;
   flex-direction: row;
   gap: 20px;
+  
 }
 
 .main-content {
